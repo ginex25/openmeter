@@ -35,7 +35,7 @@ class _ArchiveContractState extends State<ArchiveContract> {
             ),
       body: PopScope(
         canPop: !contractProvider.getHasSelectedItems,
-        onPopInvoked: (bool didPop) async {
+        onPopInvokedWithResult: (bool didPop, _) async {
           if (contractProvider.getHasSelectedItems == true) {
             contractProvider.removeAllSelectedItems(true);
           }
@@ -144,7 +144,7 @@ class _ArchiveContractState extends State<ArchiveContract> {
         Provider.of<DatabaseSettingsProvider>(context, listen: false);
 
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );

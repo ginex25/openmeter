@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../core/database/local_database.dart';
 import '../../core/provider/database_settings_provider.dart';
 import '../../core/provider/meter_provider.dart';
-
 import '../widgets/meter/meter_card_list.dart';
 import '../widgets/meter/sort_meter_cards.dart';
 import '../widgets/utils/selected_items_bar.dart';
@@ -32,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ? _selectedAppBar(meterProvider, db, autoBackup)
           : _unselectedAppBar(meterProvider),
       body: PopScope(
-        onPopInvoked: (bool didPop) async {
+        onPopInvokedWithResult: (bool didPop, _) async {
           if (hasSelectedItems) {
             meterProvider.removeAllSelectedMeters();
           }
@@ -56,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     DatabaseSettingsProvider backup,
   ) {
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );

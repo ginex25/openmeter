@@ -1,13 +1,14 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:drift/drift.dart' as drift;
 import 'package:provider/provider.dart';
 
-import '../../../core/database/local_database.dart';
 import '../../../../utils/meter_typ.dart';
+import '../../../core/database/local_database.dart';
+import '../../../core/helper/provider_helper.dart';
 import '../../../core/model/contract_dto.dart';
 import '../../../core/model/meter_typ.dart';
 import '../../../core/model/provider_dto.dart';
@@ -15,7 +16,6 @@ import '../../../core/provider/contract_provider.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/details_contract_provider.dart';
 import '../../../core/provider/refresh_provider.dart';
-import '../../../core/helper/provider_helper.dart';
 import '../../../utils/convert_meter_unit.dart';
 import '../../widgets/meter/meter_circle_avatar.dart';
 import '../../widgets/objects_screen/contract/add_provider.dart';
@@ -181,7 +181,7 @@ class _AddContractState extends State<AddContract> {
 
     int contractId = await db.contractDao.createContract(contract);
 
-    if (context.mounted) {
+    if (mounted) {
       Navigator.of(context).pop(ContractDto.fromCompanion(
         data: contract,
         contractId: contractId,
@@ -211,12 +211,14 @@ class _AddContractState extends State<AddContract> {
     );
 
     await db.contractDao.updateContract(contract).then((value) {
-      Navigator.of(context).pop(
-        ContractDto.fromData(
-          contract,
-          providerDto?.toData(),
-        ),
-      );
+      if (mounted) {
+        Navigator.of(context).pop(
+          ContractDto.fromData(
+            contract,
+            providerDto?.toData(),
+          ),
+        );
+      }
     });
 
     provider.updateContract(
@@ -233,7 +235,7 @@ class _AddContractState extends State<AddContract> {
         await _createEntry(db, detailsProvider);
       }
 
-      if (context.mounted) {
+      if (mounted) {
         Provider.of<RefreshProvider>(context, listen: false).setRefresh(true);
         Provider.of<DatabaseSettingsProvider>(context, listen: false)
             .setHasUpdate(true);
@@ -309,8 +311,10 @@ class _AddContractState extends State<AddContract> {
     final keyContext = expansionKey.currentContext;
     if (keyContext != null) {
       Future.delayed(const Duration(milliseconds: 200)).then((value) {
-        Scrollable.ensureVisible(keyContext,
-            duration: const Duration(milliseconds: 200));
+        if (keyContext.mounted) {
+          Scrollable.ensureVisible(keyContext,
+              duration: const Duration(milliseconds: 200));
+        }
       });
     }
   }

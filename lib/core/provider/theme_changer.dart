@@ -7,7 +7,6 @@ import '../helper/color_adjuster.dart';
 
 class ThemeChanger extends ChangeNotifier {
   late SharedPreferences _pref;
-  final ColorAdjuster _colorAdjuster = ColorAdjuster();
 
   final String keyTheme = 'theme';
   final String keyNight = 'night';
@@ -166,7 +165,7 @@ class ThemeChanger extends ChangeNotifier {
               backgroundColor: CustomColors.primaryColorLight),
       cardTheme: CardTheme(
         elevation: 1,
-        color: _colorAdjuster.makeLight(primaryColor!, 100),
+        color: primaryColor!.brighterColor(percent: 100),
       ),
       indicatorColor: CustomColors.charcoal,
       highlightColor: Colors.black12,
@@ -214,7 +213,7 @@ class ThemeChanger extends ChangeNotifier {
       textTheme: _getTextTheme(),
       cardTheme: CardTheme(
         elevation: 0,
-        color: _colorAdjuster.makeDark(primaryColor!, 89),
+        color: primaryColor!.darkenColor(percent: 89),
       ),
     );
   }

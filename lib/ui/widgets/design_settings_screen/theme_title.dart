@@ -28,8 +28,6 @@ class _ThemeTitleState extends State<ThemeTitle> {
         return 'Hell';
       case ThemeMode.system:
         return 'System';
-      default:
-        return '';
     }
   }
 

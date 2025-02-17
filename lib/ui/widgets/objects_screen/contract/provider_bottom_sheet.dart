@@ -85,7 +85,7 @@ class _ProviderBottomSheetState extends State<ProviderBottomSheet> {
                     provider.setCurrentProvider(null);
                   });
 
-                  if (context.mounted) {
+                  if (mounted) {
                     Navigator.of(context).pop();
                   }
                 }
@@ -143,7 +143,7 @@ class _ProviderBottomSheetState extends State<ProviderBottomSheet> {
 
     provider.setCurrentProvider(_currentProvider);
 
-    if (context.mounted) {
+    if (mounted) {
       Navigator.of(context).pop();
     }
   }

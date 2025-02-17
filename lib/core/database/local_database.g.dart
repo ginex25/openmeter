@@ -200,6 +200,18 @@ class MeterData extends DataClass implements Insertable<MeterData> {
         unit: unit ?? this.unit,
         isArchived: isArchived ?? this.isArchived,
       );
+  MeterData copyWithCompanion(MeterCompanion data) {
+    return MeterData(
+      id: data.id.present ? data.id.value : this.id,
+      typ: data.typ.present ? data.typ.value : this.typ,
+      note: data.note.present ? data.note.value : this.note,
+      number: data.number.present ? data.number.value : this.number,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      isArchived:
+          data.isArchived.present ? data.isArchived.value : this.isArchived,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MeterData(')
@@ -326,7 +338,7 @@ class MeterCompanion extends UpdateCompanion<MeterData> {
   }
 }
 
-class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entrie> {
+class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entry> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -418,7 +430,7 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entrie> {
   String get actualTableName => $name;
   static const String $name = 'entries';
   @override
-  VerificationContext validateIntegrity(Insertable<Entrie> instance,
+  VerificationContext validateIntegrity(Insertable<Entry> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -479,9 +491,9 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entrie> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Entrie map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Entry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Entrie(
+    return Entry(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       meter: attachedDatabase.typeMapping
@@ -512,7 +524,7 @@ class $EntriesTable extends Entries with TableInfo<$EntriesTable, Entrie> {
   }
 }
 
-class Entrie extends DataClass implements Insertable<Entrie> {
+class Entry extends DataClass implements Insertable<Entry> {
   final int id;
   final int meter;
   final int count;
@@ -523,7 +535,7 @@ class Entrie extends DataClass implements Insertable<Entrie> {
   final bool isReset;
   final bool transmittedToProvider;
   final String? imagePath;
-  const Entrie(
+  const Entry(
       {required this.id,
       required this.meter,
       required this.count,
@@ -571,10 +583,10 @@ class Entrie extends DataClass implements Insertable<Entrie> {
     );
   }
 
-  factory Entrie.fromJson(Map<String, dynamic> json,
+  factory Entry.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Entrie(
+    return Entry(
       id: serializer.fromJson<int>(json['id']),
       meter: serializer.fromJson<int>(json['meter']),
       count: serializer.fromJson<int>(json['count']),
@@ -605,7 +617,7 @@ class Entrie extends DataClass implements Insertable<Entrie> {
     };
   }
 
-  Entrie copyWith(
+  Entry copyWith(
           {int? id,
           int? meter,
           int? count,
@@ -616,7 +628,7 @@ class Entrie extends DataClass implements Insertable<Entrie> {
           bool? isReset,
           bool? transmittedToProvider,
           Value<String?> imagePath = const Value.absent()}) =>
-      Entrie(
+      Entry(
         id: id ?? this.id,
         meter: meter ?? this.meter,
         count: count ?? this.count,
@@ -629,9 +641,26 @@ class Entrie extends DataClass implements Insertable<Entrie> {
             transmittedToProvider ?? this.transmittedToProvider,
         imagePath: imagePath.present ? imagePath.value : this.imagePath,
       );
+  Entry copyWithCompanion(EntriesCompanion data) {
+    return Entry(
+      id: data.id.present ? data.id.value : this.id,
+      meter: data.meter.present ? data.meter.value : this.meter,
+      count: data.count.present ? data.count.value : this.count,
+      usage: data.usage.present ? data.usage.value : this.usage,
+      date: data.date.present ? data.date.value : this.date,
+      days: data.days.present ? data.days.value : this.days,
+      note: data.note.present ? data.note.value : this.note,
+      isReset: data.isReset.present ? data.isReset.value : this.isReset,
+      transmittedToProvider: data.transmittedToProvider.present
+          ? data.transmittedToProvider.value
+          : this.transmittedToProvider,
+      imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
+    );
+  }
+
   @override
   String toString() {
-    return (StringBuffer('Entrie(')
+    return (StringBuffer('Entry(')
           ..write('id: $id, ')
           ..write('meter: $meter, ')
           ..write('count: $count, ')
@@ -652,7 +681,7 @@ class Entrie extends DataClass implements Insertable<Entrie> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Entrie &&
+      (other is Entry &&
           other.id == this.id &&
           other.meter == this.meter &&
           other.count == this.count &&
@@ -665,7 +694,7 @@ class Entrie extends DataClass implements Insertable<Entrie> {
           other.imagePath == this.imagePath);
 }
 
-class EntriesCompanion extends UpdateCompanion<Entrie> {
+class EntriesCompanion extends UpdateCompanion<Entry> {
   final Value<int> id;
   final Value<int> meter;
   final Value<int> count;
@@ -704,7 +733,7 @@ class EntriesCompanion extends UpdateCompanion<Entrie> {
         usage = Value(usage),
         date = Value(date),
         days = Value(days);
-  static Insertable<Entrie> custom({
+  static Insertable<Entry> custom({
     Expression<int>? id,
     Expression<int>? meter,
     Expression<int>? count,
@@ -957,6 +986,15 @@ class RoomData extends DataClass implements Insertable<RoomData> {
         name: name ?? this.name,
         typ: typ ?? this.typ,
       );
+  RoomData copyWithCompanion(RoomCompanion data) {
+    return RoomData(
+      id: data.id.present ? data.id.value : this.id,
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      name: data.name.present ? data.name.value : this.name,
+      typ: data.typ.present ? data.typ.value : this.typ,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('RoomData(')
@@ -1162,6 +1200,13 @@ class MeterInRoomData extends DataClass implements Insertable<MeterInRoomData> {
         meterId: meterId ?? this.meterId,
         roomId: roomId ?? this.roomId,
       );
+  MeterInRoomData copyWithCompanion(MeterInRoomCompanion data) {
+    return MeterInRoomData(
+      meterId: data.meterId.present ? data.meterId.value : this.meterId,
+      roomId: data.roomId.present ? data.roomId.value : this.roomId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MeterInRoomData(')
@@ -1531,6 +1576,25 @@ class ProviderData extends DataClass implements Insertable<ProviderData> {
         canceledDate:
             canceledDate.present ? canceledDate.value : this.canceledDate,
       );
+  ProviderData copyWithCompanion(ProviderCompanion data) {
+    return ProviderData(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      contractNumber: data.contractNumber.present
+          ? data.contractNumber.value
+          : this.contractNumber,
+      notice: data.notice.present ? data.notice.value : this.notice,
+      validFrom: data.validFrom.present ? data.validFrom.value : this.validFrom,
+      validUntil:
+          data.validUntil.present ? data.validUntil.value : this.validUntil,
+      renewal: data.renewal.present ? data.renewal.value : this.renewal,
+      canceled: data.canceled.present ? data.canceled.value : this.canceled,
+      canceledDate: data.canceledDate.present
+          ? data.canceledDate.value
+          : this.canceledDate,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('ProviderData(')
@@ -2004,6 +2068,24 @@ class ContractData extends DataClass implements Insertable<ContractData> {
         unit: unit ?? this.unit,
         isArchived: isArchived ?? this.isArchived,
       );
+  ContractData copyWithCompanion(ContractCompanion data) {
+    return ContractData(
+      id: data.id.present ? data.id.value : this.id,
+      meterTyp: data.meterTyp.present ? data.meterTyp.value : this.meterTyp,
+      provider: data.provider.present ? data.provider.value : this.provider,
+      basicPrice:
+          data.basicPrice.present ? data.basicPrice.value : this.basicPrice,
+      energyPrice:
+          data.energyPrice.present ? data.energyPrice.value : this.energyPrice,
+      discount: data.discount.present ? data.discount.value : this.discount,
+      bonus: data.bonus.present ? data.bonus.value : this.bonus,
+      note: data.note.present ? data.note.value : this.note,
+      unit: data.unit.present ? data.unit.value : this.unit,
+      isArchived:
+          data.isArchived.present ? data.isArchived.value : this.isArchived,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('ContractData(')
@@ -2329,6 +2411,15 @@ class Tag extends DataClass implements Insertable<Tag> {
         name: name ?? this.name,
         color: color ?? this.color,
       );
+  Tag copyWithCompanion(TagsCompanion data) {
+    return Tag(
+      id: data.id.present ? data.id.value : this.id,
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      name: data.name.present ? data.name.value : this.name,
+      color: data.color.present ? data.color.value : this.color,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Tag(')
@@ -2534,6 +2625,13 @@ class MeterWithTag extends DataClass implements Insertable<MeterWithTag> {
         meterId: meterId ?? this.meterId,
         tagId: tagId ?? this.tagId,
       );
+  MeterWithTag copyWithCompanion(MeterWithTagsCompanion data) {
+    return MeterWithTag(
+      meterId: data.meterId.present ? data.meterId.value : this.meterId,
+      tagId: data.tagId.present ? data.tagId.value : this.tagId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MeterWithTag(')
@@ -2818,6 +2916,19 @@ class CostCompareData extends DataClass implements Insertable<CostCompareData> {
         usage: usage ?? this.usage,
         parentId: parentId ?? this.parentId,
       );
+  CostCompareData copyWithCompanion(CostCompareCompanion data) {
+    return CostCompareData(
+      id: data.id.present ? data.id.value : this.id,
+      basicPrice:
+          data.basicPrice.present ? data.basicPrice.value : this.basicPrice,
+      energyPrice:
+          data.energyPrice.present ? data.energyPrice.value : this.energyPrice,
+      bonus: data.bonus.present ? data.bonus.value : this.bonus,
+      usage: data.usage.present ? data.usage.value : this.usage,
+      parentId: data.parentId.present ? data.parentId.value : this.parentId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('CostCompareData(')
@@ -2948,6 +3059,7 @@ class CostCompareCompanion extends UpdateCompanion<CostCompareData> {
 
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
+  $LocalDatabaseManager get managers => $LocalDatabaseManager(this);
   late final $MeterTable meter = $MeterTable(this);
   late final $EntriesTable entries = $EntriesTable(this);
   late final $RoomTable room = $RoomTable(this);
@@ -3022,4 +3134,2520 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
+}
+
+typedef $$MeterTableCreateCompanionBuilder = MeterCompanion Function({
+  Value<int> id,
+  required String typ,
+  required String note,
+  required String number,
+  required String unit,
+  Value<bool> isArchived,
+});
+typedef $$MeterTableUpdateCompanionBuilder = MeterCompanion Function({
+  Value<int> id,
+  Value<String> typ,
+  Value<String> note,
+  Value<String> number,
+  Value<String> unit,
+  Value<bool> isArchived,
+});
+
+final class $$MeterTableReferences
+    extends BaseReferences<_$LocalDatabase, $MeterTable, MeterData> {
+  $$MeterTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$EntriesTable, List<Entry>> _entriesRefsTable(
+          _$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(db.entries,
+          aliasName: $_aliasNameGenerator(db.meter.id, db.entries.meter));
+
+  $$EntriesTableProcessedTableManager get entriesRefs {
+    final manager = $$EntriesTableTableManager($_db, $_db.entries)
+        .filter((f) => f.meter.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_entriesRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$MeterInRoomTable, List<MeterInRoomData>>
+      _meterInRoomRefsTable(_$LocalDatabase db) =>
+          MultiTypedResultKey.fromTable(db.meterInRoom,
+              aliasName:
+                  $_aliasNameGenerator(db.meter.id, db.meterInRoom.meterId));
+
+  $$MeterInRoomTableProcessedTableManager get meterInRoomRefs {
+    final manager = $$MeterInRoomTableTableManager($_db, $_db.meterInRoom)
+        .filter((f) => f.meterId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_meterInRoomRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$MeterWithTagsTable, List<MeterWithTag>>
+      _meterWithTagsRefsTable(_$LocalDatabase db) =>
+          MultiTypedResultKey.fromTable(db.meterWithTags,
+              aliasName:
+                  $_aliasNameGenerator(db.meter.id, db.meterWithTags.meterId));
+
+  $$MeterWithTagsTableProcessedTableManager get meterWithTagsRefs {
+    final manager = $$MeterWithTagsTableTableManager($_db, $_db.meterWithTags)
+        .filter((f) => f.meterId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_meterWithTagsRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$MeterTableFilterComposer
+    extends Composer<_$LocalDatabase, $MeterTable> {
+  $$MeterTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get typ => $composableBuilder(
+      column: $table.typ, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get number => $composableBuilder(
+      column: $table.number, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get unit => $composableBuilder(
+      column: $table.unit, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+      column: $table.isArchived, builder: (column) => ColumnFilters(column));
+
+  Expression<bool> entriesRefs(
+      Expression<bool> Function($$EntriesTableFilterComposer f) f) {
+    final $$EntriesTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.entries,
+        getReferencedColumn: (t) => t.meter,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$EntriesTableFilterComposer(
+              $db: $db,
+              $table: $db.entries,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> meterInRoomRefs(
+      Expression<bool> Function($$MeterInRoomTableFilterComposer f) f) {
+    final $$MeterInRoomTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterInRoom,
+        getReferencedColumn: (t) => t.meterId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterInRoomTableFilterComposer(
+              $db: $db,
+              $table: $db.meterInRoom,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> meterWithTagsRefs(
+      Expression<bool> Function($$MeterWithTagsTableFilterComposer f) f) {
+    final $$MeterWithTagsTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterWithTags,
+        getReferencedColumn: (t) => t.meterId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterWithTagsTableFilterComposer(
+              $db: $db,
+              $table: $db.meterWithTags,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$MeterTableOrderingComposer
+    extends Composer<_$LocalDatabase, $MeterTable> {
+  $$MeterTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get typ => $composableBuilder(
+      column: $table.typ, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get number => $composableBuilder(
+      column: $table.number, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+      column: $table.unit, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+      column: $table.isArchived, builder: (column) => ColumnOrderings(column));
+}
+
+class $$MeterTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $MeterTable> {
+  $$MeterTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get typ =>
+      $composableBuilder(column: $table.typ, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get number =>
+      $composableBuilder(column: $table.number, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+      column: $table.isArchived, builder: (column) => column);
+
+  Expression<T> entriesRefs<T extends Object>(
+      Expression<T> Function($$EntriesTableAnnotationComposer a) f) {
+    final $$EntriesTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.entries,
+        getReferencedColumn: (t) => t.meter,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$EntriesTableAnnotationComposer(
+              $db: $db,
+              $table: $db.entries,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> meterInRoomRefs<T extends Object>(
+      Expression<T> Function($$MeterInRoomTableAnnotationComposer a) f) {
+    final $$MeterInRoomTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterInRoom,
+        getReferencedColumn: (t) => t.meterId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterInRoomTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meterInRoom,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<T> meterWithTagsRefs<T extends Object>(
+      Expression<T> Function($$MeterWithTagsTableAnnotationComposer a) f) {
+    final $$MeterWithTagsTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterWithTags,
+        getReferencedColumn: (t) => t.meterId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterWithTagsTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meterWithTags,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$MeterTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $MeterTable,
+    MeterData,
+    $$MeterTableFilterComposer,
+    $$MeterTableOrderingComposer,
+    $$MeterTableAnnotationComposer,
+    $$MeterTableCreateCompanionBuilder,
+    $$MeterTableUpdateCompanionBuilder,
+    (MeterData, $$MeterTableReferences),
+    MeterData,
+    PrefetchHooks Function(
+        {bool entriesRefs, bool meterInRoomRefs, bool meterWithTagsRefs})> {
+  $$MeterTableTableManager(_$LocalDatabase db, $MeterTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MeterTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MeterTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MeterTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> typ = const Value.absent(),
+            Value<String> note = const Value.absent(),
+            Value<String> number = const Value.absent(),
+            Value<String> unit = const Value.absent(),
+            Value<bool> isArchived = const Value.absent(),
+          }) =>
+              MeterCompanion(
+            id: id,
+            typ: typ,
+            note: note,
+            number: number,
+            unit: unit,
+            isArchived: isArchived,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String typ,
+            required String note,
+            required String number,
+            required String unit,
+            Value<bool> isArchived = const Value.absent(),
+          }) =>
+              MeterCompanion.insert(
+            id: id,
+            typ: typ,
+            note: note,
+            number: number,
+            unit: unit,
+            isArchived: isArchived,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$MeterTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: (
+              {entriesRefs = false,
+              meterInRoomRefs = false,
+              meterWithTagsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (entriesRefs) db.entries,
+                if (meterInRoomRefs) db.meterInRoom,
+                if (meterWithTagsRefs) db.meterWithTags
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (entriesRefs)
+                    await $_getPrefetchedData<MeterData, $MeterTable, Entry>(
+                        currentTable: table,
+                        referencedTable:
+                            $$MeterTableReferences._entriesRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$MeterTableReferences(db, table, p0).entriesRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.meter == item.id),
+                        typedResults: items),
+                  if (meterInRoomRefs)
+                    await $_getPrefetchedData<MeterData, $MeterTable,
+                            MeterInRoomData>(
+                        currentTable: table,
+                        referencedTable:
+                            $$MeterTableReferences._meterInRoomRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$MeterTableReferences(db, table, p0)
+                                .meterInRoomRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.meterId == item.id),
+                        typedResults: items),
+                  if (meterWithTagsRefs)
+                    await $_getPrefetchedData<MeterData, $MeterTable,
+                            MeterWithTag>(
+                        currentTable: table,
+                        referencedTable:
+                            $$MeterTableReferences._meterWithTagsRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$MeterTableReferences(db, table, p0)
+                                .meterWithTagsRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.meterId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MeterTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $MeterTable,
+    MeterData,
+    $$MeterTableFilterComposer,
+    $$MeterTableOrderingComposer,
+    $$MeterTableAnnotationComposer,
+    $$MeterTableCreateCompanionBuilder,
+    $$MeterTableUpdateCompanionBuilder,
+    (MeterData, $$MeterTableReferences),
+    MeterData,
+    PrefetchHooks Function(
+        {bool entriesRefs, bool meterInRoomRefs, bool meterWithTagsRefs})>;
+typedef $$EntriesTableCreateCompanionBuilder = EntriesCompanion Function({
+  Value<int> id,
+  required int meter,
+  required int count,
+  required int usage,
+  required DateTime date,
+  required int days,
+  Value<String?> note,
+  Value<bool> isReset,
+  Value<bool> transmittedToProvider,
+  Value<String?> imagePath,
+});
+typedef $$EntriesTableUpdateCompanionBuilder = EntriesCompanion Function({
+  Value<int> id,
+  Value<int> meter,
+  Value<int> count,
+  Value<int> usage,
+  Value<DateTime> date,
+  Value<int> days,
+  Value<String?> note,
+  Value<bool> isReset,
+  Value<bool> transmittedToProvider,
+  Value<String?> imagePath,
+});
+
+final class $$EntriesTableReferences
+    extends BaseReferences<_$LocalDatabase, $EntriesTable, Entry> {
+  $$EntriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $MeterTable _meterTable(_$LocalDatabase db) =>
+      db.meter.createAlias($_aliasNameGenerator(db.entries.meter, db.meter.id));
+
+  $$MeterTableProcessedTableManager get meter {
+    final $_column = $_itemColumn<int>('meter')!;
+
+    final manager = $$MeterTableTableManager($_db, $_db.meter)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_meterTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$EntriesTableFilterComposer
+    extends Composer<_$LocalDatabase, $EntriesTable> {
+  $$EntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get count => $composableBuilder(
+      column: $table.count, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get usage => $composableBuilder(
+      column: $table.usage, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get days => $composableBuilder(
+      column: $table.days, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isReset => $composableBuilder(
+      column: $table.isReset, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get transmittedToProvider => $composableBuilder(
+      column: $table.transmittedToProvider,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get imagePath => $composableBuilder(
+      column: $table.imagePath, builder: (column) => ColumnFilters(column));
+
+  $$MeterTableFilterComposer get meter {
+    final $$MeterTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meter,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableFilterComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$EntriesTableOrderingComposer
+    extends Composer<_$LocalDatabase, $EntriesTable> {
+  $$EntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get count => $composableBuilder(
+      column: $table.count, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get usage => $composableBuilder(
+      column: $table.usage, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get days => $composableBuilder(
+      column: $table.days, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isReset => $composableBuilder(
+      column: $table.isReset, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get transmittedToProvider => $composableBuilder(
+      column: $table.transmittedToProvider,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get imagePath => $composableBuilder(
+      column: $table.imagePath, builder: (column) => ColumnOrderings(column));
+
+  $$MeterTableOrderingComposer get meter {
+    final $$MeterTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meter,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableOrderingComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$EntriesTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $EntriesTable> {
+  $$EntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get count =>
+      $composableBuilder(column: $table.count, builder: (column) => column);
+
+  GeneratedColumn<int> get usage =>
+      $composableBuilder(column: $table.usage, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get days =>
+      $composableBuilder(column: $table.days, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<bool> get isReset =>
+      $composableBuilder(column: $table.isReset, builder: (column) => column);
+
+  GeneratedColumn<bool> get transmittedToProvider => $composableBuilder(
+      column: $table.transmittedToProvider, builder: (column) => column);
+
+  GeneratedColumn<String> get imagePath =>
+      $composableBuilder(column: $table.imagePath, builder: (column) => column);
+
+  $$MeterTableAnnotationComposer get meter {
+    final $$MeterTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meter,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$EntriesTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $EntriesTable,
+    Entry,
+    $$EntriesTableFilterComposer,
+    $$EntriesTableOrderingComposer,
+    $$EntriesTableAnnotationComposer,
+    $$EntriesTableCreateCompanionBuilder,
+    $$EntriesTableUpdateCompanionBuilder,
+    (Entry, $$EntriesTableReferences),
+    Entry,
+    PrefetchHooks Function({bool meter})> {
+  $$EntriesTableTableManager(_$LocalDatabase db, $EntriesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$EntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$EntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$EntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> meter = const Value.absent(),
+            Value<int> count = const Value.absent(),
+            Value<int> usage = const Value.absent(),
+            Value<DateTime> date = const Value.absent(),
+            Value<int> days = const Value.absent(),
+            Value<String?> note = const Value.absent(),
+            Value<bool> isReset = const Value.absent(),
+            Value<bool> transmittedToProvider = const Value.absent(),
+            Value<String?> imagePath = const Value.absent(),
+          }) =>
+              EntriesCompanion(
+            id: id,
+            meter: meter,
+            count: count,
+            usage: usage,
+            date: date,
+            days: days,
+            note: note,
+            isReset: isReset,
+            transmittedToProvider: transmittedToProvider,
+            imagePath: imagePath,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int meter,
+            required int count,
+            required int usage,
+            required DateTime date,
+            required int days,
+            Value<String?> note = const Value.absent(),
+            Value<bool> isReset = const Value.absent(),
+            Value<bool> transmittedToProvider = const Value.absent(),
+            Value<String?> imagePath = const Value.absent(),
+          }) =>
+              EntriesCompanion.insert(
+            id: id,
+            meter: meter,
+            count: count,
+            usage: usage,
+            date: date,
+            days: days,
+            note: note,
+            isReset: isReset,
+            transmittedToProvider: transmittedToProvider,
+            imagePath: imagePath,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$EntriesTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({meter = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (meter) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.meter,
+                    referencedTable: $$EntriesTableReferences._meterTable(db),
+                    referencedColumn:
+                        $$EntriesTableReferences._meterTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$EntriesTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $EntriesTable,
+    Entry,
+    $$EntriesTableFilterComposer,
+    $$EntriesTableOrderingComposer,
+    $$EntriesTableAnnotationComposer,
+    $$EntriesTableCreateCompanionBuilder,
+    $$EntriesTableUpdateCompanionBuilder,
+    (Entry, $$EntriesTableReferences),
+    Entry,
+    PrefetchHooks Function({bool meter})>;
+typedef $$RoomTableCreateCompanionBuilder = RoomCompanion Function({
+  Value<int> id,
+  required String uuid,
+  required String name,
+  required String typ,
+});
+typedef $$RoomTableUpdateCompanionBuilder = RoomCompanion Function({
+  Value<int> id,
+  Value<String> uuid,
+  Value<String> name,
+  Value<String> typ,
+});
+
+class $$RoomTableFilterComposer extends Composer<_$LocalDatabase, $RoomTable> {
+  $$RoomTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get uuid => $composableBuilder(
+      column: $table.uuid, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get typ => $composableBuilder(
+      column: $table.typ, builder: (column) => ColumnFilters(column));
+}
+
+class $$RoomTableOrderingComposer
+    extends Composer<_$LocalDatabase, $RoomTable> {
+  $$RoomTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get uuid => $composableBuilder(
+      column: $table.uuid, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get typ => $composableBuilder(
+      column: $table.typ, builder: (column) => ColumnOrderings(column));
+}
+
+class $$RoomTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $RoomTable> {
+  $$RoomTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get typ =>
+      $composableBuilder(column: $table.typ, builder: (column) => column);
+}
+
+class $$RoomTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $RoomTable,
+    RoomData,
+    $$RoomTableFilterComposer,
+    $$RoomTableOrderingComposer,
+    $$RoomTableAnnotationComposer,
+    $$RoomTableCreateCompanionBuilder,
+    $$RoomTableUpdateCompanionBuilder,
+    (RoomData, BaseReferences<_$LocalDatabase, $RoomTable, RoomData>),
+    RoomData,
+    PrefetchHooks Function()> {
+  $$RoomTableTableManager(_$LocalDatabase db, $RoomTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RoomTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RoomTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RoomTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> uuid = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> typ = const Value.absent(),
+          }) =>
+              RoomCompanion(
+            id: id,
+            uuid: uuid,
+            name: name,
+            typ: typ,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String uuid,
+            required String name,
+            required String typ,
+          }) =>
+              RoomCompanion.insert(
+            id: id,
+            uuid: uuid,
+            name: name,
+            typ: typ,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$RoomTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $RoomTable,
+    RoomData,
+    $$RoomTableFilterComposer,
+    $$RoomTableOrderingComposer,
+    $$RoomTableAnnotationComposer,
+    $$RoomTableCreateCompanionBuilder,
+    $$RoomTableUpdateCompanionBuilder,
+    (RoomData, BaseReferences<_$LocalDatabase, $RoomTable, RoomData>),
+    RoomData,
+    PrefetchHooks Function()>;
+typedef $$MeterInRoomTableCreateCompanionBuilder = MeterInRoomCompanion
+    Function({
+  required int meterId,
+  required String roomId,
+  Value<int> rowid,
+});
+typedef $$MeterInRoomTableUpdateCompanionBuilder = MeterInRoomCompanion
+    Function({
+  Value<int> meterId,
+  Value<String> roomId,
+  Value<int> rowid,
+});
+
+final class $$MeterInRoomTableReferences extends BaseReferences<_$LocalDatabase,
+    $MeterInRoomTable, MeterInRoomData> {
+  $$MeterInRoomTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $MeterTable _meterIdTable(_$LocalDatabase db) => db.meter
+      .createAlias($_aliasNameGenerator(db.meterInRoom.meterId, db.meter.id));
+
+  $$MeterTableProcessedTableManager get meterId {
+    final $_column = $_itemColumn<int>('meter_id')!;
+
+    final manager = $$MeterTableTableManager($_db, $_db.meter)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_meterIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$MeterInRoomTableFilterComposer
+    extends Composer<_$LocalDatabase, $MeterInRoomTable> {
+  $$MeterInRoomTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get roomId => $composableBuilder(
+      column: $table.roomId, builder: (column) => ColumnFilters(column));
+
+  $$MeterTableFilterComposer get meterId {
+    final $$MeterTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableFilterComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterInRoomTableOrderingComposer
+    extends Composer<_$LocalDatabase, $MeterInRoomTable> {
+  $$MeterInRoomTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get roomId => $composableBuilder(
+      column: $table.roomId, builder: (column) => ColumnOrderings(column));
+
+  $$MeterTableOrderingComposer get meterId {
+    final $$MeterTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableOrderingComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterInRoomTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $MeterInRoomTable> {
+  $$MeterInRoomTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get roomId =>
+      $composableBuilder(column: $table.roomId, builder: (column) => column);
+
+  $$MeterTableAnnotationComposer get meterId {
+    final $$MeterTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterInRoomTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $MeterInRoomTable,
+    MeterInRoomData,
+    $$MeterInRoomTableFilterComposer,
+    $$MeterInRoomTableOrderingComposer,
+    $$MeterInRoomTableAnnotationComposer,
+    $$MeterInRoomTableCreateCompanionBuilder,
+    $$MeterInRoomTableUpdateCompanionBuilder,
+    (MeterInRoomData, $$MeterInRoomTableReferences),
+    MeterInRoomData,
+    PrefetchHooks Function({bool meterId})> {
+  $$MeterInRoomTableTableManager(_$LocalDatabase db, $MeterInRoomTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MeterInRoomTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MeterInRoomTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MeterInRoomTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> meterId = const Value.absent(),
+            Value<String> roomId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MeterInRoomCompanion(
+            meterId: meterId,
+            roomId: roomId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int meterId,
+            required String roomId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MeterInRoomCompanion.insert(
+            meterId: meterId,
+            roomId: roomId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$MeterInRoomTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({meterId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (meterId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.meterId,
+                    referencedTable:
+                        $$MeterInRoomTableReferences._meterIdTable(db),
+                    referencedColumn:
+                        $$MeterInRoomTableReferences._meterIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MeterInRoomTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $MeterInRoomTable,
+    MeterInRoomData,
+    $$MeterInRoomTableFilterComposer,
+    $$MeterInRoomTableOrderingComposer,
+    $$MeterInRoomTableAnnotationComposer,
+    $$MeterInRoomTableCreateCompanionBuilder,
+    $$MeterInRoomTableUpdateCompanionBuilder,
+    (MeterInRoomData, $$MeterInRoomTableReferences),
+    MeterInRoomData,
+    PrefetchHooks Function({bool meterId})>;
+typedef $$ProviderTableCreateCompanionBuilder = ProviderCompanion Function({
+  Value<int> id,
+  required String name,
+  required String contractNumber,
+  Value<int?> notice,
+  required DateTime validFrom,
+  required DateTime validUntil,
+  Value<int?> renewal,
+  Value<bool?> canceled,
+  Value<DateTime?> canceledDate,
+});
+typedef $$ProviderTableUpdateCompanionBuilder = ProviderCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> contractNumber,
+  Value<int?> notice,
+  Value<DateTime> validFrom,
+  Value<DateTime> validUntil,
+  Value<int?> renewal,
+  Value<bool?> canceled,
+  Value<DateTime?> canceledDate,
+});
+
+final class $$ProviderTableReferences
+    extends BaseReferences<_$LocalDatabase, $ProviderTable, ProviderData> {
+  $$ProviderTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$ContractTable, List<ContractData>>
+      _contractRefsTable(_$LocalDatabase db) =>
+          MultiTypedResultKey.fromTable(db.contract,
+              aliasName:
+                  $_aliasNameGenerator(db.provider.id, db.contract.provider));
+
+  $$ContractTableProcessedTableManager get contractRefs {
+    final manager = $$ContractTableTableManager($_db, $_db.contract)
+        .filter((f) => f.provider.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_contractRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$ProviderTableFilterComposer
+    extends Composer<_$LocalDatabase, $ProviderTable> {
+  $$ProviderTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get contractNumber => $composableBuilder(
+      column: $table.contractNumber,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get notice => $composableBuilder(
+      column: $table.notice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get validFrom => $composableBuilder(
+      column: $table.validFrom, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get validUntil => $composableBuilder(
+      column: $table.validUntil, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get renewal => $composableBuilder(
+      column: $table.renewal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get canceled => $composableBuilder(
+      column: $table.canceled, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get canceledDate => $composableBuilder(
+      column: $table.canceledDate, builder: (column) => ColumnFilters(column));
+
+  Expression<bool> contractRefs(
+      Expression<bool> Function($$ContractTableFilterComposer f) f) {
+    final $$ContractTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.provider,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableFilterComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ProviderTableOrderingComposer
+    extends Composer<_$LocalDatabase, $ProviderTable> {
+  $$ProviderTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get contractNumber => $composableBuilder(
+      column: $table.contractNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get notice => $composableBuilder(
+      column: $table.notice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get validFrom => $composableBuilder(
+      column: $table.validFrom, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get validUntil => $composableBuilder(
+      column: $table.validUntil, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get renewal => $composableBuilder(
+      column: $table.renewal, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get canceled => $composableBuilder(
+      column: $table.canceled, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get canceledDate => $composableBuilder(
+      column: $table.canceledDate,
+      builder: (column) => ColumnOrderings(column));
+}
+
+class $$ProviderTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $ProviderTable> {
+  $$ProviderTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get contractNumber => $composableBuilder(
+      column: $table.contractNumber, builder: (column) => column);
+
+  GeneratedColumn<int> get notice =>
+      $composableBuilder(column: $table.notice, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get validFrom =>
+      $composableBuilder(column: $table.validFrom, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get validUntil => $composableBuilder(
+      column: $table.validUntil, builder: (column) => column);
+
+  GeneratedColumn<int> get renewal =>
+      $composableBuilder(column: $table.renewal, builder: (column) => column);
+
+  GeneratedColumn<bool> get canceled =>
+      $composableBuilder(column: $table.canceled, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get canceledDate => $composableBuilder(
+      column: $table.canceledDate, builder: (column) => column);
+
+  Expression<T> contractRefs<T extends Object>(
+      Expression<T> Function($$ContractTableAnnotationComposer a) f) {
+    final $$ContractTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.provider,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableAnnotationComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ProviderTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $ProviderTable,
+    ProviderData,
+    $$ProviderTableFilterComposer,
+    $$ProviderTableOrderingComposer,
+    $$ProviderTableAnnotationComposer,
+    $$ProviderTableCreateCompanionBuilder,
+    $$ProviderTableUpdateCompanionBuilder,
+    (ProviderData, $$ProviderTableReferences),
+    ProviderData,
+    PrefetchHooks Function({bool contractRefs})> {
+  $$ProviderTableTableManager(_$LocalDatabase db, $ProviderTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ProviderTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ProviderTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ProviderTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> contractNumber = const Value.absent(),
+            Value<int?> notice = const Value.absent(),
+            Value<DateTime> validFrom = const Value.absent(),
+            Value<DateTime> validUntil = const Value.absent(),
+            Value<int?> renewal = const Value.absent(),
+            Value<bool?> canceled = const Value.absent(),
+            Value<DateTime?> canceledDate = const Value.absent(),
+          }) =>
+              ProviderCompanion(
+            id: id,
+            name: name,
+            contractNumber: contractNumber,
+            notice: notice,
+            validFrom: validFrom,
+            validUntil: validUntil,
+            renewal: renewal,
+            canceled: canceled,
+            canceledDate: canceledDate,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required String contractNumber,
+            Value<int?> notice = const Value.absent(),
+            required DateTime validFrom,
+            required DateTime validUntil,
+            Value<int?> renewal = const Value.absent(),
+            Value<bool?> canceled = const Value.absent(),
+            Value<DateTime?> canceledDate = const Value.absent(),
+          }) =>
+              ProviderCompanion.insert(
+            id: id,
+            name: name,
+            contractNumber: contractNumber,
+            notice: notice,
+            validFrom: validFrom,
+            validUntil: validUntil,
+            renewal: renewal,
+            canceled: canceled,
+            canceledDate: canceledDate,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$ProviderTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({contractRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (contractRefs) db.contract],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (contractRefs)
+                    await $_getPrefetchedData<ProviderData, $ProviderTable,
+                            ContractData>(
+                        currentTable: table,
+                        referencedTable:
+                            $$ProviderTableReferences._contractRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ProviderTableReferences(db, table, p0)
+                                .contractRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.provider == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$ProviderTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $ProviderTable,
+    ProviderData,
+    $$ProviderTableFilterComposer,
+    $$ProviderTableOrderingComposer,
+    $$ProviderTableAnnotationComposer,
+    $$ProviderTableCreateCompanionBuilder,
+    $$ProviderTableUpdateCompanionBuilder,
+    (ProviderData, $$ProviderTableReferences),
+    ProviderData,
+    PrefetchHooks Function({bool contractRefs})>;
+typedef $$ContractTableCreateCompanionBuilder = ContractCompanion Function({
+  Value<int> id,
+  required String meterTyp,
+  Value<int?> provider,
+  required double basicPrice,
+  required double energyPrice,
+  required double discount,
+  Value<int?> bonus,
+  required String note,
+  required String unit,
+  Value<bool> isArchived,
+});
+typedef $$ContractTableUpdateCompanionBuilder = ContractCompanion Function({
+  Value<int> id,
+  Value<String> meterTyp,
+  Value<int?> provider,
+  Value<double> basicPrice,
+  Value<double> energyPrice,
+  Value<double> discount,
+  Value<int?> bonus,
+  Value<String> note,
+  Value<String> unit,
+  Value<bool> isArchived,
+});
+
+final class $$ContractTableReferences
+    extends BaseReferences<_$LocalDatabase, $ContractTable, ContractData> {
+  $$ContractTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ProviderTable _providerTable(_$LocalDatabase db) => db.provider
+      .createAlias($_aliasNameGenerator(db.contract.provider, db.provider.id));
+
+  $$ProviderTableProcessedTableManager? get provider {
+    final $_column = $_itemColumn<int>('provider');
+    if ($_column == null) return null;
+    final manager = $$ProviderTableTableManager($_db, $_db.provider)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_providerTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$CostCompareTable, List<CostCompareData>>
+      _costCompareRefsTable(_$LocalDatabase db) =>
+          MultiTypedResultKey.fromTable(db.costCompare,
+              aliasName: $_aliasNameGenerator(
+                  db.contract.id, db.costCompare.parentId));
+
+  $$CostCompareTableProcessedTableManager get costCompareRefs {
+    final manager = $$CostCompareTableTableManager($_db, $_db.costCompare)
+        .filter((f) => f.parentId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_costCompareRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+}
+
+class $$ContractTableFilterComposer
+    extends Composer<_$LocalDatabase, $ContractTable> {
+  $$ContractTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get meterTyp => $composableBuilder(
+      column: $table.meterTyp, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get basicPrice => $composableBuilder(
+      column: $table.basicPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get energyPrice => $composableBuilder(
+      column: $table.energyPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get discount => $composableBuilder(
+      column: $table.discount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bonus => $composableBuilder(
+      column: $table.bonus, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get unit => $composableBuilder(
+      column: $table.unit, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+      column: $table.isArchived, builder: (column) => ColumnFilters(column));
+
+  $$ProviderTableFilterComposer get provider {
+    final $$ProviderTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.provider,
+        referencedTable: $db.provider,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ProviderTableFilterComposer(
+              $db: $db,
+              $table: $db.provider,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<bool> costCompareRefs(
+      Expression<bool> Function($$CostCompareTableFilterComposer f) f) {
+    final $$CostCompareTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.costCompare,
+        getReferencedColumn: (t) => t.parentId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CostCompareTableFilterComposer(
+              $db: $db,
+              $table: $db.costCompare,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ContractTableOrderingComposer
+    extends Composer<_$LocalDatabase, $ContractTable> {
+  $$ContractTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get meterTyp => $composableBuilder(
+      column: $table.meterTyp, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get basicPrice => $composableBuilder(
+      column: $table.basicPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get energyPrice => $composableBuilder(
+      column: $table.energyPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get discount => $composableBuilder(
+      column: $table.discount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get bonus => $composableBuilder(
+      column: $table.bonus, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get note => $composableBuilder(
+      column: $table.note, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+      column: $table.unit, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+      column: $table.isArchived, builder: (column) => ColumnOrderings(column));
+
+  $$ProviderTableOrderingComposer get provider {
+    final $$ProviderTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.provider,
+        referencedTable: $db.provider,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ProviderTableOrderingComposer(
+              $db: $db,
+              $table: $db.provider,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$ContractTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $ContractTable> {
+  $$ContractTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get meterTyp =>
+      $composableBuilder(column: $table.meterTyp, builder: (column) => column);
+
+  GeneratedColumn<double> get basicPrice => $composableBuilder(
+      column: $table.basicPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get energyPrice => $composableBuilder(
+      column: $table.energyPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get discount =>
+      $composableBuilder(column: $table.discount, builder: (column) => column);
+
+  GeneratedColumn<int> get bonus =>
+      $composableBuilder(column: $table.bonus, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+      column: $table.isArchived, builder: (column) => column);
+
+  $$ProviderTableAnnotationComposer get provider {
+    final $$ProviderTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.provider,
+        referencedTable: $db.provider,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ProviderTableAnnotationComposer(
+              $db: $db,
+              $table: $db.provider,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  Expression<T> costCompareRefs<T extends Object>(
+      Expression<T> Function($$CostCompareTableAnnotationComposer a) f) {
+    final $$CostCompareTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.costCompare,
+        getReferencedColumn: (t) => t.parentId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$CostCompareTableAnnotationComposer(
+              $db: $db,
+              $table: $db.costCompare,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+}
+
+class $$ContractTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $ContractTable,
+    ContractData,
+    $$ContractTableFilterComposer,
+    $$ContractTableOrderingComposer,
+    $$ContractTableAnnotationComposer,
+    $$ContractTableCreateCompanionBuilder,
+    $$ContractTableUpdateCompanionBuilder,
+    (ContractData, $$ContractTableReferences),
+    ContractData,
+    PrefetchHooks Function({bool provider, bool costCompareRefs})> {
+  $$ContractTableTableManager(_$LocalDatabase db, $ContractTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ContractTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ContractTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ContractTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> meterTyp = const Value.absent(),
+            Value<int?> provider = const Value.absent(),
+            Value<double> basicPrice = const Value.absent(),
+            Value<double> energyPrice = const Value.absent(),
+            Value<double> discount = const Value.absent(),
+            Value<int?> bonus = const Value.absent(),
+            Value<String> note = const Value.absent(),
+            Value<String> unit = const Value.absent(),
+            Value<bool> isArchived = const Value.absent(),
+          }) =>
+              ContractCompanion(
+            id: id,
+            meterTyp: meterTyp,
+            provider: provider,
+            basicPrice: basicPrice,
+            energyPrice: energyPrice,
+            discount: discount,
+            bonus: bonus,
+            note: note,
+            unit: unit,
+            isArchived: isArchived,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String meterTyp,
+            Value<int?> provider = const Value.absent(),
+            required double basicPrice,
+            required double energyPrice,
+            required double discount,
+            Value<int?> bonus = const Value.absent(),
+            required String note,
+            required String unit,
+            Value<bool> isArchived = const Value.absent(),
+          }) =>
+              ContractCompanion.insert(
+            id: id,
+            meterTyp: meterTyp,
+            provider: provider,
+            basicPrice: basicPrice,
+            energyPrice: energyPrice,
+            discount: discount,
+            bonus: bonus,
+            note: note,
+            unit: unit,
+            isArchived: isArchived,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$ContractTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({provider = false, costCompareRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (costCompareRefs) db.costCompare],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (provider) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.provider,
+                    referencedTable:
+                        $$ContractTableReferences._providerTable(db),
+                    referencedColumn:
+                        $$ContractTableReferences._providerTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (costCompareRefs)
+                    await $_getPrefetchedData<ContractData, $ContractTable,
+                            CostCompareData>(
+                        currentTable: table,
+                        referencedTable:
+                            $$ContractTableReferences._costCompareRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ContractTableReferences(db, table, p0)
+                                .costCompareRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.parentId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$ContractTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $ContractTable,
+    ContractData,
+    $$ContractTableFilterComposer,
+    $$ContractTableOrderingComposer,
+    $$ContractTableAnnotationComposer,
+    $$ContractTableCreateCompanionBuilder,
+    $$ContractTableUpdateCompanionBuilder,
+    (ContractData, $$ContractTableReferences),
+    ContractData,
+    PrefetchHooks Function({bool provider, bool costCompareRefs})>;
+typedef $$TagsTableCreateCompanionBuilder = TagsCompanion Function({
+  Value<int> id,
+  required String uuid,
+  required String name,
+  required int color,
+});
+typedef $$TagsTableUpdateCompanionBuilder = TagsCompanion Function({
+  Value<int> id,
+  Value<String> uuid,
+  Value<String> name,
+  Value<int> color,
+});
+
+class $$TagsTableFilterComposer extends Composer<_$LocalDatabase, $TagsTable> {
+  $$TagsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get uuid => $composableBuilder(
+      column: $table.uuid, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnFilters(column));
+}
+
+class $$TagsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $TagsTable> {
+  $$TagsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get uuid => $composableBuilder(
+      column: $table.uuid, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get name => $composableBuilder(
+      column: $table.name, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnOrderings(column));
+}
+
+class $$TagsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $TagsTable> {
+  $$TagsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get color =>
+      $composableBuilder(column: $table.color, builder: (column) => column);
+}
+
+class $$TagsTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $TagsTable,
+    Tag,
+    $$TagsTableFilterComposer,
+    $$TagsTableOrderingComposer,
+    $$TagsTableAnnotationComposer,
+    $$TagsTableCreateCompanionBuilder,
+    $$TagsTableUpdateCompanionBuilder,
+    (Tag, BaseReferences<_$LocalDatabase, $TagsTable, Tag>),
+    Tag,
+    PrefetchHooks Function()> {
+  $$TagsTableTableManager(_$LocalDatabase db, $TagsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TagsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TagsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TagsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> uuid = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<int> color = const Value.absent(),
+          }) =>
+              TagsCompanion(
+            id: id,
+            uuid: uuid,
+            name: name,
+            color: color,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String uuid,
+            required String name,
+            required int color,
+          }) =>
+              TagsCompanion.insert(
+            id: id,
+            uuid: uuid,
+            name: name,
+            color: color,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$TagsTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $TagsTable,
+    Tag,
+    $$TagsTableFilterComposer,
+    $$TagsTableOrderingComposer,
+    $$TagsTableAnnotationComposer,
+    $$TagsTableCreateCompanionBuilder,
+    $$TagsTableUpdateCompanionBuilder,
+    (Tag, BaseReferences<_$LocalDatabase, $TagsTable, Tag>),
+    Tag,
+    PrefetchHooks Function()>;
+typedef $$MeterWithTagsTableCreateCompanionBuilder = MeterWithTagsCompanion
+    Function({
+  required int meterId,
+  required String tagId,
+  Value<int> rowid,
+});
+typedef $$MeterWithTagsTableUpdateCompanionBuilder = MeterWithTagsCompanion
+    Function({
+  Value<int> meterId,
+  Value<String> tagId,
+  Value<int> rowid,
+});
+
+final class $$MeterWithTagsTableReferences
+    extends BaseReferences<_$LocalDatabase, $MeterWithTagsTable, MeterWithTag> {
+  $$MeterWithTagsTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $MeterTable _meterIdTable(_$LocalDatabase db) => db.meter
+      .createAlias($_aliasNameGenerator(db.meterWithTags.meterId, db.meter.id));
+
+  $$MeterTableProcessedTableManager get meterId {
+    final $_column = $_itemColumn<int>('meter_id')!;
+
+    final manager = $$MeterTableTableManager($_db, $_db.meter)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_meterIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$MeterWithTagsTableFilterComposer
+    extends Composer<_$LocalDatabase, $MeterWithTagsTable> {
+  $$MeterWithTagsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get tagId => $composableBuilder(
+      column: $table.tagId, builder: (column) => ColumnFilters(column));
+
+  $$MeterTableFilterComposer get meterId {
+    final $$MeterTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableFilterComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterWithTagsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $MeterWithTagsTable> {
+  $$MeterWithTagsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get tagId => $composableBuilder(
+      column: $table.tagId, builder: (column) => ColumnOrderings(column));
+
+  $$MeterTableOrderingComposer get meterId {
+    final $$MeterTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableOrderingComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterWithTagsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $MeterWithTagsTable> {
+  $$MeterWithTagsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get tagId =>
+      $composableBuilder(column: $table.tagId, builder: (column) => column);
+
+  $$MeterTableAnnotationComposer get meterId {
+    final $$MeterTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterWithTagsTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $MeterWithTagsTable,
+    MeterWithTag,
+    $$MeterWithTagsTableFilterComposer,
+    $$MeterWithTagsTableOrderingComposer,
+    $$MeterWithTagsTableAnnotationComposer,
+    $$MeterWithTagsTableCreateCompanionBuilder,
+    $$MeterWithTagsTableUpdateCompanionBuilder,
+    (MeterWithTag, $$MeterWithTagsTableReferences),
+    MeterWithTag,
+    PrefetchHooks Function({bool meterId})> {
+  $$MeterWithTagsTableTableManager(
+      _$LocalDatabase db, $MeterWithTagsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MeterWithTagsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MeterWithTagsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MeterWithTagsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> meterId = const Value.absent(),
+            Value<String> tagId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MeterWithTagsCompanion(
+            meterId: meterId,
+            tagId: tagId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int meterId,
+            required String tagId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MeterWithTagsCompanion.insert(
+            meterId: meterId,
+            tagId: tagId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$MeterWithTagsTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({meterId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (meterId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.meterId,
+                    referencedTable:
+                        $$MeterWithTagsTableReferences._meterIdTable(db),
+                    referencedColumn:
+                        $$MeterWithTagsTableReferences._meterIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MeterWithTagsTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $MeterWithTagsTable,
+    MeterWithTag,
+    $$MeterWithTagsTableFilterComposer,
+    $$MeterWithTagsTableOrderingComposer,
+    $$MeterWithTagsTableAnnotationComposer,
+    $$MeterWithTagsTableCreateCompanionBuilder,
+    $$MeterWithTagsTableUpdateCompanionBuilder,
+    (MeterWithTag, $$MeterWithTagsTableReferences),
+    MeterWithTag,
+    PrefetchHooks Function({bool meterId})>;
+typedef $$CostCompareTableCreateCompanionBuilder = CostCompareCompanion
+    Function({
+  Value<int> id,
+  required double basicPrice,
+  required double energyPrice,
+  required int bonus,
+  required int usage,
+  required int parentId,
+});
+typedef $$CostCompareTableUpdateCompanionBuilder = CostCompareCompanion
+    Function({
+  Value<int> id,
+  Value<double> basicPrice,
+  Value<double> energyPrice,
+  Value<int> bonus,
+  Value<int> usage,
+  Value<int> parentId,
+});
+
+final class $$CostCompareTableReferences extends BaseReferences<_$LocalDatabase,
+    $CostCompareTable, CostCompareData> {
+  $$CostCompareTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $ContractTable _parentIdTable(_$LocalDatabase db) =>
+      db.contract.createAlias(
+          $_aliasNameGenerator(db.costCompare.parentId, db.contract.id));
+
+  $$ContractTableProcessedTableManager get parentId {
+    final $_column = $_itemColumn<int>('parent_id')!;
+
+    final manager = $$ContractTableTableManager($_db, $_db.contract)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_parentIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$CostCompareTableFilterComposer
+    extends Composer<_$LocalDatabase, $CostCompareTable> {
+  $$CostCompareTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get basicPrice => $composableBuilder(
+      column: $table.basicPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get energyPrice => $composableBuilder(
+      column: $table.energyPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get bonus => $composableBuilder(
+      column: $table.bonus, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get usage => $composableBuilder(
+      column: $table.usage, builder: (column) => ColumnFilters(column));
+
+  $$ContractTableFilterComposer get parentId {
+    final $$ContractTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parentId,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableFilterComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$CostCompareTableOrderingComposer
+    extends Composer<_$LocalDatabase, $CostCompareTable> {
+  $$CostCompareTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get basicPrice => $composableBuilder(
+      column: $table.basicPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get energyPrice => $composableBuilder(
+      column: $table.energyPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get bonus => $composableBuilder(
+      column: $table.bonus, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get usage => $composableBuilder(
+      column: $table.usage, builder: (column) => ColumnOrderings(column));
+
+  $$ContractTableOrderingComposer get parentId {
+    final $$ContractTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parentId,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableOrderingComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$CostCompareTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $CostCompareTable> {
+  $$CostCompareTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get basicPrice => $composableBuilder(
+      column: $table.basicPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get energyPrice => $composableBuilder(
+      column: $table.energyPrice, builder: (column) => column);
+
+  GeneratedColumn<int> get bonus =>
+      $composableBuilder(column: $table.bonus, builder: (column) => column);
+
+  GeneratedColumn<int> get usage =>
+      $composableBuilder(column: $table.usage, builder: (column) => column);
+
+  $$ContractTableAnnotationComposer get parentId {
+    final $$ContractTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.parentId,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableAnnotationComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$CostCompareTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $CostCompareTable,
+    CostCompareData,
+    $$CostCompareTableFilterComposer,
+    $$CostCompareTableOrderingComposer,
+    $$CostCompareTableAnnotationComposer,
+    $$CostCompareTableCreateCompanionBuilder,
+    $$CostCompareTableUpdateCompanionBuilder,
+    (CostCompareData, $$CostCompareTableReferences),
+    CostCompareData,
+    PrefetchHooks Function({bool parentId})> {
+  $$CostCompareTableTableManager(_$LocalDatabase db, $CostCompareTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CostCompareTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CostCompareTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CostCompareTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<double> basicPrice = const Value.absent(),
+            Value<double> energyPrice = const Value.absent(),
+            Value<int> bonus = const Value.absent(),
+            Value<int> usage = const Value.absent(),
+            Value<int> parentId = const Value.absent(),
+          }) =>
+              CostCompareCompanion(
+            id: id,
+            basicPrice: basicPrice,
+            energyPrice: energyPrice,
+            bonus: bonus,
+            usage: usage,
+            parentId: parentId,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required double basicPrice,
+            required double energyPrice,
+            required int bonus,
+            required int usage,
+            required int parentId,
+          }) =>
+              CostCompareCompanion.insert(
+            id: id,
+            basicPrice: basicPrice,
+            energyPrice: energyPrice,
+            bonus: bonus,
+            usage: usage,
+            parentId: parentId,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$CostCompareTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({parentId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (parentId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.parentId,
+                    referencedTable:
+                        $$CostCompareTableReferences._parentIdTable(db),
+                    referencedColumn:
+                        $$CostCompareTableReferences._parentIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$CostCompareTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $CostCompareTable,
+    CostCompareData,
+    $$CostCompareTableFilterComposer,
+    $$CostCompareTableOrderingComposer,
+    $$CostCompareTableAnnotationComposer,
+    $$CostCompareTableCreateCompanionBuilder,
+    $$CostCompareTableUpdateCompanionBuilder,
+    (CostCompareData, $$CostCompareTableReferences),
+    CostCompareData,
+    PrefetchHooks Function({bool parentId})>;
+
+class $LocalDatabaseManager {
+  final _$LocalDatabase _db;
+  $LocalDatabaseManager(this._db);
+  $$MeterTableTableManager get meter =>
+      $$MeterTableTableManager(_db, _db.meter);
+  $$EntriesTableTableManager get entries =>
+      $$EntriesTableTableManager(_db, _db.entries);
+  $$RoomTableTableManager get room => $$RoomTableTableManager(_db, _db.room);
+  $$MeterInRoomTableTableManager get meterInRoom =>
+      $$MeterInRoomTableTableManager(_db, _db.meterInRoom);
+  $$ProviderTableTableManager get provider =>
+      $$ProviderTableTableManager(_db, _db.provider);
+  $$ContractTableTableManager get contract =>
+      $$ContractTableTableManager(_db, _db.contract);
+  $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
+  $$MeterWithTagsTableTableManager get meterWithTags =>
+      $$MeterWithTagsTableTableManager(_db, _db.meterWithTags);
+  $$CostCompareTableTableManager get costCompare =>
+      $$CostCompareTableTableManager(_db, _db.costCompare);
 }

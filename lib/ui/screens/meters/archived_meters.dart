@@ -36,7 +36,7 @@ class _ArchivedMetersState extends State<ArchivedMeters> {
             ),
       body: PopScope(
         canPop: !hasSelectedItems,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, _) {
           if (hasSelectedItems) {
             meterProvider.removeAllSelectedMeters();
           }
@@ -57,7 +57,7 @@ class _ArchivedMetersState extends State<ArchivedMeters> {
     DatabaseSettingsProvider backup,
   ) {
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );

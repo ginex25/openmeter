@@ -153,8 +153,11 @@ class _MeterCardState extends State<MeterCard> {
       meterProvider.toggleSelectedMeter(_meterData);
     } else {
       _openDetailsSingleMeter(widget.room, entryProvider).then((value) {
-        Provider.of<CostProvider>(context, listen: false).resetValues();
-        Provider.of<RoomProvider>(context, listen: false).setHasUpdate(true);
+        if (mounted) {
+          Provider.of<CostProvider>(context, listen: false).resetValues();
+          Provider.of<RoomProvider>(context, listen: false).setHasUpdate(true);
+        }
+
         entryProvider.removeAllSelectedEntries();
         room = value as RoomDto?;
       });
@@ -171,7 +174,9 @@ class _MeterCardState extends State<MeterCard> {
       room = roomProvider.getCurrentRoom;
 
       _openDetailsSingleMeter(room, entryProvider).then((value) {
-        Provider.of<CostProvider>(context, listen: false).resetValues();
+        if (mounted) {
+          Provider.of<CostProvider>(context, listen: false).resetValues();
+        }
 
         entryProvider.removeAllSelectedEntries();
 
@@ -226,8 +231,6 @@ class _MeterCardState extends State<MeterCard> {
               entryProvider: entryProvider,
             );
             break;
-          default:
-            null;
         }
       },
       child: Padding(

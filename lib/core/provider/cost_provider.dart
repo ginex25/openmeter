@@ -61,11 +61,11 @@ class CostProvider extends ChangeNotifier {
 
   int? get getSelectedContractId => _selectedContracts.get(_meterId);
 
-  void setEntries(List<Entrie> entries) {
+  void setEntries(List<Entry> entries) {
     _entries = entries.map((e) => EntryDto.fromData(e)).toList();
   }
 
-  void setCachedEntries(List<Entrie> entries) {
+  void setCachedEntries(List<Entry> entries) {
     _cachedEntries = entries.map((e) => EntryDto.fromData(e)).toList();
   }
 

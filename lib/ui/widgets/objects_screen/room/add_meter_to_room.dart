@@ -96,13 +96,17 @@ class _AddMeterToRoomState extends State<AddMeterToRoom> {
               ? () {
                   provider
                       .saveSelectedMeters(
-                        withRooms: _selectedItemsWithExists,
-                        withOutRooms: _selectedItemsWithoutExists,
-                        roomId: room.uuid,
-                        db: db,
-                        currentLength: room.sumMeter ?? 0,
-                      )
-                      .then((value) => Navigator.of(context).pop(value));
+                    withRooms: _selectedItemsWithExists,
+                    withOutRooms: _selectedItemsWithoutExists,
+                    roomId: room.uuid,
+                    db: db,
+                    currentLength: room.sumMeter ?? 0,
+                  )
+                      .then((value) {
+                    if (context.mounted) {
+                      Navigator.of(context).pop(value);
+                    }
+                  });
                 }
               : () => Navigator.of(context).pop(),
           child: const Text('Fertig'),
@@ -270,7 +274,7 @@ class _AddMeterToRoomState extends State<AddMeterToRoom> {
       padding: const EdgeInsets.only(left: 8, right: 8),
       child: SearchBar(
         controller: _searchController,
-        padding: const MaterialStatePropertyAll<EdgeInsets>(
+        padding: const WidgetStatePropertyAll<EdgeInsets>(
           EdgeInsets.symmetric(horizontal: 16.0),
         ),
         leading: const Icon(Icons.search),

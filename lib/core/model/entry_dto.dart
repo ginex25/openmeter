@@ -13,7 +13,7 @@ class EntryDto {
   bool isSelected = false;
   String? imagePath;
 
-  EntryDto.fromData(Entrie entry)
+  EntryDto.fromData(Entry entry)
       : count = entry.count,
         usage = entry.usage,
         days = entry.days,
@@ -35,7 +35,7 @@ class EntryDto {
         isReset = json['isReset'],
         imagePath = json['imagePath'];
 
-  static Map<String, dynamic> entriesToJson(Entrie entry) {
+  static Map<String, dynamic> entriesToJson(Entry entry) {
     return {
       'count': entry.count,
       'days': entry.days,

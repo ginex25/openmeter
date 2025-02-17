@@ -38,7 +38,7 @@ class SimpleUsageBarChart extends StatelessWidget {
           String text = showTwelveMonths ? month : '$month ${date.year % 100}';
 
           return SideTitleWidget(
-            axisSide: meta.axisSide,
+            meta: meta,
             child: Transform.rotate(
               angle: -45,
               child: Text(
@@ -121,7 +121,7 @@ class SimpleUsageBarChart extends StatelessWidget {
 
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
-        tooltipBgColor: Theme.of(context).primaryColor,
+        getTooltipColor: (_) => Theme.of(context).primaryColor,
         fitInsideHorizontally: true,
         fitInsideVertically: true,
         getTooltipItem: (group, groupIndex, rod, rodIndex) {

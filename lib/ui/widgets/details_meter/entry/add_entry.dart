@@ -164,12 +164,14 @@ class _AddEntryState extends State<AddEntry> {
 
         _saved = true;
 
-        Provider.of<DatabaseSettingsProvider>(context, listen: false)
-            .setHasUpdate(true);
+        if (mounted) {
+          Provider.of<DatabaseSettingsProvider>(context, listen: false)
+              .setHasUpdate(true);
 
-        entryProvider.setHasEntries(true);
+          entryProvider.setHasEntries(true);
 
-        Navigator.pop(context, true);
+          Navigator.pop(context, true);
+        }
 
         _counterController.clear();
         _selectedDate = DateTime.now();

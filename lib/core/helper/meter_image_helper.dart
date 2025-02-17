@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:flutter_image_gallery_saver/flutter_image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -134,13 +134,13 @@ class MeterImageHelper {
   }
 
   saveImageToGallery(File image) async {
-    var result = await ImageGallerySaver.saveImage(
-      image.readAsBytesSync(),
-    );
+    try {
+      await FlutterImageGallerySaver.saveImage(
+        image.readAsBytesSync(),
+      );
 
-    if (result['isSuccess']) {
       return true;
-    } else {
+    } catch (e) {
       return false;
     }
   }

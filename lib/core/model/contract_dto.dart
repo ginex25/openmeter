@@ -102,7 +102,7 @@ class ContractDto {
     return ContractCompanion(
       bonus: Value(costs.bonus),
       energyPrice: Value(costs.energyPrice),
-      discount: Value(costs.discount ?? 0),
+      discount: Value(costs.discount),
       basicPrice: Value(costs.basicPrice),
       meterTyp: Value(meterTyp),
       isArchived: Value(isArchived),

@@ -44,7 +44,7 @@ class _UsageBarCardState extends State<UsageBarCard> {
     return StreamBuilder(
       stream: db.entryDao.watchAllEntries(widget.meter.id!),
       builder: (context, snapshot) {
-        List<Entrie> data = snapshot.data ?? [];
+        List<Entry> data = snapshot.data ?? [];
         List<EntryDto> entries = data.map((e) => EntryDto.fromData(e)).toList();
 
         List<EntryMonthlySums> sumMonths = [];

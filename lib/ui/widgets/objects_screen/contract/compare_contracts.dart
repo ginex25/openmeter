@@ -272,7 +272,7 @@ class _CompareContractsState extends State<CompareContracts> {
                     provider: provider,
                     currentContract: contract)
                 .then((value) {
-              if (value) {
+              if (value && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text(
                     'Neuer Vertrag wurde erstellt!',
@@ -284,9 +284,6 @@ class _CompareContractsState extends State<CompareContracts> {
             break;
           case CompareCostsMenu.edit:
             _openBottomSheet(context);
-            break;
-          default:
-            'No PopUpMenuButton';
             break;
         }
 

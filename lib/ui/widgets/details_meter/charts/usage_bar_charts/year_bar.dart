@@ -50,7 +50,7 @@ class YearBarChart extends StatelessWidget {
         interval: 0.5,
         getTitlesWidget: (value, meta) {
           return SideTitleWidget(
-            axisSide: meta.axisSide,
+            meta: meta,
             child: Text(
               value.toStringAsFixed(0),
               style: const TextStyle(
@@ -100,7 +100,7 @@ class YearBarChart extends StatelessWidget {
   BarTouchData _barTouchData(Color color, ChartProvider chartProvider) {
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
-        tooltipBgColor: color,
+        getTooltipColor: (_) => color,
         fitInsideHorizontally: true,
         getTooltipItem: (group, groupIndex, rod, rodIndex) {
           String text =

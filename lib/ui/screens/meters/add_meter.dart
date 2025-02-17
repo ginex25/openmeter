@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../utils/meter_typ.dart';
 import '../../../core/database/local_database.dart';
 import '../../../core/enums/tag_chip_state.dart';
+import '../../../core/helper/torch_controller.dart';
 import '../../../core/model/meter_dto.dart';
 import '../../../core/model/room_dto.dart';
 import '../../../core/model/tag_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/meter_provider.dart';
 import '../../../core/provider/refresh_provider.dart';
-import '../../../core/helper/torch_controller.dart';
-import '../../../../utils/meter_typ.dart';
 import '../../../utils/convert_meter_unit.dart';
 import '../../widgets/meter/meter_circle_avatar.dart';
 import '../../widgets/tags/add_tags.dart';
@@ -155,10 +155,12 @@ class _AddScreenState extends State<AddScreen> {
     }
 
     await db.meterDao.updateMeter(meterData).then((value) {
-      Provider.of<MeterProvider>(context, listen: false)
-          .setStateHasUpdate(true);
-      Navigator.of(context)
-          .pop([MeterDto.fromData(meterData, true), _room, true]);
+      if (mounted) {
+        Provider.of<MeterProvider>(context, listen: false)
+            .setStateHasUpdate(true);
+        Navigator.of(context)
+            .pop([MeterDto.fromData(meterData, true), _room, true]);
+      }
     });
   }
 
@@ -197,7 +199,9 @@ class _AddScreenState extends State<AddScreen> {
     );
 
     await db.entryDao.createEntry(entry).then((value) {
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     });
   }
 

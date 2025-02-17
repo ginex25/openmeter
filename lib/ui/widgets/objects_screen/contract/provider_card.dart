@@ -199,11 +199,11 @@ class _ProviderCardState extends State<ProviderCard> {
               child: TextButton(
                 onPressed: () => _selectCanceledDate(),
                 style: ButtonStyle(
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  padding: WidgetStateProperty.all(EdgeInsets.zero),
                   alignment: Alignment.centerLeft,
-                  textStyle: MaterialStateProperty.all(
+                  textStyle: WidgetStateProperty.all(
                       Theme.of(context).textTheme.bodyMedium),
-                  foregroundColor: MaterialStateProperty.all(
+                  foregroundColor: WidgetStateProperty.all(
                     currentProvider!.canceled ?? false
                         ? Theme.of(context).textTheme.titleLarge!.color
                         : null,
@@ -236,12 +236,12 @@ class _ProviderCardState extends State<ProviderCard> {
         TextButton(
           onPressed: () => _openBottomSheet(),
           style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(
+            textStyle: WidgetStateProperty.all(
               Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Colors.grey,
                   ),
             ),
-            foregroundColor: MaterialStateProperty.all(Colors.grey),
+            foregroundColor: WidgetStateProperty.all(Colors.grey),
           ),
           child: const Text(
             'Drücke hier, um einen Vertrag zu erstellen',

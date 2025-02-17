@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:openmeter/core/helper/meter_image_helper.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -50,25 +50,28 @@ class DatabaseSettingsHelper {
               await _meterImageHelper.deleteFolder();
 
               db.deleteDB().then((value) {
-                final meterProvider =
-                    Provider.of<MeterProvider>(context, listen: false);
+                if (context.mounted) {
+                  final meterProvider =
+                      Provider.of<MeterProvider>(context, listen: false);
 
-                Provider.of<DatabaseSettingsProvider>(context, listen: false)
-                    .resetStats();
-                Provider.of<RoomProvider>(context, listen: false).deleteCache();
-                Provider.of<ContractProvider>(context, listen: false)
-                    .deleteCache();
+                  Provider.of<DatabaseSettingsProvider>(context, listen: false)
+                      .resetStats();
+                  Provider.of<RoomProvider>(context, listen: false)
+                      .deleteCache();
+                  Provider.of<ContractProvider>(context, listen: false)
+                      .deleteCache();
 
-                meterProvider.resetMeterList();
-                meterProvider.setArchivMetersLength(0);
+                  meterProvider.resetMeterList();
+                  meterProvider.setArchivMetersLength(0);
 
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                    'Datenbank wurde erfolgreich zurückgesetzt!',
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                ));
-                Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                      'Datenbank wurde erfolgreich zurückgesetzt!',
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                  Navigator.of(context).pop();
+                }
               });
             },
             child: const Text(

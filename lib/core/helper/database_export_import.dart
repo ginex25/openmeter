@@ -4,14 +4,14 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:drift/isolate.dart';
-import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:drift/drift.dart' as drift;
 
 import '../../utils/log.dart';
 import '../database/local_database.dart';
@@ -29,7 +29,7 @@ class DatabaseExportImportHelper {
   List<MeterWithRoom> _metersWithRoom = [];
   List<RoomDto> _rooms = [];
   List<ContractDto> _contracts = [];
-  final Map<int, List<Entrie>> _entries = {};
+  final Map<int, List<Entry>> _entries = {};
   List<Tag> _tags = [];
   List<MeterWithTag> _meterWithTags = [];
 
@@ -60,7 +60,7 @@ class DatabaseExportImportHelper {
     for (MeterWithRoom meterWithRoom in _metersWithRoom) {
       final meter = meterWithRoom.meter;
 
-      List<Entrie> entries = await db.entryDao.getAllEntries(meter.id);
+      List<Entry> entries = await db.entryDao.getAllEntries(meter.id);
 
       _entries.addAll({meter.id: entries});
     }
@@ -77,7 +77,7 @@ class DatabaseExportImportHelper {
         color: drift.Value(json['color']));
   }
 
-  Map<String, dynamic> _entriesToJson(Entrie entry) {
+  Map<String, dynamic> _entriesToJson(Entry entry) {
     return {
       'count': entry.count,
       'days': entry.days,
@@ -91,7 +91,7 @@ class DatabaseExportImportHelper {
   }
 
   Map<String, dynamic> _meterToJson(
-      MeterWithRoom meterWithRoom, List<Entrie> entries) {
+      MeterWithRoom meterWithRoom, List<Entry> entries) {
     final meter = meterWithRoom.meter;
     final room = meterWithRoom.room;
 
@@ -128,7 +128,7 @@ class DatabaseExportImportHelper {
     List<Map<String, dynamic>> finalMeter = [];
 
     for (MeterWithRoom data in _metersWithRoom) {
-      List<Entrie>? meterEntries = _entries[data.meter.id];
+      List<Entry>? meterEntries = _entries[data.meter.id];
 
       finalMeter.add(_meterToJson(data, meterEntries!));
     }
@@ -391,7 +391,7 @@ class DatabaseExportImportHelper {
           note: drift.Value(contract.note!),
           meterTyp: drift.Value(contract.meterTyp),
           energyPrice: drift.Value(contract.costs.energyPrice),
-          discount: drift.Value(contract.costs.discount ?? 0),
+          discount: drift.Value(contract.costs.discount),
           bonus: drift.Value(contract.costs.bonus),
           basicPrice: drift.Value(contract.costs.basicPrice),
           unit: drift.Value(contract.unit));
@@ -497,7 +497,7 @@ class DatabaseExportImportHelper {
     await _meterImageHelper.createDirectory();
 
     final inputStream = InputFileStream(path);
-    final zipData = ZipDecoder().decodeBuffer(inputStream);
+    final zipData = ZipDecoder().decodeStream(inputStream);
 
     final saveImagePath = await _meterImageHelper.getDir();
 

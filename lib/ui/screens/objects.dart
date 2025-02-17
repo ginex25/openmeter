@@ -85,7 +85,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
       body: PopScope(
         canPop: !roomProvider.getStateHasSelected &&
             !contractProvider.getHasSelectedItems,
-        onPopInvoked: (bool didPop) async {
+        onPopInvokedWithResult: (bool didPop, _) async {
           if (roomProvider.getStateHasSelected == true) {
             roomProvider.removeAllSelected();
           }
@@ -149,7 +149,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
 
   _selectedRooms(RoomProvider roomProvider) {
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );
@@ -184,7 +184,7 @@ class _ObjectsScreenState extends State<ObjectsScreen> {
     final db = Provider.of<LocalDatabase>(context, listen: false);
 
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );

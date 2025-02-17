@@ -1,6 +1,6 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:drift/drift.dart' as drift;
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/local_database.dart';
@@ -66,7 +66,10 @@ class AddRoom {
       );
 
       await db.roomDao.createRoom(room).then((value) {
-        Navigator.of(context).pop();
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+
         _roomTyp = 'Sonstiges';
         _nameController.clear();
       });

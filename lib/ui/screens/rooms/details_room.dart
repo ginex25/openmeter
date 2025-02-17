@@ -106,7 +106,7 @@ class _DetailsRoomState extends State<DetailsRoom> {
           : _nonSelectedAppBar(
               db: db, roomProvider: roomProvider, autoBackUp: autoBackUp),
       body: PopScope(
-        onPopInvoked: (bool didPop) async {
+        onPopInvokedWithResult: (bool didPop, _) async {
           if (hasSelectedMeters) {
             roomProvider.removeAllSelectedMetersInRoom();
           }

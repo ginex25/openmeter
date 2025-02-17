@@ -115,7 +115,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
               entryFilterProvider: entryFilterProvider),
       body: PopScope(
         canPop: hasSelectedEntries ? false : true,
-        onPopInvoked: (bool didPop) async {
+        onPopInvokedWithResult: (bool didPop, _) async {
           if (hasSelectedEntries) {
             entryProvider.removeAllSelectedEntries();
           } else {
@@ -209,7 +209,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
 
   _selectedBottomBar(EntryProvider entryProvider) {
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );

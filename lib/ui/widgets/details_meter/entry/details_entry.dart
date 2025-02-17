@@ -81,7 +81,7 @@ class _DetailsEntryState extends State<DetailsEntry> {
 
     await db.entryDao.replaceEntry(newEntry);
 
-    if (context.mounted) {
+    if (mounted) {
       Provider.of<DatabaseSettingsProvider>(context, listen: false)
           .setHasUpdate(true);
     }

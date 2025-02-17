@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:flutter/material.dart';
+import 'package:openmeter/core/helper/color_adjuster.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/database/local_database.dart';
@@ -43,7 +44,7 @@ class AddTags {
     final db = Provider.of<LocalDatabase>(context, listen: false);
 
     if (_formKey.currentState!.validate()) {
-      final int pickedColor = _listColors[_pickedIndex].value;
+      final int pickedColor = _listColors[_pickedIndex].toInt();
 
       final tag = TagsCompanion(
           name: drift.Value(_nameController.text),
@@ -51,13 +52,15 @@ class AddTags {
           uuid: drift.Value(const Uuid().v1()));
 
       await db.tagsDao.createTag(tag).then((value) {
-        Provider.of<DatabaseSettingsProvider>(context, listen: false)
-            .setHasUpdate(true);
+        if (context.mounted) {
+          Provider.of<DatabaseSettingsProvider>(context, listen: false)
+              .setHasUpdate(true);
 
-        _nameController.clear();
-        _pickedIndex = 0;
+          _nameController.clear();
+          _pickedIndex = 0;
 
-        Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }
       });
     }
   }

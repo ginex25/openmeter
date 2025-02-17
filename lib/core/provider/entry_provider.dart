@@ -56,7 +56,7 @@ class EntryProvider extends ChangeNotifier {
     _unit = value;
   }
 
-  void setAllEntries(List<Entrie> entry) {
+  void setAllEntries(List<Entry> entry) {
     _entries = entry.map((element) => EntryDto.fromData(element)).toList();
   }
 

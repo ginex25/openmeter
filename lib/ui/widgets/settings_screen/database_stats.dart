@@ -222,7 +222,7 @@ class _DatabaseStatsState extends State<DatabaseStats> {
       if (_itemValues.elementAt(i).isNaN) {
         result.add(
           PieChartSectionData(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             value: 100,
             showTitle: false,
           ),

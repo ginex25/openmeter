@@ -56,7 +56,7 @@ class _CountLineChartState extends State<CountLineChart> {
             ),
             belowBarData: BarAreaData(
               show: true,
-              color: Theme.of(context).primaryColor.withOpacity(0.2),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
             ),
           ),
         );
@@ -81,7 +81,7 @@ class _CountLineChartState extends State<CountLineChart> {
           ),
           belowBarData: BarAreaData(
             show: true,
-            color: Theme.of(context).primaryColor.withOpacity(0.2),
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
           ),
         ),
       );
@@ -178,7 +178,7 @@ class _CountLineChartState extends State<CountLineChart> {
     return LineTouchData(
       enabled: true,
       touchTooltipData: LineTouchTooltipData(
-        tooltipBgColor: Theme.of(context).primaryColor,
+        getTooltipColor: (_) => Theme.of(context).primaryColor,
         fitInsideHorizontally: true,
         getTooltipItems: (touchedSpots) {
           return touchedSpots.map((e) {
@@ -243,7 +243,7 @@ class _CountLineChartState extends State<CountLineChart> {
     return StreamBuilder(
       stream: db.entryDao.watchAllEntries(widget.meter.id!),
       builder: (context, snapshot) {
-        List<Entrie> data = snapshot.data ?? [];
+        List<Entry> data = snapshot.data ?? [];
         List<EntryDto> entries = data.map((e) => EntryDto.fromData(e)).toList();
 
         if (entries.isEmpty) {

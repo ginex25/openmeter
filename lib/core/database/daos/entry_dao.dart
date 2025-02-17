@@ -30,7 +30,7 @@ class EntryDao extends DatabaseAccessor<LocalDatabase> with _$EntryDaoMixin {
         .write(entry);
   }
 
-  Future<List<Entrie>> getLastEntry(int meterId) async {
+  Future<List<Entry>> getLastEntry(int meterId) async {
     return await (db.select(db.entries)
           ..where((tbl) => tbl.meter.equals(meterId))
           ..orderBy([
@@ -40,21 +40,21 @@ class EntryDao extends DatabaseAccessor<LocalDatabase> with _$EntryDaoMixin {
         .get();
   }
 
-  Stream<List<Entrie>> watchAllEntries(int meterId) {
+  Stream<List<Entry>> watchAllEntries(int meterId) {
     return (select(db.entries)
           ..where((tbl) => tbl.meter.equals(meterId))
           ..orderBy([(tbl) => OrderingTerm.asc(tbl.date)]))
         .watch();
   }
 
-  Future<List<Entrie>> getAllEntries(int meterId) async {
+  Future<List<Entry>> getAllEntries(int meterId) async {
     return (select(db.entries)
           ..where((tbl) => tbl.meter.equals(meterId))
           ..orderBy([(tbl) => OrderingTerm.asc(tbl.date)]))
         .get();
   }
 
-  Stream<Entrie> getNewestEntry(int meterId) {
+  Stream<Entry> getNewestEntry(int meterId) {
     return (select(db.entries)
           ..where((tbl) => tbl.meter.equals(meterId))
           ..orderBy([

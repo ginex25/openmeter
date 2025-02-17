@@ -5,10 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/helper/meter_image_helper.dart';
 import '../../../core/model/entry_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/entry_provider.dart';
-import '../../../core/helper/meter_image_helper.dart';
 import '../../../utils/convert_count.dart';
 import '../../../utils/convert_meter_unit.dart';
 
@@ -142,7 +142,7 @@ class _ImageViewState extends State<ImageView>
 
   _bottomBar() {
     final buttonStyle = ButtonStyle(
-      foregroundColor: MaterialStateProperty.all(
+      foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
       ),
     );
@@ -208,7 +208,11 @@ class _ImageViewState extends State<ImageView>
                   onPressed: () async {
                     await _meterImageHelper
                         .deleteImage(widget.image.path)
-                        .then((value) => Navigator.of(context).pop(true));
+                        .then((value) {
+                      if (mounted) {
+                        Navigator.of(context).pop(true);
+                      }
+                    });
                   },
                   child: _createButtons(
                     Icons.delete_outline,
