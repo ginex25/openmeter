@@ -5,7 +5,7 @@ import '../../../core/database/local_database.dart';
 import '../../../core/model/meter_with_room.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/meter_provider.dart';
-import '../../widgets/meter/meter_card_list.dart';
+import '../../../features/meters/widgets/meter_card_list.dart';
 import '../../widgets/utils/selected_items_bar.dart';
 
 class ArchivedMeters extends StatefulWidget {

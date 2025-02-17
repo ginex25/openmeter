@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/database/local_database.dart';
 import '../../core/provider/database_settings_provider.dart';
 import '../../core/provider/meter_provider.dart';
-import '../widgets/meter/meter_card_list.dart';
+import '../../features/meters/widgets/meter_card_list.dart';
 import '../widgets/meter/sort_meter_cards.dart';
 import '../widgets/utils/selected_items_bar.dart';
 import 'meters/add_meter.dart';

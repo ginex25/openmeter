@@ -13,11 +13,11 @@ import '../../../core/provider/meter_provider.dart';
 import '../../../core/provider/room_provider.dart';
 import '../../../core/provider/small_feature_provider.dart';
 import '../../../core/provider/sort_provider.dart';
+import '../../../ui/screens/meters/details_single_meter.dart';
+import '../../../ui/widgets/meter/meter_circle_avatar.dart';
+import '../../../ui/widgets/tags/horizontal_tags_list.dart';
 import '../../../utils/convert_meter_unit.dart';
 import '../../../utils/meter_typ.dart';
-import '../../screens/meters/details_single_meter.dart';
-import '../tags/horizontal_tags_list.dart';
-import 'meter_circle_avatar.dart';
 
 class MeterCard extends StatefulWidget {
   final MeterDto meter;

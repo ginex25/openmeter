@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import 'daos/contract_dao.dart';
@@ -13,7 +15,7 @@ import 'daos/entry_dao.dart';
 import 'daos/meter_dao.dart';
 import 'daos/room_dao.dart';
 import 'daos/tags_dao.dart';
-import 'tables/contract.dart';
+import 'tables/contract.dart' as c;
 import 'tables/cost_compare.dart';
 import 'tables/entries.dart';
 import 'tables/meter.dart';
@@ -29,8 +31,8 @@ part 'local_database.g.dart';
   Entries,
   Room,
   MeterInRoom,
-  Contract,
-  Provider,
+  c.Contract,
+  c.Provider,
   Tags,
   MeterWithTags,
   CostCompare
@@ -142,4 +144,15 @@ LazyDatabase _openConnection() {
 
     return NativeDatabase.createInBackground(file);
   });
+}
+
+@Riverpod(keepAlive: true)
+LocalDatabase localDb(Ref ref) {
+  final db = LocalDatabase();
+
+  ref.onDispose(() {
+    db.close();
+  });
+
+  return db;
 }

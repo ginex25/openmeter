@@ -1,9 +1,10 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:openmeter/core/provider/entry_filter_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as p;
 
 import 'core/database/local_database.dart';
 import 'core/provider/chart_provider.dart';
@@ -14,23 +15,22 @@ import 'core/provider/design_provider.dart';
 import 'core/provider/details_contract_provider.dart';
 import 'core/provider/entry_provider.dart';
 import 'core/provider/meter_provider.dart';
-import 'core/provider/room_provider.dart';
-import 'core/provider/small_feature_provider.dart';
 import 'core/provider/refresh_provider.dart';
 import 'core/provider/reminder_provider.dart';
+import 'core/provider/room_provider.dart';
+import 'core/provider/small_feature_provider.dart';
 import 'core/provider/sort_provider.dart';
 import 'core/provider/stats_provider.dart';
 import 'core/provider/theme_changer.dart';
-
 import 'core/provider/torch_provider.dart';
 import 'ui/screens/contract/archive_contracts.dart';
 import 'ui/screens/meters/archived_meters.dart';
+import 'ui/screens/settings_screens/database_screen.dart';
 import 'ui/screens/settings_screens/design_screen.dart';
 import 'ui/screens/settings_screens/main_settings.dart';
 import 'ui/screens/settings_screens/reminder_screen.dart';
 import 'ui/screens/settings_screens/tags_screen.dart';
 import 'ui/widgets/utils/bottom_nav_bar.dart';
-import 'ui/screens/settings_screens/database_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,10 +38,12 @@ void main() async {
   await Hive.initFlutter();
 
   runApp(
-    Provider<LocalDatabase>(
-      create: (context) => LocalDatabase(),
-      child: const MyApp(),
-      dispose: (context, db) => db.close(),
+    ProviderScope(
+      child: p.Provider<LocalDatabase>(
+        create: (context) => LocalDatabase(),
+        child: const MyApp(),
+        dispose: (context, db) => db.close(),
+      ),
     ),
   );
 }
@@ -71,33 +73,34 @@ class MyApp extends StatelessWidget {
     WidgetsFlutterBinding.ensureInitialized();
     _cacheImages(context);
 
-    return MultiProvider(
+    return p.MultiProvider(
       providers: [
-        ChangeNotifierProvider<ThemeChanger>.value(value: ThemeChanger()),
-        ChangeNotifierProvider<CostProvider>.value(value: CostProvider()),
-        ChangeNotifierProvider<SortProvider>.value(value: SortProvider()),
-        ChangeNotifierProvider<RefreshProvider>.value(value: RefreshProvider()),
-        ChangeNotifierProvider<ReminderProvider>.value(
+        p.ChangeNotifierProvider<ThemeChanger>.value(value: ThemeChanger()),
+        p.ChangeNotifierProvider<CostProvider>.value(value: CostProvider()),
+        p.ChangeNotifierProvider<SortProvider>.value(value: SortProvider()),
+        p.ChangeNotifierProvider<RefreshProvider>.value(
+            value: RefreshProvider()),
+        p.ChangeNotifierProvider<ReminderProvider>.value(
             value: ReminderProvider()),
-        ChangeNotifierProvider<SmallFeatureProvider>.value(
+        p.ChangeNotifierProvider<SmallFeatureProvider>.value(
             value: SmallFeatureProvider()),
-        ChangeNotifierProvider<EntryProvider>.value(value: EntryProvider()),
-        ChangeNotifierProvider<ChartProvider>.value(value: ChartProvider()),
-        ChangeNotifierProvider<StatsProvider>.value(value: StatsProvider()),
-        ChangeNotifierProvider<DatabaseSettingsProvider>.value(
+        p.ChangeNotifierProvider<EntryProvider>.value(value: EntryProvider()),
+        p.ChangeNotifierProvider<ChartProvider>.value(value: ChartProvider()),
+        p.ChangeNotifierProvider<StatsProvider>.value(value: StatsProvider()),
+        p.ChangeNotifierProvider<DatabaseSettingsProvider>.value(
             value: DatabaseSettingsProvider()),
-        ChangeNotifierProvider<RoomProvider>.value(value: RoomProvider()),
-        ChangeNotifierProvider<ContractProvider>.value(
+        p.ChangeNotifierProvider<RoomProvider>.value(value: RoomProvider()),
+        p.ChangeNotifierProvider<ContractProvider>.value(
             value: ContractProvider()),
-        ChangeNotifierProvider<MeterProvider>.value(value: MeterProvider()),
-        ChangeNotifierProvider<TorchProvider>.value(value: TorchProvider()),
-        ChangeNotifierProvider<DetailsContractProvider>.value(
+        p.ChangeNotifierProvider<MeterProvider>.value(value: MeterProvider()),
+        p.ChangeNotifierProvider<TorchProvider>.value(value: TorchProvider()),
+        p.ChangeNotifierProvider<DetailsContractProvider>.value(
             value: DetailsContractProvider()),
-        ChangeNotifierProvider<DesignProvider>.value(value: DesignProvider()),
-        ChangeNotifierProvider<EntryFilterProvider>.value(
+        p.ChangeNotifierProvider<DesignProvider>.value(value: DesignProvider()),
+        p.ChangeNotifierProvider<EntryFilterProvider>.value(
             value: EntryFilterProvider()),
       ],
-      child: Consumer<ThemeChanger>(
+      child: p.Consumer<ThemeChanger>(
         builder: (context, themeChanger, child) => DynamicColorBuilder(
           builder: (lightDynamic, darkDynamic) {
             final useDynamic = themeChanger.getUseDynamicColor;

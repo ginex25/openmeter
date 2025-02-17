@@ -1288,7 +1288,7 @@ class MeterInRoomCompanion extends UpdateCompanion<MeterInRoomData> {
   }
 }
 
-class $ProviderTable extends Provider
+class $ProviderTable extends c.Provider
     with TableInfo<$ProviderTable, ProviderData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1761,7 +1761,7 @@ class ProviderCompanion extends UpdateCompanion<ProviderData> {
   }
 }
 
-class $ContractTable extends Contract
+class $ContractTable extends c.Contract
     with TableInfo<$ContractTable, ContractData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -5651,3 +5651,26 @@ class $LocalDatabaseManager {
   $$CostCompareTableTableManager get costCompare =>
       $$CostCompareTableTableManager(_db, _db.costCompare);
 }
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$localDbHash() => r'4c6dda4d48370072c7a4885a0b7dd4a9d55797ad';
+
+/// See also [localDb].
+@ProviderFor(localDb)
+final localDbProvider = Provider<LocalDatabase>.internal(
+  localDb,
+  name: r'localDbProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$localDbHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LocalDbRef = ProviderRef<LocalDatabase>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
