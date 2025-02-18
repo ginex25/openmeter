@@ -141,9 +141,9 @@ class ContractProvider extends ChangeNotifier {
 
         if (e.provider != null) {
           provider = await _getProviderData(e.provider!, db);
-          return ContractDto.fromData(e, provider);
+          return ContractDto.fromData(e, provider, null);
         } else {
-          return ContractDto.fromData(e, null);
+          return ContractDto.fromData(e, null, null);
         }
       }).toList());
 
@@ -154,9 +154,9 @@ class ContractProvider extends ChangeNotifier {
 
         if (e.provider != null) {
           provider = await _getProviderData(e.provider!, db);
-          return ContractDto.fromData(e, provider);
+          return ContractDto.fromData(e, provider, null);
         } else {
-          return ContractDto.fromData(e, null);
+          return ContractDto.fromData(e, null, null);
         }
       }).toList());
 
@@ -328,14 +328,14 @@ class ContractProvider extends ChangeNotifier {
 
       CompareCosts? compareCosts = _archivedContracts[index].compareCosts;
 
-      _archivedContracts[index] = ContractDto.fromData(data, provider);
+      _archivedContracts[index] = ContractDto.fromData(data, provider, null);
       _archivedContracts[index].compareCosts = compareCosts;
     } else {
       int index = _contracts.indexWhere((element) => element.id == data.id);
 
       CompareCosts? compareCosts = _contracts[index].compareCosts;
 
-      _contracts[index] = ContractDto.fromData(data, provider);
+      _contracts[index] = ContractDto.fromData(data, provider, null);
       _contracts[index].compareCosts = compareCosts;
 
       splitContracts();

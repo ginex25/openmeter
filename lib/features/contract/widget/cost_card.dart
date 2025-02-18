@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/model/contract_dto.dart';
-import '../../../../utils/convert_meter_unit.dart';
-import 'add_costs.dart';
+import '../../../core/model/contract_dto.dart';
+import '../../../ui/widgets/objects_screen/contract/add_costs.dart';
+import '../../../utils/convert_meter_unit.dart';
 
 class CostCard extends StatelessWidget {
   final ContractDto contract;

@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+
 import '../database/local_database.dart';
 
 class ProviderDto {
@@ -89,6 +91,17 @@ class ProviderDto {
       renewal: renewal,
     );
   }
+
+  ProviderCompanion toCompanion() => ProviderCompanion(
+        name: Value(name),
+        contractNumber: Value(contractNumber),
+        notice: Value(notice),
+        validFrom: Value(validFrom),
+        validUntil: Value(validUntil),
+        renewal: Value(renewal),
+        canceled: Value(canceled),
+        canceledDate: Value(canceledDate),
+      );
 
   ProviderDto.fromData(ProviderData data)
       : id = data.id,

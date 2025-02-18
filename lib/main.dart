@@ -23,7 +23,7 @@ import 'core/provider/sort_provider.dart';
 import 'core/provider/stats_provider.dart';
 import 'core/provider/theme_changer.dart';
 import 'core/provider/torch_provider.dart';
-import 'ui/screens/contract/archive_contracts.dart';
+import 'features/contract/view/archive_contracts.dart';
 import 'ui/screens/meters/archived_meters.dart';
 import 'ui/screens/settings_screens/database_screen.dart';
 import 'ui/screens/settings_screens/design_screen.dart';

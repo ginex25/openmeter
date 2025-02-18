@@ -11,7 +11,7 @@ class ContractDto {
   ContractCosts costs;
   String? note;
   ProviderDto? provider;
-  bool? isSelected;
+  bool isSelected;
   bool isArchived = false;
   CompareCosts? compareCosts;
   String unit;
@@ -22,11 +22,13 @@ class ContractDto {
     required this.costs,
     this.note,
     this.provider,
-    this.isSelected,
+    this.isSelected = false,
     required this.unit,
+    this.isArchived = false,
   });
 
-  ContractDto.fromData(ContractData data, ProviderData? provider)
+  ContractDto.fromData(
+      ContractData data, ProviderData? provider, this.compareCosts)
       : id = data.id,
         meterTyp = data.meterTyp,
         costs = ContractCosts(

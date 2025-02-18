@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/core/model/contract_dto.dart';
+import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/provider/archived_contract_list_provider.dart';
+import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
+import 'package:openmeter/features/contract/widget/provider_bottom_sheet.dart';
+import 'package:openmeter/ui/widgets/tags/canceled_tag.dart';
+import 'package:openmeter/ui/widgets/tags/should_cancel_tag.dart';
+import 'package:openmeter/utils/meter_typ.dart';
 
-import '../../../../core/database/local_database.dart';
-import '../../../../core/model/contract_dto.dart';
-import '../../../../core/model/provider_dto.dart';
-import '../../../../core/provider/contract_provider.dart';
-import '../../../../core/provider/details_contract_provider.dart';
-import '../../../../utils/meter_typ.dart';
-import '../../tags/canceled_tag.dart';
-import '../../tags/should_cancel_tag.dart';
-import 'provider_bottom_sheet.dart';
-
-class ProviderCard extends StatefulWidget {
+class ProviderCard extends ConsumerStatefulWidget {
   final ProviderDto? provider;
   final ContractDto contract;
 
   const ProviderCard({super.key, this.provider, required this.contract});
 
   @override
-  State<ProviderCard> createState() => _ProviderCardState();
+  ConsumerState createState() => _ProviderCardState();
 }
 
-class _ProviderCardState extends State<ProviderCard> {
-  final DateFormat _dateFormat = DateFormat('dd.MM.yyyy');
-
+class _ProviderCardState extends ConsumerState<ProviderCard> {
   ProviderDto? currentProvider;
 
   bool hasCanceled = false;
@@ -37,13 +33,27 @@ class _ProviderCardState extends State<ProviderCard> {
     super.initState();
   }
 
-  _selectCanceledDate() async {
-    final ContractProvider contractProvider =
-        Provider.of<ContractProvider>(context, listen: false);
-    final LocalDatabase db = Provider.of<LocalDatabase>(context, listen: false);
-    final DetailsContractProvider detailsContractProvider =
-        Provider.of<DetailsContractProvider>(context, listen: false);
+  _openBottomSheet() async {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => ProviderBottomSheet(
+        createProvider: currentProvider != null ? false : true,
+        contract: widget.contract,
+      ),
+    ).then(
+      (value) {
+        setState(() {
+          if (value != -1) {
+            currentProvider = value;
+          }
+        });
+      },
+    );
+  }
 
+  _selectCanceledDate() async {
     final DateTime? date = await showDatePicker(
       context: context,
       initialDate: currentProvider!.canceledDate != null
@@ -61,214 +71,20 @@ class _ProviderCardState extends State<ProviderCard> {
         currentProvider!.showShouldCanceled = false;
       });
 
-      contractProvider.updateProvider(
-        db: db,
-        provider: currentProvider!,
-        contractId: widget.contract.id!,
-        isArchiv: widget.contract.isArchived,
-      );
-
-      detailsContractProvider.setCurrentProvider(currentProvider);
+      if (widget.contract.isArchived) {
+        ref
+            .read(archivedContractListProvider.notifier)
+            .updateProvider(widget.contract, currentProvider!);
+      } else {
+        ref
+            .read(contractListProvider.notifier)
+            .updateProvider(widget.contract, currentProvider!);
+      }
     }
-  }
-
-  _providerData() {
-    return Table(
-      children: [
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Anbieter',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: SelectableText(
-                currentProvider!.name,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Nummer',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: SelectableText(
-                currentProvider!.contractNumber,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Beginn',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                _dateFormat.format(currentProvider!.validFrom),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Ende',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                _dateFormat.format(currentProvider!.validUntil),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-        if (currentProvider!.renewal != null)
-          TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  'Verlängerung',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  '${currentProvider!.renewal} Monate',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ],
-          ),
-        if (currentProvider!.notice != null)
-          TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  'Kündigungsfrist',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text(
-                  '${currentProvider!.notice} Monate',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ],
-          ),
-        TableRow(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Gekündigt am',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-            SizedBox(
-              height: 25,
-              child: TextButton(
-                onPressed: () => _selectCanceledDate(),
-                style: ButtonStyle(
-                  padding: WidgetStateProperty.all(EdgeInsets.zero),
-                  alignment: Alignment.centerLeft,
-                  textStyle: WidgetStateProperty.all(
-                      Theme.of(context).textTheme.bodyMedium),
-                  foregroundColor: WidgetStateProperty.all(
-                    currentProvider!.canceled ?? false
-                        ? Theme.of(context).textTheme.titleLarge!.color
-                        : null,
-                  ),
-                ),
-                child: currentProvider!.canceled ?? false
-                    ? Text(_dateFormat.format(currentProvider!.canceledDate!))
-                    : const Text('Datum wählen'),
-              ),
-            ),
-          ],
-        )
-      ],
-    );
-  }
-
-  _emptyProvider(DetailsContractProvider provider) {
-    final meterTyp = meterTyps
-        .firstWhere((element) => element.meterTyp == widget.contract.meterTyp);
-
-    return Column(
-      children: [
-        Text(
-          'Es wurde noch kein Vertrag für diesen ${meterTyp.providerTitle} angelegt.',
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: Colors.grey,
-              ),
-          textAlign: TextAlign.center,
-        ),
-        TextButton(
-          onPressed: () => _openBottomSheet(),
-          style: ButtonStyle(
-            textStyle: WidgetStateProperty.all(
-              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Colors.grey,
-                  ),
-            ),
-            foregroundColor: WidgetStateProperty.all(Colors.grey),
-          ),
-          child: const Text(
-            'Drücke hier, um einen Vertrag zu erstellen',
-          ),
-        ),
-      ],
-    );
-  }
-
-  _openBottomSheet() async {
-    return showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ProviderBottomSheet(
-        createProvider: currentProvider != null ? false : true,
-        contract: widget.contract,
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DetailsContractProvider>(context);
-
-    currentProvider = provider.getCurrentProvider;
-
     return SizedBox(
       width: double.infinity,
       child: Card(
@@ -308,8 +124,16 @@ class _ProviderCardState extends State<ProviderCard> {
                 height: 10,
               ),
               currentProvider == null
-                  ? _emptyProvider(provider)
-                  : _providerData(),
+                  ? EmptyProvider(
+                      contractMeterTyp: widget.contract.meterTyp,
+                      onTextPressed: () {
+                        _openBottomSheet();
+                      },
+                    )
+                  : ProviderData(
+                      currentProvider: currentProvider!,
+                      selectCanceledDate: _selectCanceledDate,
+                    ),
               const SizedBox(
                 height: 5,
               ),
@@ -317,6 +141,207 @@ class _ProviderCardState extends State<ProviderCard> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class ProviderData extends StatelessWidget {
+  final ProviderDto currentProvider;
+  final VoidCallback selectCanceledDate;
+
+  const ProviderData(
+      {super.key,
+      required this.currentProvider,
+      required this.selectCanceledDate});
+
+  @override
+  Widget build(BuildContext context) {
+    final DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+
+    return Table(
+      children: [
+        TableRow(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Anbieter',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: SelectableText(
+                currentProvider.name,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Nummer',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: SelectableText(
+                currentProvider.contractNumber,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Beginn',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                dateFormat.format(currentProvider.validFrom),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Ende',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                dateFormat.format(currentProvider.validUntil),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        if (currentProvider.renewal != null)
+          TableRow(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  'Verlängerung',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  '${currentProvider.renewal} Monate',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        if (currentProvider.notice != null)
+          TableRow(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  'Kündigungsfrist',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  '${currentProvider.notice} Monate',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ),
+            ],
+          ),
+        TableRow(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Text(
+                'Gekündigt am',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            SizedBox(
+              height: 25,
+              child: TextButton(
+                onPressed: selectCanceledDate,
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(EdgeInsets.zero),
+                  alignment: Alignment.centerLeft,
+                  textStyle: WidgetStateProperty.all(
+                      Theme.of(context).textTheme.bodyMedium),
+                  foregroundColor: WidgetStateProperty.all(
+                    currentProvider.canceled ?? false
+                        ? Theme.of(context).textTheme.titleLarge!.color
+                        : null,
+                  ),
+                ),
+                child: currentProvider.canceled ?? false
+                    ? Text(dateFormat.format(currentProvider.canceledDate!))
+                    : const Text('Datum wählen'),
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+}
+
+class EmptyProvider extends StatelessWidget {
+  final String contractMeterTyp;
+  final VoidCallback? onTextPressed;
+
+  const EmptyProvider(
+      {super.key, required this.contractMeterTyp, this.onTextPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final meterTyp =
+        meterTyps.firstWhere((element) => element.meterTyp == contractMeterTyp);
+
+    return Column(
+      children: [
+        Text(
+          'Es wurde noch kein Vertrag für diesen ${meterTyp.providerTitle} angelegt.',
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Colors.grey,
+              ),
+          textAlign: TextAlign.center,
+        ),
+        TextButton(
+          onPressed: onTextPressed,
+          style: ButtonStyle(
+            textStyle: WidgetStateProperty.all(
+              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Colors.grey,
+                  ),
+            ),
+            foregroundColor: WidgetStateProperty.all(Colors.grey),
+          ),
+          child: const Text(
+            'Drücke hier, um einen Vertrag zu erstellen',
+          ),
+        ),
+      ],
     );
   }
 }

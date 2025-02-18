@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/provider/delete_provider_state.dart';
 
-import '../../../../core/model/provider_dto.dart';
-import '../../../../core/provider/details_contract_provider.dart';
-
-class AddProvider extends StatefulWidget {
+class AddProvider extends ConsumerStatefulWidget {
   final bool showCanceledButton;
   final ProviderDto? provider;
   final double textSize;
-  final Function(ProviderDto?, DetailsContractProvider) onSave;
+  final Function(ProviderDto?) onSave;
   final bool createProvider;
 
   const AddProvider({
@@ -22,10 +21,10 @@ class AddProvider extends StatefulWidget {
   });
 
   @override
-  State<AddProvider> createState() => _AddProviderState();
+  ConsumerState createState() => _AddProviderState();
 }
 
-class _AddProviderState extends State<AddProvider> {
+class _AddProviderState extends ConsumerState<AddProvider> {
   ProviderDto? _currentProvider;
 
   final _formKey = GlobalKey<FormState>();
@@ -47,6 +46,13 @@ class _AddProviderState extends State<AddProvider> {
 
   bool firstInit = true;
   bool isDelete = false;
+
+  @override
+  void initState() {
+    _currentProvider = widget.provider;
+
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -111,6 +117,31 @@ class _AddProviderState extends State<AddProvider> {
     _renewal.clear();
   }
 
+  ProviderDto getProvider() {
+    int? renewal = _renewal.text.isEmpty ? null : int.parse(_renewal.text);
+    int? notice = _notice.text.isEmpty ? null : int.parse(_notice.text);
+
+    return ProviderDto(
+      id: _currentProvider?.id,
+      name: _providerName.text,
+      contractNumber: _contractNumber.text,
+      validUntil: _dateEnd!,
+      validFrom: _dateBegin!,
+      notice: notice,
+      renewal: renewal,
+      canceledDate: _canceledDate,
+      canceled: _canceledDate != null,
+      showShouldCanceled: false,
+    );
+  }
+
+  _deleteProvider() {
+    _resetController();
+    isDelete = true;
+
+    ref.read(deleteProviderStateProvider.notifier).setState(true);
+  }
+
   void _showDatePicker(BuildContext context, String typ) async {
     DateTime initDate = DateTime.now();
 
@@ -158,47 +189,9 @@ class _AddProviderState extends State<AddProvider> {
     });
   }
 
-  ProviderDto getProvider() {
-    int? renewal = _renewal.text.isEmpty ? null : int.parse(_renewal.text);
-    int? notice = _notice.text.isEmpty ? null : int.parse(_notice.text);
-
-    return ProviderDto(
-      id: _currentProvider?.id,
-      name: _providerName.text,
-      contractNumber: _contractNumber.text,
-      validUntil: _dateEnd!,
-      validFrom: _dateBegin!,
-      notice: notice,
-      renewal: renewal,
-      canceledDate: _canceledDate,
-      canceled: _canceledDate != null,
-      showShouldCanceled: false,
-    );
-  }
-
-  _deleteProvider(DetailsContractProvider provider) {
-    _resetController();
-    isDelete = true;
-
-    provider.setDeleteProviderState(true, true);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DetailsContractProvider>(context);
-
-    _currentProvider = provider.getCurrentProvider;
-
-    _initController(provider.getDeleteProviderState);
-
-    if (provider.getDeleteProviderState && !isDelete) {
-      provider.setDeleteProviderState(false, false);
-    }
-
-    if (provider.getRemoveCanceledDateState) {
-      _canceledDateController.clear();
-      provider.setRemoveCanceledDateState(false, false);
-    }
+    _initController(isDelete);
 
     return Form(
       key: _formKey,
@@ -207,7 +200,7 @@ class _AddProviderState extends State<AddProvider> {
         children: [
           if (widget.showCanceledButton)
             TextButton(
-              onPressed: () => _deleteProvider(provider),
+              onPressed: () => _deleteProvider(),
               child: const Text(
                 'Anbieter löschen',
                 style: TextStyle(color: Colors.redAccent, fontSize: 16),
@@ -331,11 +324,11 @@ class _AddProviderState extends State<AddProvider> {
             child: FloatingActionButton.extended(
               onPressed: () {
                 if (isDelete) {
-                  widget.onSave(isDelete ? null : getProvider(), provider);
+                  widget.onSave(isDelete ? null : getProvider());
                   return;
                 }
                 if (_formKey.currentState!.validate()) {
-                  widget.onSave(isDelete ? null : getProvider(), provider);
+                  widget.onSave(isDelete ? null : getProvider());
                 }
               },
               label: const Text('Speichern'),

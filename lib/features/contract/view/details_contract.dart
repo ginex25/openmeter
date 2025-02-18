@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/model/contract_dto.dart';
+import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/widget/cost_card.dart';
+import 'package:openmeter/features/contract/widget/provider_card.dart';
+import 'package:openmeter/ui/widgets/objects_screen/contract/compare_contracts.dart';
+import 'package:openmeter/utils/meter_typ.dart';
 
-import '../../../core/model/contract_dto.dart';
-import '../../../core/model/provider_dto.dart';
-import '../../../core/provider/details_contract_provider.dart';
-import '../../../utils/meter_typ.dart';
-import '../../widgets/objects_screen/contract/compare_contracts.dart';
-import '../../widgets/objects_screen/contract/cost_card.dart';
-import '../../widgets/objects_screen/contract/provider_card.dart';
 import 'add_contract.dart';
 
-class DetailsContract extends StatefulWidget {
+class DetailsContract extends ConsumerStatefulWidget {
   final ContractDto contract;
 
   const DetailsContract({super.key, required this.contract});
 
   @override
-  State<DetailsContract> createState() => _DetailsContractState();
+  ConsumerState createState() => _DetailsContractState();
 }
 
-class _DetailsContractState extends State<DetailsContract> {
+class _DetailsContractState extends ConsumerState<DetailsContract> {
   late ContractDto _currentContract;
   ProviderDto? _currentProvider;
 
@@ -32,18 +31,6 @@ class _DetailsContractState extends State<DetailsContract> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DetailsContractProvider>(context);
-
-    if (_currentContract.compareCosts != null) {
-      provider.setCompareContract(_currentContract.compareCosts, false);
-    }
-
-    _currentProvider = provider.getCurrentProvider;
-
-    if (_currentProvider != null && _currentContract.provider == null) {
-      _currentContract.provider = _currentProvider;
-    }
-
     final meterTyp = meterTyps
         .firstWhere((element) => element.meterTyp == _currentContract.meterTyp);
 
@@ -67,10 +54,11 @@ class _DetailsContractState extends State<DetailsContract> {
                     _currentContract = value;
                     _currentProvider = _currentContract.provider;
 
-                    _currentContract.compareCosts = provider.getCompareContract;
-
-                    provider.setCurrentProvider(_currentProvider);
-                    provider.setUnit(_currentContract.unit);
+                    // TODO: das hier nochmal anschauen
+                    // _currentContract.compareCosts = provider.getCompareContract;
+                    //
+                    // provider.setCurrentProvider(_currentProvider);
+                    // provider.setUnit(_currentContract.unit);
                   }
                 });
               });
@@ -87,11 +75,7 @@ class _DetailsContractState extends State<DetailsContract> {
               child: Column(
                 children: [
                   CostCard(contract: _currentContract),
-                  if (provider.getCompareContract != null)
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  if (provider.getCompareContract != null)
+                  if (_currentContract.compareCosts != null)
                     const CompareContracts(),
                   const SizedBox(
                     height: 10,
