@@ -6,11 +6,11 @@ import 'package:openmeter/features/contract/provider/selected_contract_count.dar
 import 'package:openmeter/features/contract/widget/contract_card.dart';
 import 'package:provider/provider.dart' as p;
 
-import '../../../core/model/contract_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../ui/widgets/utils/empty_archiv.dart';
 import '../../../ui/widgets/utils/selected_items_bar.dart';
 import '../../../utils/custom_colors.dart';
+import '../model/contract_dto.dart';
 import 'details_contract.dart';
 
 class ArchiveContract extends ConsumerStatefulWidget {
@@ -70,9 +70,10 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
                                 .toggleState(contract);
                           } else {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailsContract(contract: contract)),
+                              MaterialPageRoute(builder: (context) {
+                                return DetailsContractView(
+                                    contractId: contract.id!);
+                              }),
                             );
                           }
                         },
@@ -158,8 +159,9 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
                 .toggleState(contract);
           } else {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => DetailsContract(contract: contract)),
+              MaterialPageRoute(builder: (context) {
+                return DetailsContractView(contractId: contract.id!);
+              }),
             );
           }
         },
@@ -205,8 +207,10 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
         ),
       ),
       TextButton(
-        onPressed: () {
-          ref.read(archivedContractListProvider.notifier);
+        onPressed: () async {
+          await ref
+              .read(archivedContractListProvider.notifier)
+              .deleteAllSelectedContracts();
 
           backupProvider.setHasUpdate(true);
         },

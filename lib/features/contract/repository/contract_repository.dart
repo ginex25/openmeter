@@ -1,9 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/contract_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
 import 'package:openmeter/core/database/model/contract_model.dart';
-import 'package:openmeter/core/model/compare_costs.dart';
-import 'package:openmeter/core/model/contract_dto.dart';
+import 'package:openmeter/features/contract/model/compare_costs.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'contract_repository.g.dart';
@@ -36,6 +37,12 @@ class ContractRepository {
 
   (List<ContractDto>, List<ContractDto>) splitContracts(
       Iterable<ContractDto> contracts) {
+    contracts = contracts.sortedBy(
+      (element) {
+        return element.meterTyp;
+      },
+    );
+
     List<ContractDto> firstRow = [];
     List<ContractDto> secondRow = [];
 
@@ -74,6 +81,20 @@ class ContractRepository {
 
   Future updateContract(ContractData data) async {
     await _contractDao.updateContract(data);
+  }
+
+  Future<ContractDto> getContractById(int id) async {
+    final ContractModel? data = await _contractDao.findById(id);
+
+    if (data == null) {
+      throw 'Contract with id $id not found!';
+    }
+
+    final CompareCosts? costs = data.costCompareData == null
+        ? null
+        : CompareCosts.fromData(data.costCompareData!);
+
+    return ContractDto.fromData(data.contractData, data.providerData, costs);
   }
 }
 

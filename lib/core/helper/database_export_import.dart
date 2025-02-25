@@ -13,12 +13,12 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../features/contract/model/contract_dto.dart';
+import '../../features/contract/model/provider_dto.dart';
 import '../../utils/log.dart';
 import '../database/local_database.dart';
-import '../model/contract_dto.dart';
 import '../model/entry_dto.dart';
 import '../model/meter_with_room.dart';
-import '../model/provider_dto.dart';
 import '../model/room_dto.dart';
 import '../provider/meter_provider.dart';
 import 'meter_image_helper.dart';

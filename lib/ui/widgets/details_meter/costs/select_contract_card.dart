@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/model/contract_dto.dart';
 import '../../../../core/provider/cost_provider.dart';
+import '../../../../features/contract/model/contract_dto.dart';
 import 'select_contract_dialog.dart';
 
 class SelectContractCard extends StatefulWidget {

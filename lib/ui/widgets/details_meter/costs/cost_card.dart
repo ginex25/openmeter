@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/model/contract_dto.dart';
 import '../../../../core/provider/cost_provider.dart';
+import '../../../../features/contract/model/contract_dto.dart';
 import '../../../../utils/convert_meter_unit.dart';
 import '../../../../utils/custom_icons.dart';
 

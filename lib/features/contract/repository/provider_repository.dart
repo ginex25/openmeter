@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/contract_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'provider_repository.g.dart';

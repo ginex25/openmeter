@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart' as drift;
 
+import '../../features/contract/model/contract_dto.dart';
+import '../../features/contract/model/provider_dto.dart';
 import '../database/local_database.dart';
-import '../model/contract_dto.dart';
-import '../model/provider_dto.dart';
 import '../provider/contract_provider.dart';
 
 class ProviderHelper {

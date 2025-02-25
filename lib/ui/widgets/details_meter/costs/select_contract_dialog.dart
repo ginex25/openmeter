@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/model/contract_dto.dart';
-import '../../../../core/model/provider_dto.dart';
+import '../../../../features/contract/model/contract_dto.dart';
+import '../../../../features/contract/model/provider_dto.dart';
 
 class SelectContractDialog extends StatefulWidget {
   final List<ContractDto> contracts;

@@ -6,13 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/contract_dto.dart';
 import 'package:openmeter/core/model/meter_typ.dart';
-import 'package:openmeter/core/model/provider_dto.dart';
 import 'package:openmeter/core/provider/database_settings_provider.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
+import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/delete_provider_state.dart';
+import 'package:openmeter/features/contract/provider/details_contract_provider.dart';
 import 'package:openmeter/features/contract/widget/add_provider.dart';
+import 'package:openmeter/features/contract/widget/number_text_field.dart';
 import 'package:openmeter/ui/widgets/meter/meter_circle_avatar.dart';
 import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/meter_typ.dart';
@@ -20,8 +22,9 @@ import 'package:provider/provider.dart' as p;
 
 class AddContract extends ConsumerStatefulWidget {
   final ContractDto? contract;
+  final bool fromDetails;
 
-  const AddContract({this.contract, super.key});
+  const AddContract({this.contract, super.key, this.fromDetails = false});
 
   @override
   ConsumerState createState() => _AddContractState();
@@ -166,6 +169,12 @@ class _AddContractState extends ConsumerState<AddContract> {
         .updateContract(
             contract, _deleteProvider ? _contractDto?.provider : _providerDto)
         .then((value) {
+      if (widget.fromDetails) {
+        ref
+            .read(detailsContractProvider(value.id!).notifier)
+            .updateContract(value);
+      }
+
       if (mounted) {
         Navigator.of(context).pop(value);
       }
@@ -408,37 +417,6 @@ class MeterTypeDropdown extends StatelessWidget {
           );
         }).toList(),
         onChanged: onChanged,
-      ),
-    );
-  }
-}
-
-class NumberTextFields extends StatelessWidget {
-  final String label;
-  final String suffix;
-  final TextEditingController controller;
-
-  const NumberTextFields(
-      {super.key,
-      required this.label,
-      required this.suffix,
-      required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.number,
-      controller: controller,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Bitte gib eine $label an!';
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        label: Text(label),
-        suffix: Text(suffix),
       ),
     );
   }

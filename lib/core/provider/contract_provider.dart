@@ -5,12 +5,12 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../features/contract/model/compare_costs.dart';
+import '../../features/contract/model/contract_dto.dart';
+import '../../features/contract/model/provider_dto.dart';
 import '../../utils/log.dart';
 import '../database/local_database.dart';
 import '../helper/provider_helper.dart';
-import '../model/compare_costs.dart';
-import '../model/contract_dto.dart';
-import '../model/provider_dto.dart';
 import 'cost_provider.dart';
 
 class ContractProvider extends ChangeNotifier {

@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:openmeter/core/database/model/contract_model.dart';
 
-import '../../model/compare_costs.dart';
-import '../../model/contract_dto.dart';
-import '../../model/provider_dto.dart';
+import '../../../features/contract/model/compare_costs.dart';
+import '../../../features/contract/model/contract_dto.dart';
+import '../../../features/contract/model/provider_dto.dart';
 import '../local_database.dart';
 import '../tables/contract.dart';
 
@@ -158,5 +158,24 @@ class ContractDao extends DatabaseAccessor<LocalDatabase>
       {required int contractId, required bool isArchived}) async {
     return await (update(contract)..where((tbl) => tbl.id.equals(contractId)))
         .write(ContractCompanion(isArchived: Value(isArchived)));
+  }
+
+  Future<ContractModel?> findById(int id) async {
+    final query = select(db.contract).join([
+      leftOuterJoin(
+          db.provider, db.provider.id.equalsExp(db.contract.provider)),
+      leftOuterJoin(
+          db.costCompare, db.costCompare.parentId.equalsExp(db.contract.id))
+    ])
+      ..where(db.contract.id.equals(id))
+      ..orderBy([OrderingTerm(expression: db.contract.meterTyp)]);
+
+    return await query
+        .map((rows) => ContractModel(
+              rows.readTable(db.contract),
+              rows.readTableOrNull(db.provider),
+              rows.readTableOrNull(db.costCompare),
+            ))
+        .getSingleOrNull();
   }
 }

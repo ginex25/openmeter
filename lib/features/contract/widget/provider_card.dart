@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/model/contract_dto.dart';
-import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
+import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/contract/provider/archived_contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/widget/provider_bottom_sheet.dart';

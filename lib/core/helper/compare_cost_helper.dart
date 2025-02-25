@@ -1,9 +1,9 @@
 import 'dart:developer';
 
+import '../../features/contract/model/compare_costs.dart';
+import '../../features/contract/model/contract_dto.dart';
 import '../../utils/log.dart';
 import '../database/local_database.dart';
-import '../model/compare_costs.dart';
-import '../model/contract_dto.dart';
 import '../provider/contract_provider.dart';
 import '../provider/details_contract_provider.dart';
 

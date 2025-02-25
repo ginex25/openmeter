@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/database/local_database.dart';
-import '../../../../core/model/contract_dto.dart';
 import '../../../../core/model/meter_dto.dart';
 import '../../../../core/provider/cost_provider.dart';
+import '../../../../features/contract/model/contract_dto.dart';
 import 'cost_card.dart';
 import 'select_contract_card.dart';
 import 'select_contract_dialog.dart';

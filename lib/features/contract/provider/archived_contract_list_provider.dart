@@ -1,5 +1,5 @@
-import 'package:openmeter/core/model/contract_dto.dart';
-import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
+import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/repository/contract_repository.dart';

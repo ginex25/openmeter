@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 
-import '../database/local_database.dart';
+import '../../../core/database/local_database.dart';
 import 'compare_costs.dart';
 import 'contract_costs.dart';
 import 'provider_dto.dart';

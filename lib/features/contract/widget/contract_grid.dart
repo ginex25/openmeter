@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/enums/font_size_value.dart';
-import 'package:openmeter/core/model/contract_dto.dart';
 import 'package:openmeter/core/provider/theme_changer.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/view/details_contract.dart';
@@ -117,9 +117,11 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
                                 .toggleState(contract1);
                           } else {
                             Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      DetailsContract(contract: contract1)),
+                              MaterialPageRoute(builder: (context) {
+                                return DetailsContractView(
+                                  contractId: contract1.id!,
+                                );
+                              }),
                             );
                           }
                         },
@@ -142,9 +144,10 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
                                   .toggleState(contract2!);
                             } else {
                               Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DetailsContract(contract: contract2!)),
+                                MaterialPageRoute(builder: (context) {
+                                  return DetailsContractView(
+                                      contractId: contract2!.id!);
+                                }),
                               );
                             }
                           },

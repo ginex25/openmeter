@@ -1,6 +1,6 @@
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/contract_dto.dart';
-import 'package:openmeter/core/model/provider_dto.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
+import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/contract/provider/archived_contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/delete_provider_state.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
@@ -282,6 +282,25 @@ class ContractList extends _$ContractList {
 
     allContracts[index] = contract;
 
+    state = AsyncData(contractRepo.splitContracts(allContracts));
+  }
+
+  addContract(ContractDto newContract) {
+    List<ContractDto> allContracts = state.value!.$1 + state.value!.$2;
+    allContracts.add(newContract);
+
+    final contractRepo = ref.watch(contractRepositoryProvider);
+    state = AsyncData(contractRepo.splitContracts(allContracts));
+  }
+
+  removeContract(ContractDto contract) {
+    List<ContractDto> allContracts = state.value!.$1 + state.value!.$2;
+
+    allContracts.removeWhere(
+      (element) => element.id == contract.id,
+    );
+
+    final contractRepo = ref.watch(contractRepositoryProvider);
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }
 }

@@ -1,43 +1,102 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/core/enums/compare_costs_menu.dart';
+import 'package:openmeter/features/contract/helper/calc_compare_values.dart';
+import 'package:openmeter/features/contract/model/compare_costs.dart';
+import 'package:openmeter/features/contract/model/contract_costs.dart';
+import 'package:openmeter/features/contract/model/contract_dto.dart';
+import 'package:openmeter/features/contract/provider/details_contract_provider.dart';
+import 'package:openmeter/features/contract/widget/add_costs.dart';
+import 'package:openmeter/utils/convert_meter_unit.dart';
 
-import '../../../../core/database/local_database.dart';
-import '../../../../core/enums/compare_costs_menu.dart';
-import '../../../../core/helper/calc_compare_values.dart';
-import '../../../../core/helper/compare_cost_helper.dart';
-import '../../../../core/model/compare_costs.dart';
-import '../../../../core/model/contract_costs.dart';
-import '../../../../core/model/contract_dto.dart';
-import '../../../../core/provider/contract_provider.dart';
-import '../../../../core/provider/database_settings_provider.dart';
-import '../../../../core/provider/details_contract_provider.dart';
-import '../../../../utils/convert_meter_unit.dart';
-import 'add_costs.dart';
-
+// Todo checken ob es im archiv auch noch geht, Lösung finden um mit Archiv besser um zu gehen
 class CompareContracts extends StatefulWidget {
-  const CompareContracts({super.key});
+  final ContractDto contract;
+
+  const CompareContracts({super.key, required this.contract});
 
   @override
   State<CompareContracts> createState() => _CompareContractsState();
 }
 
 class _CompareContractsState extends State<CompareContracts> {
-  late ContractDto contract;
+  @override
+  Widget build(BuildContext context) {
+    final compareCosts = widget.contract.compareCosts;
 
+    final compareValuesHelper = CalcCompareValues(
+        compareCost: compareCosts!, currentCost: widget.contract.costs);
+
+    final ContractCosts compareValues = compareValuesHelper.compareCosts();
+
+    compareCosts.costs.total = compareValuesHelper.getCompareTotal();
+
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Kosten Vergleichen',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  CompareContractPopupMenu(
+                    contract: widget.contract,
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              CompareContractsTable(
+                compareContract: compareCosts,
+                compareValues: compareValues,
+                unit: widget.contract.unit,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CompareContractsTable extends StatefulWidget {
+  final ContractCosts compareValues;
+  final CompareCosts compareContract;
+  final String unit;
+
+  const CompareContractsTable({
+    super.key,
+    required this.compareValues,
+    required this.compareContract,
+    required this.unit,
+  });
+
+  @override
+  State<CompareContractsTable> createState() => _CompareContractsTableState();
+}
+
+class _CompareContractsTableState extends State<CompareContractsTable> {
   final String local = Platform.localeName;
 
-  final ConvertMeterUnit _convertMeterUnit = ConvertMeterUnit();
-
-  String _unit = '';
+  final ConvertMeterUnit convertMeterUnit = ConvertMeterUnit();
 
   _createTableRows({
     required String title,
     required double newValue,
     required double difference,
     double padding = 0,
+    required String local,
   }) {
     final formatSimpleCurrency = NumberFormat.simpleCurrency(locale: local);
 
@@ -74,14 +133,15 @@ class _CompareContractsState extends State<CompareContracts> {
     );
   }
 
-  _createTable(
-      {required ContractCosts compareValues,
-      required CompareCosts compareContract,
-      required CalcCompareValues compareValuesHelper}) {
-    final costs = compareContract.costs;
-
+  @override
+  Widget build(BuildContext context) {
     final formatDecimal =
         NumberFormat.decimalPatternDigits(locale: local, decimalDigits: 2);
+
+    ContractCosts compareValues = widget.compareValues;
+    CompareCosts compareContract = widget.compareContract;
+
+    final costs = compareContract.costs;
 
     return Table(
       columnWidths: const {
@@ -105,7 +165,7 @@ class _CompareContractsState extends State<CompareContracts> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 15),
                 child: Text(
-                  '${compareContract.usage} ${_convertMeterUnit.getUnitString(_unit)}',
+                  '${compareContract.usage} ${convertMeterUnit.getUnitString(widget.unit)}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
@@ -146,6 +206,7 @@ class _CompareContractsState extends State<CompareContracts> {
           title: 'Grundpreis',
           difference: compareValues.basicPrice,
           newValue: costs.basicPrice,
+          local: local,
         ),
         TableRow(
           children: [
@@ -179,15 +240,32 @@ class _CompareContractsState extends State<CompareContracts> {
           title: 'Bonus',
           difference: compareValues.bonus?.toDouble() ?? 0.0,
           newValue: costs.bonus?.toDouble() ?? 0.0,
+          local: local,
         ),
         _createTableRows(
             title: 'pro Monat',
             difference: compareValues.total! / 12,
             newValue: compareContract.costs.total! / 12,
+            local: local,
             padding: 10),
       ],
     );
   }
+}
+
+class CompareContractPopupMenu extends ConsumerStatefulWidget {
+  final ContractDto contract;
+
+  const CompareContractPopupMenu({super.key, required this.contract});
+
+  @override
+  ConsumerState<CompareContractPopupMenu> createState() =>
+      _CompareContractPopupMenuState();
+}
+
+class _CompareContractPopupMenuState
+    extends ConsumerState<CompareContractPopupMenu> {
+  late ContractDto contract;
 
   _openBottomSheet(BuildContext context) {
     return showModalBottomSheet(
@@ -205,7 +283,7 @@ class _CompareContractsState extends State<CompareContracts> {
             padding: const EdgeInsets.all(10),
             height: 500,
             width: double.infinity,
-            child: const SingleChildScrollView(
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -222,7 +300,7 @@ class _CompareContractsState extends State<CompareContracts> {
                   SizedBox(
                     height: 15,
                   ),
-                  AddCosts(),
+                  AddCosts(contract: contract),
                 ],
               ),
             ),
@@ -232,12 +310,9 @@ class _CompareContractsState extends State<CompareContracts> {
     );
   }
 
-  _popupMenu(CompareCosts compareContract, DetailsContractProvider provider,
-      BuildContext context) {
-    final db = Provider.of<LocalDatabase>(context, listen: false);
-    final contractProvider =
-        Provider.of<ContractProvider>(context, listen: false);
-    final helper = CompareCostHelper();
+  @override
+  Widget build(BuildContext context) {
+    contract = widget.contract;
 
     return PopupMenuButton(
       shape: RoundedRectangleBorder(
@@ -246,49 +321,39 @@ class _CompareContractsState extends State<CompareContracts> {
       onSelected: (value) async {
         switch (value) {
           case CompareCostsMenu.save:
-            helper.saveCompare(
-              compare: compareContract,
-              db: db,
-              provider: provider,
-              contractProvider: contractProvider,
-              isArchived: contract.isArchived,
-            );
+            await ref
+                .read(detailsContractProvider(contract.id!).notifier)
+                .saveCompareCosts();
             break;
           case CompareCostsMenu.delete:
-            helper.deleteCompare(
-              compare: compareContract,
-              db: db,
-              provider: provider,
-              contractProvider: contractProvider,
-              isArchived: contract.isArchived,
-            );
+            await ref
+                .read(detailsContractProvider(contract.id!).notifier)
+                .deleteCompareCosts();
             break;
           case CompareCostsMenu.newContract:
-            helper
-                .createNewContract(
-                    compare: compareContract,
-                    db: db,
-                    contractProvider: contractProvider,
-                    provider: provider,
-                    currentContract: contract)
-                .then((value) {
-              if (value && context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                    'Neuer Vertrag wurde erstellt!',
-                  ),
-                  behavior: SnackBarBehavior.floating,
-                ));
-              }
-            });
+            await ref
+                .read(detailsContractProvider(contract.id!).notifier)
+                .createNewContractFromCompare()
+                .then(
+              (value) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                      'Neuer Vertrag wurde erstellt!',
+                    ),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }
+              },
+            );
             break;
           case CompareCostsMenu.edit:
             _openBottomSheet(context);
             break;
         }
 
-        Provider.of<DatabaseSettingsProvider>(context, listen: false)
-            .setHasUpdate(true);
+        // Provider.of<DatabaseSettingsProvider>(context, listen: false)
+        //     .setHasUpdate(true);
       },
       itemBuilder: (context) => [
         PopupMenuItem(
@@ -367,66 +432,6 @@ class _CompareContractsState extends State<CompareContracts> {
       icon: Icon(
         Icons.more_horiz,
         color: Theme.of(context).indicatorColor,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<DetailsContractProvider>(context);
-
-    CompareCosts? compareContract = provider.getCompareContract;
-
-    contract = provider.getCurrentContract;
-
-    if (!identical(compareContract, contract.compareCosts) &&
-        contract.compareCosts != null) {
-      compareContract = contract.compareCosts;
-      provider.setCompareContract(compareContract, false);
-    }
-
-    _unit = provider.getUnit;
-
-    if (_unit.isEmpty) {
-      _unit = contract.unit;
-    }
-
-    final compareValuesHelper =
-        CalcCompareValues(compareCost: compareContract!, currentCost: contract);
-
-    final ContractCosts compareValues = compareValuesHelper.compareCosts();
-
-    compareContract.costs.total = compareValuesHelper.getCompareTotal();
-
-    return SizedBox(
-      width: double.infinity,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Kosten Vergleichen',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  _popupMenu(compareContract, provider, context),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              _createTable(
-                compareContract: compareContract,
-                compareValues: compareValues,
-                compareValuesHelper: compareValuesHelper,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

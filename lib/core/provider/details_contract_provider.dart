@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../model/compare_costs.dart';
-import '../model/contract_dto.dart';
-import '../model/provider_dto.dart';
+import '../../features/contract/model/compare_costs.dart';
+import '../../features/contract/model/contract_dto.dart';
+import '../../features/contract/model/provider_dto.dart';
 
 class DetailsContractProvider extends ChangeNotifier {
   ProviderDto? _provider;
