@@ -1,4 +1,4 @@
-List roomTyps = [
+List<String> roomTyps = [
   'Arbeitszimmer',
   'Badezimmer',
   'Esszimmer',

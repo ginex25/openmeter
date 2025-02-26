@@ -152,12 +152,12 @@ class RoomProvider extends ChangeNotifier {
     int index = _rooms.indexWhere((element) => element.id == room.id);
 
     if (index >= 0) {
-      _rooms.elementAt(index).isSelected = !_rooms.elementAt(index).isSelected!;
+      _rooms.elementAt(index).isSelected = !_rooms.elementAt(index).isSelected;
 
       int count = 0;
 
       for (var element in _rooms) {
-        if (element.isSelected!) {
+        if (element.isSelected) {
           count++;
         }
       }

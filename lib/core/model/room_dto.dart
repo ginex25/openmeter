@@ -1,3 +1,5 @@
+import 'package:openmeter/core/model/meter_dto.dart';
+
 import '../database/local_database.dart';
 
 class RoomDto {
@@ -5,8 +7,9 @@ class RoomDto {
   String uuid;
   String name;
   String typ;
-  bool? isSelected;
-  int? sumMeter;
+  bool isSelected = false;
+  int? sumMeter; // Todo remove sumMeter
+  List<MeterDto> meters = [];
 
   RoomDto.fromData(RoomData data)
       : id = data.id,
@@ -14,6 +17,13 @@ class RoomDto {
         name = data.name,
         typ = data.typ,
         isSelected = false;
+
+  RoomData toData() => RoomData(id: id!, name: name, typ: typ, uuid: uuid);
+
+  RoomDto.fromCompanion(RoomCompanion data)
+      : uuid = data.uuid.value,
+        name = data.name.value,
+        typ = data.typ.value;
 
   RoomDto.fromJson(Map<String, dynamic> json)
       : id = json['id'],

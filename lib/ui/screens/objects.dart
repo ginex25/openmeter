@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/view/contract_view.dart';
+import 'package:openmeter/features/room/provider/room_list_provider.dart';
+import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
+import 'package:openmeter/features/room/view/room_view.dart';
 import 'package:provider/provider.dart' as p;
 
 import '../../core/provider/database_settings_provider.dart';
-import '../../core/provider/room_provider.dart';
 import '../../features/contract/view/add_contract.dart';
-import '../widgets/objects_screen/room/add_room.dart';
-import '../widgets/objects_screen/room/room_card.dart';
 import '../widgets/utils/selected_items_bar.dart';
 
 class ObjectsScreen extends ConsumerStatefulWidget {
@@ -20,44 +20,36 @@ class ObjectsScreen extends ConsumerStatefulWidget {
 }
 
 class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
-  final AddRoom _addRoom = AddRoom();
-
-  @override
-  void dispose() {
-    _addRoom.dispose();
-    super.dispose();
-  }
-
   _removeSelectedContracts() {
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
     ref.read(contractListProvider.notifier).removeAllSelectedState();
   }
 
+  _removeSelectedRooms() {
+    ref.read(selectedRoomCountProvider.notifier).setSelectedState(0);
+    ref.read(roomListProvider.notifier).removeAllSelectedState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final roomProvider = p.Provider.of<RoomProvider>(context);
-
     final int contractSelectedCount = ref.watch(selectedContractCountProvider);
+    final int roomSelectedCount = ref.watch(selectedRoomCountProvider);
 
     return Scaffold(
-      appBar:
-          roomProvider.getStateHasSelected == true || contractSelectedCount > 0
-              ? _hasSelectedItems(
-                  roomProvider: roomProvider,
-                  contractSelectedCount: contractSelectedCount)
-              : _noSelectedItems(),
+      appBar: roomSelectedCount > 0 || contractSelectedCount > 0
+          ? _hasSelectedItems(
+              roomSelectedCount: roomSelectedCount,
+              contractSelectedCount: contractSelectedCount)
+          : _noSelectedItems(),
       body: PopScope(
-        canPop: !roomProvider.getStateHasSelected && contractSelectedCount == 0,
+        canPop: roomSelectedCount == 0 && contractSelectedCount == 0,
         onPopInvokedWithResult: (bool didPop, _) async {
-          if (roomProvider.getStateHasSelected == true) {
-            roomProvider.removeAllSelected();
+          if (roomSelectedCount > 0) {
+            _removeSelectedRooms();
           }
 
           if (contractSelectedCount > 0) {
-            ref
-                .read(selectedContractCountProvider.notifier)
-                .setSelectedState(0);
-            ref.read(contractListProvider.notifier).removeAllSelectedState();
+            _removeSelectedContracts();
           }
         },
         child: Stack(
@@ -67,18 +59,7 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Tooltip(
-                      message: 'Raum erstellen',
-                      child: ListTile(
-                        title: Text(
-                          'Meine Zimmer',
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        trailing: const Icon(Icons.add),
-                        onTap: () => _addRoom.getAddRoom(context),
-                      ),
-                    ),
-                    const RoomCard(),
+                    const RoomView(),
                     const ContractView(),
                     if (contractSelectedCount > 0)
                       const SizedBox(
@@ -88,7 +69,7 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
                 ),
               ),
             ),
-            if (roomProvider.getStateHasSelected) _selectedRooms(roomProvider),
+            if (roomSelectedCount > 0) _selectedRooms(),
             if (contractSelectedCount > 0)
               _selectedContract(contractSelectedCount),
           ],
@@ -112,7 +93,7 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
     );
   }
 
-  _selectedRooms(RoomProvider roomProvider) {
+  _selectedRooms() {
     final buttonStyle = ButtonStyle(
       foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
@@ -121,8 +102,10 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
 
     final buttons = [
       TextButton(
-        onPressed: () {
-          roomProvider.deleteAllSelectedRooms(context);
+        onPressed: () async {
+          await ref
+              .read(roomListProvider.notifier)
+              .deleteAllSelectedContracts();
         },
         style: buttonStyle,
         child: const Column(
@@ -238,17 +221,16 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
   }
 
   AppBar _hasSelectedItems(
-      {required RoomProvider roomProvider,
-      required int contractSelectedCount}) {
-    int count = roomProvider.getSelectedRoomsLength + contractSelectedCount;
+      {required int roomSelectedCount, required int contractSelectedCount}) {
+    int count = roomSelectedCount + contractSelectedCount;
 
     return AppBar(
       title: Text('$count ausgewählt'),
       leading: IconButton(
         icon: const Icon(Icons.close),
         onPressed: () {
-          if (roomProvider.getStateHasSelected == true) {
-            roomProvider.removeAllSelected();
+          if (roomSelectedCount > 0) {
+            _removeSelectedRooms();
           }
 
           if (contractSelectedCount > 0) {

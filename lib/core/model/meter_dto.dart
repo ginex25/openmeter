@@ -1,4 +1,5 @@
 import '../database/local_database.dart';
+import 'entry_dto.dart';
 
 class MeterDto {
   int? id;
@@ -11,6 +12,7 @@ class MeterDto {
   List<dynamic>? tags;
   bool isSelected;
   bool hasEntry = false;
+  EntryDto? lastEntry;
 
   MeterDto.fromData(MeterData data, this.hasEntry)
       : typ = data.typ,

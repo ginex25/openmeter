@@ -6,6 +6,7 @@ import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/view/details_contract.dart';
+import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:provider/provider.dart' as p;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -32,6 +33,7 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
   @override
   Widget build(BuildContext context) {
     final int hasSelectedItems = ref.watch(selectedContractCountProvider);
+    final int roomSelectedCount = ref.watch(selectedRoomCountProvider);
 
     final contractsProvider = ref.watch(contractListProvider);
 
@@ -105,12 +107,19 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
                     children: [
                       GestureDetector(
                         onLongPress: () {
+                          if (roomSelectedCount > 0) {
+                            return;
+                          }
+
                           ref
                               .read(contractListProvider.notifier)
                               .toggleState(contract1);
                         },
                         onTap: () {
-                          // TODO: add if condition: only if Rooms arent selected
+                          if (roomSelectedCount > 0) {
+                            return;
+                          }
+
                           if (hasSelectedItems > 0) {
                             ref
                                 .read(contractListProvider.notifier)
@@ -132,12 +141,19 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
                       if (contract2 != null)
                         GestureDetector(
                           onLongPress: () {
+                            if (roomSelectedCount > 0) {
+                              return;
+                            }
+
                             ref
                                 .read(contractListProvider.notifier)
                                 .toggleState(contract2!);
                           },
                           onTap: () {
-                            // TODO: add if condition: only if Rooms arent selected
+                            if (roomSelectedCount > 0) {
+                              return;
+                            }
+
                             if (hasSelectedItems > 0) {
                               ref
                                   .read(contractListProvider.notifier)

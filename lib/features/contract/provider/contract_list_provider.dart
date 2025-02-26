@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'contract_list_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ContractList extends _$ContractList {
   @override
   FutureOr<(List<ContractDto>, List<ContractDto>)?> build() async {

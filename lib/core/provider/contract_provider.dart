@@ -200,12 +200,12 @@ class ContractProvider extends ChangeNotifier {
 
     if (index >= 0) {
       toggleList.elementAt(index).isSelected =
-          !toggleList.elementAt(index).isSelected!;
+          !toggleList.elementAt(index).isSelected;
 
       int count = 0;
 
       for (var e in toggleList) {
-        if (e.isSelected!) {
+        if (e.isSelected) {
           count++;
         }
       }
@@ -233,13 +233,13 @@ class ContractProvider extends ChangeNotifier {
 
   removeAllSelectedItems(bool notify) {
     for (ContractDto data in _contracts) {
-      if (data.isSelected! == true) {
+      if (data.isSelected == true) {
         data.isSelected = false;
       }
     }
 
     for (ContractDto data in _archivedContracts) {
-      if (data.isSelected! == true) {
+      if (data.isSelected == true) {
         data.isSelected = false;
       }
     }
@@ -258,7 +258,7 @@ class ContractProvider extends ChangeNotifier {
       required LocalDatabase db,
       required CostProvider costProvider}) async {
     for (ContractDto data in currentList) {
-      if (data.isSelected! == true) {
+      if (data.isSelected == true) {
         if (data.provider != null) {
           await db.contractDao.deleteProvider(data.provider!.id!);
         }
@@ -447,7 +447,7 @@ class ContractProvider extends ChangeNotifier {
 
   archiveAllSelectedContract(LocalDatabase db) async {
     for (ContractDto contract in _contracts) {
-      if (contract.isSelected != null && contract.isSelected!) {
+      if (contract.isSelected) {
         await db.contractDao
             .updateIsArchived(contractId: contract.id!, isArchived: true);
 
@@ -458,7 +458,7 @@ class ContractProvider extends ChangeNotifier {
 
   unarchiveSelectedContracts(LocalDatabase db) async {
     for (ContractDto contract in _archivedContracts) {
-      if (contract.isSelected != null && contract.isSelected!) {
+      if (contract.isSelected) {
         await db.contractDao
             .updateIsArchived(contractId: contract.id!, isArchived: false);
 

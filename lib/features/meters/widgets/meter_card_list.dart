@@ -141,7 +141,7 @@ class _MeterCardListState extends State<MeterCardList> {
                         : RoomDto.fromData(element.room!);
 
                     return StreamBuilder(
-                      stream: db.entryDao.getNewestEntry(meterItem.id),
+                      stream: db.entryDao.watchNewestEntry(meterItem.id),
                       builder: (context, snapshot2) {
                         final entryList = snapshot2.data;
 
