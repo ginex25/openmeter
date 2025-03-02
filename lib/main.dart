@@ -25,7 +25,6 @@ import 'core/provider/small_feature_provider.dart';
 import 'core/provider/sort_provider.dart';
 import 'core/provider/stats_provider.dart';
 import 'core/provider/theme_changer.dart';
-import 'core/provider/torch_provider.dart';
 import 'features/contract/view/archive_contracts.dart';
 import 'ui/screens/meters/archived_meters.dart';
 import 'ui/screens/settings_screens/database_screen.dart';
@@ -102,7 +101,6 @@ class MyApp extends StatelessWidget {
         p.ChangeNotifierProvider<ContractProvider>.value(
             value: ContractProvider()),
         p.ChangeNotifierProvider<MeterProvider>.value(value: MeterProvider()),
-        p.ChangeNotifierProvider<TorchProvider>.value(value: TorchProvider()),
         p.ChangeNotifierProvider<DetailsContractProvider>.value(
             value: DetailsContractProvider()),
         p.ChangeNotifierProvider<DesignProvider>.value(value: DesignProvider()),

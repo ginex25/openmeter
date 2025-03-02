@@ -14,7 +14,6 @@ import '../../../../core/model/entry_dto.dart';
 import '../../../../core/model/meter_dto.dart';
 import '../../../../core/provider/database_settings_provider.dart';
 import '../../../../core/provider/entry_provider.dart';
-import '../../../../core/provider/torch_provider.dart';
 import '../../../../utils/convert_count.dart';
 import '../../../../utils/custom_icons.dart';
 
@@ -92,7 +91,7 @@ class _AddEntryState extends State<AddEntry> {
     return newDate.difference(oldDate).inDays;
   }
 
-  _saveEntry(TorchProvider torchProvider, EntryProvider entryProvider) async {
+  _saveEntry(EntryProvider entryProvider) async {
     final db = Provider.of<LocalDatabase>(context, listen: false);
 
     EntryDto? newestEntry = entryProvider.getNewestEntry;
@@ -157,10 +156,10 @@ class _AddEntryState extends State<AddEntry> {
       }
 
       await db.entryDao.createEntry(entry).then((value) {
-        if (_torchController.stateTorch && torchProvider.stateTorch) {
-          _torchController.getTorch();
-          _stateTorch = false;
-        }
+        // if (_torchController.stateTorch && torchProvider.stateTorch) {
+        //   _torchController.getTorch();
+        //   _stateTorch = false;
+        // }
 
         _saved = true;
 
@@ -317,17 +316,14 @@ class _AddEntryState extends State<AddEntry> {
     );
   }
 
-  _topBar(
-    TorchProvider torchProvider,
-    Function setState,
-  ) {
+  _topBar(Function setState) {
     bool isTorchOn = _torchController.stateTorch;
 
-    if (torchProvider.stateTorch && !_torchController.stateTorch) {
-      _torchController.getTorch();
-      _stateTorch = true;
-      isTorchOn = true;
-    }
+    // if (torchProvider.stateTorch && !_torchController.stateTorch) {
+    //   _torchController.getTorch();
+    //   _stateTorch = true;
+    //   isTorchOn = true;
+    // }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -344,7 +340,7 @@ class _AddEntryState extends State<AddEntry> {
                 setState(() {
                   if (torch) {
                     isTorchOn = !isTorchOn;
-                    torchProvider.setIsTorchOn(isTorchOn);
+                    // torchProvider.setIsTorchOn(isTorchOn);
                   }
                 });
               },
@@ -488,11 +484,8 @@ class _AddEntryState extends State<AddEntry> {
     );
   }
 
-  _showBottomModel(
-    EntryProvider entryProvider,
-    TorchProvider torchProvider,
-  ) {
-    _torchController.setStateTorch(torchProvider.getStateIsTorchOn);
+  _showBottomModel(EntryProvider entryProvider) {
+    // _torchController.setStateTorch(torchProvider.getStateIsTorchOn);
     _counterController.text = entryProvider.getPredictedCount;
 
     return showModalBottomSheet(
@@ -519,7 +512,7 @@ class _AddEntryState extends State<AddEntry> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          _topBar(torchProvider, setState),
+                          _topBar(setState),
                           const SizedBox(
                             height: 15,
                           ),
@@ -530,8 +523,7 @@ class _AddEntryState extends State<AddEntry> {
                           Align(
                             alignment: Alignment.bottomRight,
                             child: FloatingActionButton.extended(
-                              onPressed: () =>
-                                  _saveEntry(torchProvider, entryProvider),
+                              onPressed: () => _saveEntry(entryProvider),
                               label: const Text('Speichern'),
                             ),
                           ),
@@ -573,11 +565,10 @@ class _AddEntryState extends State<AddEntry> {
   @override
   Widget build(BuildContext context) {
     final entryProvider = Provider.of<EntryProvider>(context);
-    final torchProvider = Provider.of<TorchProvider>(context);
 
     return IconButton(
       onPressed: () {
-        _showBottomModel(entryProvider, torchProvider);
+        _showBottomModel(entryProvider);
       },
       icon: const Icon(Icons.add),
       tooltip: 'Eintrag erstellen',

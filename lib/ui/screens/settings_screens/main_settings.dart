@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:openmeter/features/torch/view/active_torch_tile.dart';
 
-import '../../widgets/settings_screen/active_torch.dart';
-import '../../widgets/settings_screen/desing_tile.dart';
-import '../../widgets/settings_screen/tags_tile.dart';
 import '../../widgets/settings_screen/database_listtile.dart';
+import '../../widgets/settings_screen/desing_tile.dart';
 import '../../widgets/settings_screen/reading_reminder.dart';
+import '../../widgets/settings_screen/tags_tile.dart';
 
 class MainSettings extends StatelessWidget {
   const MainSettings({super.key});
@@ -26,7 +26,7 @@ class MainSettings extends StatelessWidget {
               Divider(),
               ReadingReminder(),
               TagsTile(),
-              ActiveTorch(),
+              ActiveTorchTile(),
             ],
           ),
         ),
