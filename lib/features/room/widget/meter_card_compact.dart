@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:openmeter/features/room/model/meter_room_dto.dart';
+import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
 import 'package:openmeter/ui/widgets/meter/meter_circle_avatar.dart';
 import 'package:openmeter/utils/meter_typ.dart';
 
@@ -88,7 +89,7 @@ class MeterCompactTile extends StatelessWidget {
                   ),
               ],
             ),
-            // HorizontalTagsList(meterId: data.meter.id),
+            HorizontalTagsList(meterId: data.meter.id!),
             if (data.isInARoom)
               Text(
                 'Bereits im ${roomData?.name}',

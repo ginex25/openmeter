@@ -4,7 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:openmeter/core/provider/entry_filter_provider.dart';
+import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
+import 'package:openmeter/features/tags/view/tags_screen.dart';
 import 'package:provider/provider.dart' as p;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/database/local_database.dart';
 import 'core/provider/chart_provider.dart';
@@ -29,7 +32,6 @@ import 'ui/screens/settings_screens/database_screen.dart';
 import 'ui/screens/settings_screens/design_screen.dart';
 import 'ui/screens/settings_screens/main_settings.dart';
 import 'ui/screens/settings_screens/reminder_screen.dart';
-import 'ui/screens/settings_screens/tags_screen.dart';
 import 'ui/widgets/utils/bottom_nav_bar.dart';
 
 void main() async {
@@ -37,8 +39,15 @@ void main() async {
 
   await Hive.initFlutter();
 
+  final SharedPreferencesWithCache pref =
+      await SharedPreferencesWithCache.create(
+          cacheOptions: SharedPreferencesWithCacheOptions());
+
   runApp(
     ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(pref),
+      ],
       child: p.Provider<LocalDatabase>(
         create: (context) => LocalDatabase(),
         child: const MyApp(),

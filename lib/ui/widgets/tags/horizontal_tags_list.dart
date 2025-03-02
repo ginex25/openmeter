@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/database/local_database.dart';
 import '../../../core/enums/tag_chip_state.dart';
 import '../../../core/model/tag_dto.dart';
-import 'tag_chip.dart';
+import '../../../features/tags/widget/tag_chip.dart';
 
 class HorizontalTagsList extends StatelessWidget {
   final int meterId;
@@ -31,7 +31,7 @@ class HorizontalTagsList extends StatelessWidget {
           setHasTags!(true);
         }
 
-        if(setTags != null){
+        if (setTags != null) {
           setTags!(tags);
         }
 

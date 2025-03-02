@@ -60,6 +60,7 @@ class _AddRoomSheetState extends ConsumerState<AddRoomSheet> {
             key: _formKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
+              spacing: 15,
               children: [
                 const Text(
                   'Neues Zimmer',
@@ -68,25 +69,21 @@ class _AddRoomSheetState extends ConsumerState<AddRoomSheet> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
                 RoomTypeDropdown(
                   selectedType: _roomTyp,
                   onChanged: (value) {
                     _roomTyp = value.toString();
                   },
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
                 TextFormField(
                   controller: _nameController,
                   decoration: const InputDecoration(
-                      icon: Icon(Icons.abc), label: Text('Zimmername')),
+                    icon: Icon(Icons.abc),
+                    label: Text('Zimmername'),
+                  ),
                 ),
                 const SizedBox(
-                  height: 30,
+                  height: 15,
                 ),
                 Align(
                   alignment: Alignment.bottomRight,

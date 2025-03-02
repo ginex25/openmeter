@@ -13,10 +13,9 @@ import '../../../core/model/tag_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/meter_provider.dart';
 import '../../../core/provider/refresh_provider.dart';
+import '../../../features/tags/widget/tag_chip.dart';
 import '../../../utils/convert_meter_unit.dart';
 import '../../widgets/meter/meter_circle_avatar.dart';
-import '../../widgets/tags/add_tags.dart';
-import '../../widgets/tags/tag_chip.dart';
 
 class AddScreen extends StatefulWidget {
   final MeterData? meter;
@@ -31,8 +30,6 @@ class AddScreen extends StatefulWidget {
 }
 
 class _AddScreenState extends State<AddScreen> {
-  final AddTags _addTags = AddTags();
-
   final ConvertMeterUnit convertMeterUnit = ConvertMeterUnit();
 
   final TextEditingController _meternumber = TextEditingController();
@@ -355,7 +352,8 @@ class _AddScreenState extends State<AddScreen> {
             ),
             trailing: IconButton(
                 onPressed: () {
-                  _addTags.getAddTags(context);
+                  // TODO neue methode mit tags implentieren
+                  // _addTags.getAddTags(context);
                 },
                 icon: Icon(
                   Icons.add,

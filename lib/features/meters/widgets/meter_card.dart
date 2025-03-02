@@ -15,7 +15,6 @@ import '../../../core/provider/small_feature_provider.dart';
 import '../../../core/provider/sort_provider.dart';
 import '../../../ui/screens/meters/details_single_meter.dart';
 import '../../../ui/widgets/meter/meter_circle_avatar.dart';
-import '../../../ui/widgets/tags/horizontal_tags_list.dart';
 import '../../../utils/convert_meter_unit.dart';
 import '../../../utils/meter_typ.dart';
 
@@ -276,11 +275,12 @@ class _MeterCardState extends State<MeterCard> {
                 const SizedBox(
                   height: 10,
                 ),
-                if (smallProvider.getShowTags)
-                  HorizontalTagsList(
-                    meterId: widget.meter.id!,
-                    setHasTags: (p0) => setHasTags(p0),
-                  ),
+                // TODO get state with riverpod
+                // if (smallProvider.getShowTags)
+                //   HorizontalTagsList(
+                //     meterId: widget.meter.id!,
+                //     setHasTags: (p0) => setHasTags(p0),
+                //   ),
                 const SizedBox(
                   height: 10,
                 ),

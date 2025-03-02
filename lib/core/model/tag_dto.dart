@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+
 import '../database/local_database.dart';
 
 class TagDto {
@@ -6,6 +8,9 @@ class TagDto {
   String name = '';
   int color = -1;
 
+  TagDto(
+      {this.id, required this.uuid, required this.name, required this.color});
+
   TagDto.fromValue({required this.name, required this.color});
 
   TagDto.fromData(Tag data)
@@ -13,4 +18,10 @@ class TagDto {
         uuid = data.uuid,
         name = data.name,
         color = data.color;
+
+  TagsCompanion toCompanion() => TagsCompanion(
+        uuid: Value(uuid!),
+        name: Value(name),
+        color: Value(color),
+      );
 }
