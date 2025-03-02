@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:openmeter/core/model/tag_dto.dart';
+import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -18,7 +20,6 @@ import '../../widgets/details_meter/charts/usage_line_chart.dart';
 import '../../widgets/details_meter/costs/costs.dart';
 import '../../widgets/details_meter/entry/add_entry.dart';
 import '../../widgets/details_meter/entry/entry_card.dart';
-import '../../widgets/tags/horizontal_tags_list.dart';
 import '../../widgets/utils/selected_items_bar.dart';
 import 'add_meter.dart';
 
@@ -45,7 +46,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
 
   int _activeChartWidget = 0;
 
-  List<Tag> _tags = [];
+  List<TagDto> _tags = [];
   bool _updateTags = false;
 
   @override
@@ -57,7 +58,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
     super.initState();
   }
 
-  getTags(List<Tag> tags) {
+  getTags(List<TagDto> tags) {
     _tags = tags;
   }
 
@@ -81,7 +82,14 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
   }
 
   Future _getTagsById(LocalDatabase db) async {
-    _tags = await db.tagsDao.getTagsForMeter(_meter.id!);
+    final data = await db.tagsDao.getTagsForMeter(_meter.id!);
+
+    _tags = data
+        .map(
+          (e) => TagDto.fromData(e),
+        )
+        .toList();
+
     setState(() {
       _updateTags = false;
     });
@@ -266,7 +274,11 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
                   builder: (context) => AddScreen(
                     meter: _meter.toMeterData(),
                     room: _room,
-                    tags: _tags,
+                    tags: _tags
+                        .map(
+                          (e) => e.toData(),
+                        )
+                        .toList(),
                   ),
                 )).then((value) {
               if (value == null) {

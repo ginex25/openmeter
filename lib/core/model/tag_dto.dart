@@ -24,4 +24,6 @@ class TagDto {
         name: Value(name),
         color: Value(color),
       );
+
+  Tag toData() => Tag(uuid: uuid!, name: name, color: color, id: id!);
 }
