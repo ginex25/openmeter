@@ -4,11 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/database/local_database.dart';
-import '../../../core/enums/font_size_value.dart';
 import '../../../core/helper/database_settings_helper.dart';
 import '../../../core/model/database_stats_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
-import '../../../core/provider/theme_changer.dart';
 
 class DatabaseStats extends StatefulWidget {
   final DatabaseSettingsHelper databaseSettingsHelper;
@@ -95,10 +93,10 @@ class _DatabaseStatsState extends State<DatabaseStats> {
 
     DatabaseSettingsHelper databaseHelper = widget.databaseSettingsHelper;
 
-    final themeProvider = Provider.of<ThemeChanger>(context);
+    // final themeProvider = Provider.of<ThemeChanger>(context);
 
-    _isLargeText =
-        themeProvider.getFontSizeValue == FontSizeValue.large ? true : false;
+    _isLargeText = false;
+    // themeProvider.getFontSizeValue == FontSizeValue.large ? true : false;
 
     _imageSize = provider.imageSize;
     _dbSize = provider.databaseSize;

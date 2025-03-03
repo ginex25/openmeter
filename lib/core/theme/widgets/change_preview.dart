@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:openmeter/core/enums/font_size_value.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/theme/model/theme_model.dart';
+import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/utils/custom_colors.dart';
-import 'package:provider/provider.dart';
 
-import '../../../core/provider/design_provider.dart';
-import '../../../core/provider/theme_changer.dart';
 import '../../../utils/custom_icons.dart';
 
-class ChangePreview extends StatelessWidget {
+class ChangePreview extends ConsumerWidget {
   const ChangePreview({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeModel theme = ref.watch(themeModeProviderProvider);
+
     return SizedBox(
       width: double.infinity,
       height: 250,
@@ -50,9 +51,9 @@ class ChangePreview extends StatelessWidget {
             ),
             child: Column(
               children: [
-                _meterCard(context),
+                _meterCard(theme),
                 const Spacer(),
-                _navBar(context),
+                _navBar(theme.compactNavigation),
               ],
             ),
           ),
@@ -61,21 +62,8 @@ class ChangePreview extends StatelessWidget {
     );
   }
 
-  double _getTextHeight(ThemeChanger themeChanger) {
-    final textMode = themeChanger.getFontSizeValue;
-
-    switch (textMode) {
-      case FontSizeValue.large:
-        return 17;
-      case FontSizeValue.small:
-        return 13;
-      default:
-        return 15;
-    }
-  }
-
-  _meterInformation(BoxDecoration decoration, ThemeChanger themeChanger) {
-    final double height = _getTextHeight(themeChanger);
+  _meterInformation(BoxDecoration decoration, ThemeModel theme) {
+    final double height = theme.fontSize.size.toDouble() - 2;
 
     return Table(
       columnWidths: const {
@@ -135,12 +123,9 @@ class ChangePreview extends StatelessWidget {
     );
   }
 
-  _meterCard(BuildContext context) {
-    final themeChanger = Provider.of<ThemeChanger>(context);
-
-    final color = themeChanger.getThemeMode == ThemeMode.dark
-        ? Colors.white30
-        : CustomColors.lightGrey;
+  _meterCard(ThemeModel theme) {
+    final color =
+        theme.mode == ThemeMode.dark ? Colors.white30 : CustomColors.lightGrey;
 
     const radius = BorderRadius.all(Radius.circular(16));
 
@@ -149,7 +134,7 @@ class ChangePreview extends StatelessWidget {
       borderRadius: radius,
     );
 
-    final double height = _getTextHeight(themeChanger);
+    final double height = theme.fontSize.size.toDouble() - 2;
 
     return SizedBox(
       height: 120,
@@ -180,7 +165,7 @@ class ChangePreview extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              _meterInformation(decoration, themeChanger),
+              _meterInformation(decoration, theme),
               const Spacer(),
               Center(
                 child: Container(
@@ -196,11 +181,7 @@ class ChangePreview extends StatelessWidget {
     );
   }
 
-  _navBar(BuildContext context) {
-    final provider = Provider.of<DesignProvider>(context);
-
-    bool compactNavBar = provider.getStateCompactNavBar;
-
+  _navBar(bool compactNavBar) {
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(bottom: Radius.circular(9)),
       child: NavigationBar(

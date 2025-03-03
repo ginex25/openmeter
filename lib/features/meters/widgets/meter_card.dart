@@ -11,7 +11,6 @@ import '../../../core/provider/cost_provider.dart';
 import '../../../core/provider/entry_provider.dart';
 import '../../../core/provider/meter_provider.dart';
 import '../../../core/provider/room_provider.dart';
-import '../../../core/provider/small_feature_provider.dart';
 import '../../../core/provider/sort_provider.dart';
 import '../../../ui/screens/meters/details_single_meter.dart';
 import '../../../ui/widgets/meter/meter_circle_avatar.dart';
@@ -192,7 +191,6 @@ class _MeterCardState extends State<MeterCard> {
   @override
   Widget build(BuildContext context) {
     final sortProvider = Provider.of<SortProvider>(context);
-    final smallProvider = Provider.of<SmallFeatureProvider>(context);
     final meterProvider = Provider.of<MeterProvider>(context);
     final roomProvider = Provider.of<RoomProvider>(context);
 

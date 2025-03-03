@@ -3,14 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/database/local_database.dart';
-import '../../../../core/enums/font_size_value.dart';
 import '../../../../core/model/entry_dto.dart';
 import '../../../../core/model/entry_filter.dart';
 import '../../../../core/model/meter_dto.dart';
 import '../../../../core/provider/cost_provider.dart';
 import '../../../../core/provider/entry_filter_provider.dart';
 import '../../../../core/provider/entry_provider.dart';
-import '../../../../core/provider/theme_changer.dart';
 import '../../../../utils/convert_count.dart';
 import '../../../../utils/convert_meter_unit.dart';
 import 'details_entry.dart';
@@ -38,11 +36,10 @@ class EntryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final entryProvider = Provider.of<EntryProvider>(context);
     final costProvider = Provider.of<CostProvider>(context, listen: false);
-    final themeProvider = Provider.of<ThemeChanger>(context);
     final entryFilterProvider = Provider.of<EntryFilterProvider>(context);
 
-    bool isLargeText =
-        themeProvider.getFontSizeValue == FontSizeValue.large ? true : false;
+    bool isLargeText = false;
+    // themeProvider.getFontSizeValue == FontSizeValue.large ? true : false;
 
     bool hasFilter = entryFilterProvider.getHasActiveFilters;
 

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/enums/font_size_value.dart';
-import 'package:openmeter/core/provider/theme_changer.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/view/details_contract.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
-import 'package:provider/provider.dart' as p;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'contract_card.dart';
@@ -37,7 +34,7 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
 
     final contractsProvider = ref.watch(contractListProvider);
 
-    final themeProvider = p.Provider.of<ThemeChanger>(context);
+    // final themeProvider = p.Provider.of<ThemeChanger>(context);
 
     return contractsProvider.when(
       data: (data) {
@@ -64,9 +61,10 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
 
         double height = 180;
 
-        bool isLargeText = themeProvider.getFontSizeValue == FontSizeValue.large
-            ? true
-            : false;
+        bool isLargeText =
+            false; //themeProvider.getFontSizeValue == FontSizeValue.large
+        //     ? true
+        //     : false;
 
         if (first.length == 1 && second.isEmpty) {
           if (isLargeText) {

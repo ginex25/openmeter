@@ -3,16 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/enums/font_size_value.dart';
 import 'package:openmeter/core/model/meter_typ.dart';
-import 'package:openmeter/core/provider/theme_changer.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/tags/widget/tag_chip.dart';
 import 'package:openmeter/ui/widgets/meter/meter_circle_avatar.dart';
 import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/meter_typ.dart';
-import 'package:provider/provider.dart' as p;
 
 class ContractCard extends ConsumerStatefulWidget {
   final ContractDto contractDto;
@@ -31,10 +28,10 @@ class _ContractCardState extends ConsumerState<ContractCard> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = p.Provider.of<ThemeChanger>(context);
+    // final themeProvider = p.Provider.of<ThemeChanger>(context);
 
-    bool isLargeText =
-        themeProvider.getFontSizeValue == FontSizeValue.large ? true : false;
+    // bool isLargeText =
+    //     themeProvider.getFontSizeValue == FontSizeValue.large ? true : false;
 
     final ContractDto contract = widget.contractDto;
     final ProviderDto? providerDto = contract.provider;
@@ -53,7 +50,7 @@ class _ContractCardState extends ConsumerState<ContractCard> {
     final CustomAvatar avatarData = meterTyp.avatar;
 
     return SizedBox(
-      height: isLargeText ? 200 : 180,
+      height: 180, //isLargeText ? 200 : 180,
       child: Card(
         color: contract.isSelected ? Theme.of(context).highlightColor : null,
         child: Padding(

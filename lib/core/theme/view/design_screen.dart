@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:openmeter/core/theme/widgets/theme_title.dart';
 
-import '../../widgets/design_settings_screen/change_preview.dart';
-import '../../widgets/design_settings_screen/compact_nav_bar.dart';
-import '../../widgets/design_settings_screen/dynamic_color_tile.dart';
-import '../../widgets/design_settings_screen/font_size_tile.dart';
-import '../../widgets/design_settings_screen/theme_title.dart';
-import '../../widgets/design_settings_screen/display_awake.dart';
+import '../widgets/change_preview.dart';
+import '../widgets/compact_nav_bar.dart';
+import '../widgets/display_awake.dart';
+import '../widgets/dynamic_color_tile.dart';
+import '../widgets/font_size_tile.dart';
 
 class DesignScreen extends StatefulWidget {
   const DesignScreen({super.key});
