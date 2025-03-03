@@ -5,18 +5,20 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:openmeter/features/reminder/exception/no_permission.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../utils/log.dart';
+import '../../../utils/log.dart';
 
-class LocalNotificationHelper {
+class LocalNotificationService {
   late final FlutterLocalNotificationsPlugin _localNotification;
+
   final String _notificationTitle = 'Ableseerinnerung';
   final String _notificationBody =
       'Heute sollen die Zähler wieder abgelesen werden!';
 
-  LocalNotificationHelper() {
+  LocalNotificationService() {
     _localNotification = FlutterLocalNotificationsPlugin();
     _initTimeZone();
     _initLocalNotification();
@@ -43,18 +45,26 @@ class LocalNotificationHelper {
     request notification permission
      for android 13 and higher
    */
-  Future<void> requestPermission() async {
+  Future<bool> requestPermission() async {
     if (Platform.isAndroid) {
-      await _localNotification
+      final allowed = await _localNotification
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
 
-      await _localNotification
+      if (allowed == null || allowed == false) {
+        return false;
+      }
+
+      final exactAllowed = await _localNotification
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.requestExactAlarmsPermission();
+
+      return exactAllowed ?? false;
     }
+
+    return false;
   }
 
   NotificationDetails _notificationDetails() {
@@ -93,6 +103,12 @@ class LocalNotificationHelper {
   }
 
   void dailyReminder(int hour, int minute) async {
+    bool hasPermission = await requestPermission();
+
+    if (!hasPermission) {
+      throw NoPermissionException();
+    }
+
     await _localNotification.zonedSchedule(
       0,
       _notificationTitle,
@@ -120,6 +136,12 @@ class LocalNotificationHelper {
   }
 
   void weeklyReminder(int hour, int minute, int day) async {
+    bool hasPermission = await requestPermission();
+
+    if (!hasPermission) {
+      throw NoPermissionException();
+    }
+
     await _localNotification.zonedSchedule(
       0,
       _notificationTitle,
@@ -147,6 +169,12 @@ class LocalNotificationHelper {
   }
 
   void monthlyReminder(int hour, int minute, int day) async {
+    bool hasPermission = await requestPermission();
+
+    if (!hasPermission) {
+      throw NoPermissionException();
+    }
+
     await _localNotification.zonedSchedule(
       0,
       _notificationTitle,

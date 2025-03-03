@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ReadingReminder extends StatelessWidget {
-  const ReadingReminder({super.key});
+class ReadingReminderTile extends StatelessWidget {
+  const ReadingReminderTile({super.key});
 
   @override
   Widget build(BuildContext context) {

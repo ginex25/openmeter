@@ -19,18 +19,17 @@ import 'core/provider/details_contract_provider.dart';
 import 'core/provider/entry_provider.dart';
 import 'core/provider/meter_provider.dart';
 import 'core/provider/refresh_provider.dart';
-import 'core/provider/reminder_provider.dart';
 import 'core/provider/room_provider.dart';
 import 'core/provider/small_feature_provider.dart';
 import 'core/provider/sort_provider.dart';
 import 'core/provider/stats_provider.dart';
 import 'core/provider/theme_changer.dart';
 import 'features/contract/view/archive_contracts.dart';
+import 'features/reminder/view/reminder_screen.dart';
 import 'ui/screens/meters/archived_meters.dart';
 import 'ui/screens/settings_screens/database_screen.dart';
 import 'ui/screens/settings_screens/design_screen.dart';
 import 'ui/screens/settings_screens/main_settings.dart';
-import 'ui/screens/settings_screens/reminder_screen.dart';
 import 'ui/widgets/utils/bottom_nav_bar.dart';
 
 void main() async {
@@ -88,8 +87,6 @@ class MyApp extends StatelessWidget {
         p.ChangeNotifierProvider<SortProvider>.value(value: SortProvider()),
         p.ChangeNotifierProvider<RefreshProvider>.value(
             value: RefreshProvider()),
-        p.ChangeNotifierProvider<ReminderProvider>.value(
-            value: ReminderProvider()),
         p.ChangeNotifierProvider<SmallFeatureProvider>.value(
             value: SmallFeatureProvider()),
         p.ChangeNotifierProvider<EntryProvider>.value(value: EntryProvider()),

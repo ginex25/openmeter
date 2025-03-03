@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/features/reminder/model/reminder_model.dart';
+import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
 
-import '../../../core/provider/reminder_provider.dart';
-
-class WeekTile extends StatefulWidget {
+class WeekTile extends ConsumerStatefulWidget {
   const WeekTile({super.key});
 
   @override
-  State<WeekTile> createState() => _WeekTileState();
+  ConsumerState<WeekTile> createState() => _WeekTileState();
 }
 
-class _WeekTileState extends State<WeekTile> {
+class _WeekTileState extends ConsumerState<WeekTile> {
   String _selectedWeek = 'Montag';
 
   final weekDays = [
@@ -24,7 +24,7 @@ class _WeekTileState extends State<WeekTile> {
     'Sonntag'
   ];
 
-  _weekDaysDialog(BuildContext context, ReminderProvider provider) {
+  _weekDaysDialog() {
     return showDialog(
       context: context,
       builder: (context) {
@@ -39,10 +39,10 @@ class _WeekTileState extends State<WeekTile> {
                     groupValue: _selectedWeek,
                     title: Text(e),
                     onChanged: (value) {
-                      setState(() {
-                        _selectedWeek = value!;
-                      });
-                      provider.setWeekDay(weekDays.indexOf(e));
+                      ref
+                          .read(reminderProvider.notifier)
+                          .setWeekDay(weekDays.indexOf(e));
+
                       Navigator.of(context).pop();
                     },
                   );
@@ -57,11 +57,9 @@ class _WeekTileState extends State<WeekTile> {
 
   @override
   Widget build(BuildContext context) {
-    final reminderProvider = Provider.of<ReminderProvider>(context);
+    final ReminderModel reminder = ref.watch(reminderProvider);
 
-    if (reminderProvider.weekDay != 0) {
-      _selectedWeek = weekDays.elementAt(reminderProvider.weekDay);
-    }
+    _selectedWeek = weekDays.elementAt(reminder.weekDay);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +75,7 @@ class _WeekTileState extends State<WeekTile> {
           ),
           subtitle: const Text('Wähle den Wochentag der Benachrichtigung.'),
           leading: const FaIcon(FontAwesomeIcons.calendarDay),
-          onTap: () => _weekDaysDialog(context, reminderProvider),
+          onTap: () => _weekDaysDialog(),
         ),
       ],
     );

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/features/reminder/model/reminder_model.dart';
+import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
 
-import '../../../core/provider/reminder_provider.dart';
-
-class MonthTile extends StatefulWidget {
+class MonthTile extends ConsumerStatefulWidget {
   const MonthTile({super.key});
 
   @override
-  State<MonthTile> createState() => _MonthTileState();
+  ConsumerState<MonthTile> createState() => _MonthTileState();
 }
 
-class _MonthTileState extends State<MonthTile> {
+class _MonthTileState extends ConsumerState<MonthTile> {
   int _selectedDay = 1;
   final _monthDays = List.generate(30, (index) => index + 1, growable: false);
 
-  _monthDaysDialog(BuildContext context, ReminderProvider provider) {
+  _monthDaysDialog() {
     return showDialog(
       context: context,
       builder: (context) {
@@ -31,10 +31,10 @@ class _MonthTileState extends State<MonthTile> {
                       groupValue: _selectedDay,
                       title: Text('$e'),
                       onChanged: (value) {
-                        setState(() {
-                          _selectedDay = value!;
-                        });
-                        provider.setMonthDay(_selectedDay);
+                        ref
+                            .read(reminderProvider.notifier)
+                            .setMonthDay(value ?? 1);
+
                         Navigator.of(context).pop();
                       },
                     );
@@ -50,11 +50,9 @@ class _MonthTileState extends State<MonthTile> {
 
   @override
   Widget build(BuildContext context) {
-    final reminderProvider = Provider.of<ReminderProvider>(context);
+    final ReminderModel reminder = ref.watch(reminderProvider);
 
-    if (reminderProvider.monthDay != 0) {
-      _selectedDay = reminderProvider.monthDay;
-    }
+    _selectedDay = reminder.monthDay;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +68,7 @@ class _MonthTileState extends State<MonthTile> {
           ),
           subtitle: const Text('Wähle den Tag des Monats der Benachrichtigung'),
           leading: const FaIcon(FontAwesomeIcons.solidCalendarDays),
-          onTap: () => _monthDaysDialog(context, reminderProvider),
+          onTap: () => _monthDaysDialog(),
         ),
       ],
     );

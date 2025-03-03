@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/features/reminder/model/reminder_model.dart';
+import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
+import 'package:openmeter/utils/datetime_formats.dart';
 
-import '../../../core/provider/reminder_provider.dart';
-
-class TimePickerTile extends StatefulWidget {
+class TimePickerTile extends ConsumerStatefulWidget {
   const TimePickerTile({super.key});
 
   @override
-  State<TimePickerTile> createState() => _TimePickerTileState();
+  ConsumerState<TimePickerTile> createState() => _TimePickerTileState();
 }
 
-class _TimePickerTileState extends State<TimePickerTile> {
+class _TimePickerTileState extends ConsumerState<TimePickerTile> {
   String _lableTime = '18:00';
 
   DateTime _selectedTime = DateTime.now();
 
-  final DateFormat _timeFormat = DateFormat("HH:mm");
+  final DateFormat _timeFormat = DateFormat(DateTimeFormats.hourMinute);
 
   final DateTime _dateTimeNow = DateTime.now();
 
-  _timePicker(BuildContext context, ReminderProvider provider) {
+  _timePicker() {
     return showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -42,43 +43,46 @@ class _TimePickerTileState extends State<TimePickerTile> {
       if (pickedTime == null) {
         return;
       }
-      _selectedTime = DateTime(_dateTimeNow.year, _dateTimeNow.month,
-          _dateTimeNow.day, pickedTime.hour, pickedTime.minute);
-      provider.setTime(_selectedTime.hour, _selectedTime.minute);
+
+      ref
+          .read(reminderProvider.notifier)
+          .setMinuteAndHour(pickedTime.minute, pickedTime.hour);
     });
   }
 
-  _loadFromPrefs(ReminderProvider reminderProvider) {
+  _loadFromPrefs(ReminderModel reminder) {
     _selectedTime = DateTime(
       _dateTimeNow.year,
       _dateTimeNow.month,
       _dateTimeNow.day,
-      reminderProvider.timeHour,
-      reminderProvider.timeMinute,
+      reminder.hour,
+      reminder.minute,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final reminderProvider = Provider.of<ReminderProvider>(context);
+    final ReminderModel reminder = ref.watch(reminderProvider);
 
-    _loadFromPrefs(reminderProvider);
+    _loadFromPrefs(reminder);
 
     _lableTime = _timeFormat.format(_selectedTime);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         Text(
           'Uhrzeit',
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         ListTile(
-          title: Text(_lableTime, style: Theme.of(context).textTheme.bodyLarge,),
+          title: Text(
+            _lableTime,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
           subtitle: const Text('Wähle die Uhrzeit der Benachrichtigung.'),
           leading: const FaIcon(FontAwesomeIcons.clock),
-          onTap: () => _timePicker(context, reminderProvider),
+          onTap: () => _timePicker(),
         ),
       ],
     );

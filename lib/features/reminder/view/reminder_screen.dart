@@ -1,40 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/features/reminder/model/reminder_model.dart';
+import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
+import 'package:openmeter/features/reminder/widgets/active_reminder.dart';
 
-import '../../../core/provider/reminder_provider.dart';
-import '../../widgets/reminder_screen/active_reminder.dart';
-
-class ReminderScreen extends StatefulWidget {
+class ReminderScreen extends ConsumerStatefulWidget {
   const ReminderScreen({super.key});
 
   @override
-  State<ReminderScreen> createState() => _ReminderScreenState();
+  ConsumerState createState() => _ReminderScreenState();
 }
 
-class _ReminderScreenState extends State<ReminderScreen> {
-  bool _active = false;
-  final DateTime _selectedTime = DateTime.now();
-
-  _loadFromPrefs(ReminderProvider reminderProvider) {
-    _active = reminderProvider.isActive;
-  }
-
-  _handleSwitchState(bool value, ReminderProvider reminderProvider) async {
-    setState(() {
-      _active = value;
-      reminderProvider.setActive(value);
-
-      if (_selectedTime.hour == 0 && _selectedTime.minute == 0) {
-        reminderProvider.setTime(TimeOfDay.now().hour, TimeOfDay.now().minute);
-      }
-    });
-  }
-
+class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   @override
   Widget build(BuildContext context) {
-    final reminderProvider = Provider.of<ReminderProvider>(context);
-
-    _loadFromPrefs(reminderProvider);
+    ReminderModel reminder = ref.watch(reminderProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,14 +25,14 @@ class _ReminderScreenState extends State<ReminderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!_active)
+            if (!reminder.isActive)
               Center(
                 child: Image.asset(
                   'assets/icons/notifications_disable.png',
                   width: 200,
                 ),
               ),
-            if (_active)
+            if (reminder.isActive)
               Center(
                 child: Image.asset(
                   'assets/icons/notifications_enable.png',
@@ -63,7 +43,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
               height: 10,
             ),
             SwitchListTile(
-              title: _active
+              title: reminder.isActive
                   ? Text(
                       'An',
                       style: Theme.of(context).textTheme.headlineLarge,
@@ -72,17 +52,33 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       'Aus',
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
-              subtitle: _active
+              subtitle: reminder.isActive
                   ? null
                   : const Text(
                       'Richte eine Ableseerinnerung ein, um Benachrichtigungen zu erhalten.'),
               contentPadding: const EdgeInsets.all(0),
-              value: _active,
+              value: reminder.isActive,
               onChanged: (value) async {
-                await _handleSwitchState(value, reminderProvider);
+                final success = await ref
+                    .read(reminderProvider.notifier)
+                    .setActiveState(value);
+
+                if (!success && context.mounted) {
+                  final snackBar = SnackBar(
+                    content: Text(
+                        'Benachrichtigungsberechtigung wurde nicht erteilt.'),
+                    backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                }
               },
             ),
-            if (_active) const ActiveReminder(),
+            if (reminder.isActive) const ActiveReminder(),
           ],
         ),
       ),
