@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/meter_typ.dart';
 import 'package:openmeter/core/provider/database_settings_provider.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/model/provider_dto.dart';
@@ -15,7 +14,7 @@ import 'package:openmeter/features/contract/provider/delete_provider_state.dart'
 import 'package:openmeter/features/contract/provider/details_contract_provider.dart';
 import 'package:openmeter/features/contract/widget/add_provider.dart';
 import 'package:openmeter/features/contract/widget/number_text_field.dart';
-import 'package:openmeter/ui/widgets/meter/meter_circle_avatar.dart';
+import 'package:openmeter/features/meters/widgets/meter_type_dropdown.dart';
 import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/meter_typ.dart';
 import 'package:provider/provider.dart' as p;
@@ -354,70 +353,6 @@ class AddProviderTile extends StatelessWidget {
       tilePadding: const EdgeInsets.all(0),
       onExpansionChanged: onExpansionChanged,
       children: children,
-    );
-  }
-}
-
-class MeterTypeDropdown extends StatelessWidget {
-  final String defaultValue;
-  final Function(String? value) onChanged;
-
-  const MeterTypeDropdown(
-      {super.key, required this.defaultValue, required this.onChanged});
-
-  List<MeterTyp> _filterMeterTyps() {
-    List<MeterTyp> result = [];
-
-    for (MeterTyp element in meterTyps) {
-      if (element.providerTitle.isNotEmpty) {
-        result.add(element);
-      }
-    }
-
-    return result;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final List<MeterTyp> newMeterTyps = _filterMeterTyps();
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 4),
-      child: DropdownButtonFormField(
-        validator: (value) {
-          if (value == null) {
-            return 'Bitte wähle einen Zählertyp!';
-          }
-          return null;
-        },
-        value: defaultValue,
-        isExpanded: true,
-        decoration: const InputDecoration(
-          label: Text('Zählertyp'),
-          icon: Icon(Icons.gas_meter_outlined),
-        ),
-        isDense: false,
-        items: newMeterTyps.map((element) {
-          final avatarData = element.avatar;
-          return DropdownMenuItem(
-            value: element.meterTyp,
-            child: Row(
-              children: [
-                MeterCircleAvatar(
-                  color: avatarData.color,
-                  icon: avatarData.icon,
-                  size: MediaQuery.of(context).size.width * 0.045,
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Text(element.meterTyp),
-              ],
-            ),
-          );
-        }).toList(),
-        onChanged: onChanged,
-      ),
     );
   }
 }

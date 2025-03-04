@@ -13,23 +13,23 @@ import '../../../core/model/tag_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/meter_provider.dart';
 import '../../../core/provider/refresh_provider.dart';
+import '../../../features/meters/widgets/meter_circle_avatar.dart';
 import '../../../features/tags/widget/tag_chip.dart';
 import '../../../utils/convert_meter_unit.dart';
-import '../../widgets/meter/meter_circle_avatar.dart';
 
-class AddScreen extends StatefulWidget {
+class AddScreenOld extends StatefulWidget {
   final MeterData? meter;
   final RoomDto? room;
   final List<Tag>? tags;
 
-  const AddScreen(
+  const AddScreenOld(
       {super.key, required this.meter, required this.room, this.tags});
 
   @override
-  State<AddScreen> createState() => _AddScreenState();
+  State<AddScreenOld> createState() => _AddScreenOldState();
 }
 
-class _AddScreenState extends State<AddScreen> {
+class _AddScreenOldState extends State<AddScreenOld> {
   final ConvertMeterUnit convertMeterUnit = ConvertMeterUnit();
 
   final TextEditingController _meternumber = TextEditingController();

@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+
 import '../database/local_database.dart';
 import 'entry_dto.dart';
 
@@ -9,10 +11,24 @@ class MeterDto {
   String note;
   String? room;
   bool isArchived;
+  // Todo make List<String>?
   List<dynamic>? tags;
   bool isSelected;
   bool hasEntry = false;
   EntryDto? lastEntry;
+
+  MeterDto(
+      {this.id,
+      required this.typ,
+      required this.number,
+      required this.unit,
+      this.note = '',
+      this.room,
+      this.isArchived = false,
+      this.tags,
+      this.isSelected = false,
+      this.hasEntry = false,
+      this.lastEntry});
 
   MeterDto.fromData(MeterData data, this.hasEntry)
       : typ = data.typ,
@@ -43,4 +59,11 @@ class MeterDto {
       id: id!,
     );
   }
+
+  MeterCompanion toMeterCompanion() => MeterCompanion(
+      isArchived: Value(isArchived),
+      typ: Value(typ),
+      note: Value(note),
+      number: Value(number),
+      unit: Value(unit));
 }

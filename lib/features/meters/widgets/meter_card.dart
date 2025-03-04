@@ -11,15 +11,14 @@ import '../../../core/provider/cost_provider.dart';
 import '../../../core/provider/entry_provider.dart';
 import '../../../core/provider/meter_provider.dart';
 import '../../../core/provider/room_provider.dart';
-import '../../../core/provider/sort_provider.dart';
 import '../../../ui/screens/meters/details_single_meter.dart';
-import '../../../ui/widgets/meter/meter_circle_avatar.dart';
 import '../../../utils/convert_meter_unit.dart';
 import '../../../utils/meter_typ.dart';
+import 'meter_circle_avatar.dart';
 
 class MeterCard extends StatefulWidget {
   final MeterDto meter;
-  final RoomDto? room;
+  final String roomName;
   final DateTime? date;
   final String count;
   final bool isSelected;
@@ -29,7 +28,7 @@ class MeterCard extends StatefulWidget {
   const MeterCard({
     super.key,
     required this.meter,
-    required this.room,
+    required this.roomName,
     required this.date,
     required this.count,
     required this.isSelected,
@@ -42,15 +41,12 @@ class MeterCard extends StatefulWidget {
 }
 
 class _MeterCardState extends State<MeterCard> {
-  RoomDto? room;
   bool hasTags = false;
 
   late MeterData _meterData;
 
   @override
   void initState() {
-    room = widget.room;
-
     _meterData = widget.meter.toMeterData();
     super.initState();
   }
@@ -150,14 +146,13 @@ class _MeterCardState extends State<MeterCard> {
     if (hasSelectedItems == true) {
       meterProvider.toggleSelectedMeter(_meterData);
     } else {
-      _openDetailsSingleMeter(widget.room, entryProvider).then((value) {
+      _openDetailsSingleMeter(null, entryProvider).then((value) {
         if (mounted) {
           Provider.of<CostProvider>(context, listen: false).resetValues();
           Provider.of<RoomProvider>(context, listen: false).setHasUpdate(true);
         }
 
         entryProvider.removeAllSelectedEntries();
-        room = value as RoomDto?;
       });
     }
   }
@@ -169,34 +164,33 @@ class _MeterCardState extends State<MeterCard> {
     if (roomProvider.getHasSelectedMeters) {
       roomProvider.toggleSelectedMeters(MeterDto.fromData(_meterData, false));
     } else {
-      room = roomProvider.getCurrentRoom;
+      // room = roomProvider.getCurrentRoom;
+      //
+      // _openDetailsSingleMeter(room, entryProvider).then((value) {
+      //   if (mounted) {
+      //     Provider.of<CostProvider>(context, listen: false).resetValues();
+      //   }
+      //
+      //   entryProvider.removeAllSelectedEntries();
+      //
+      //   final newRoom = roomProvider.getNewRoom;
 
-      _openDetailsSingleMeter(room, entryProvider).then((value) {
-        if (mounted) {
-          Provider.of<CostProvider>(context, listen: false).resetValues();
-        }
-
-        entryProvider.removeAllSelectedEntries();
-
-        final newRoom = roomProvider.getNewRoom;
-
-        if (newRoom == null || room?.id != newRoom.id) {
-          roomProvider.setHasUpdate(true);
-          roomProvider.setMeterCount(-1);
-        }
-      });
+      // if (newRoom == null || room?.id != newRoom.id) {
+      //   roomProvider.setHasUpdate(true);
+      //   roomProvider.setMeterCount(-1);
+      // }
+      // });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final sortProvider = Provider.of<SortProvider>(context);
     final meterProvider = Provider.of<MeterProvider>(context);
     final roomProvider = Provider.of<RoomProvider>(context);
 
     bool hasSelectedItems = meterProvider.getStateHasSelectedMeters;
 
-    String roomName = widget.room == null ? '' : widget.room!.name;
+    String roomName = widget.roomName;
 
     final entryProvider = Provider.of<EntryProvider>(context, listen: false);
 
@@ -259,11 +253,12 @@ class _MeterCardState extends State<MeterCard> {
                         ),
                       ],
                     ),
-                    if (sortProvider.getSort == 'meter')
-                      Text(
-                        roomName,
-                        style: themeContext.textTheme.bodyMedium,
-                      ),
+                    // TODO implment new sort provider
+                    // if (sortProvider.getSort == 'meter')
+                    //   Text(
+                    //     roomName,
+                    //     style: themeContext.textTheme.bodyMedium,
+                    //   ),
                   ],
                 ),
                 const SizedBox(

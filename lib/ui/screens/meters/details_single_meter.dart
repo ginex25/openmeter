@@ -21,7 +21,7 @@ import '../../widgets/details_meter/costs/costs.dart';
 import '../../widgets/details_meter/entry/add_entry.dart';
 import '../../widgets/details_meter/entry/entry_card.dart';
 import '../../widgets/utils/selected_items_bar.dart';
-import 'add_meter.dart';
+import 'add_meter_old.dart';
 
 class DetailsSingleMeter extends StatefulWidget {
   final MeterDto meter;
@@ -271,7 +271,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddScreen(
+                  builder: (context) => AddScreenOld(
                     meter: _meter.toMeterData(),
                     room: _room,
                     tags: _tags

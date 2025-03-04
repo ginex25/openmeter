@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
+import 'package:openmeter/features/meters/view/add_meter_screen.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
+import 'package:openmeter/features/meters/widgets/sort_icon_button.dart';
+import 'package:openmeter/ui/widgets/utils/empty_data.dart';
 import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
 
 class MeterListScreen extends ConsumerStatefulWidget {
@@ -15,28 +19,50 @@ class MeterListScreen extends ConsumerStatefulWidget {
 class _MeterListScreenState extends ConsumerState<MeterListScreen> {
   @override
   Widget build(BuildContext context) {
-    final db = ref.watch(localDbProvider);
     final int selectedMetersCount = ref.watch(selectedMetersCountProvider);
+
+    final meterProvider = ref.watch(meterListProvider);
 
     return Scaffold(
       appBar: selectedMetersCount > 0
           ? _selectedAppBar(selectedMetersCount)
           : _unselectedAppBar(),
-      body: PopScope(
-        onPopInvokedWithResult: (bool didPop, _) async {
-          // if (hasSelectedItems) {
-          //   meterProvider.removeAllSelectedMeters();
-          // }
-        },
-        canPop: selectedMetersCount == 0,
-        child: Stack(
-          children: [
-            MeterCardList(
-              stream: db.meterDao.watchAllMeterWithRooms(false),
-              isHomescreen: true,
+      body: meterProvider.when(
+        data: (List<MeterDto> data) {
+          if (data.isEmpty) {
+            return const EmptyData();
+          }
+
+          return PopScope(
+            onPopInvokedWithResult: (bool didPop, _) async {
+              if (selectedMetersCount > 0) {
+                ref
+                    .read(meterListProvider.notifier)
+                    .removeAllSelectedMetersState();
+              }
+            },
+            canPop: selectedMetersCount == 0,
+            child: Stack(
+              children: [
+                MeterCardList(
+                  meters: data,
+                  (MeterDto selectedMeter) {
+                    ref
+                        .read(meterListProvider.notifier)
+                        .toggleMeterSelectedState(selectedMeter);
+                  },
+                  (MeterDto meter) {
+                    ref.read(meterListProvider.notifier).deleteMeter(meter);
+                  },
+                ),
+                if (selectedMetersCount > 0) _selectedItems(),
+              ],
             ),
-            if (selectedMetersCount > 0) _selectedItems(),
-          ],
+          );
+        },
+        error: (error, stackTrace) => throw error,
+        loading: () => const Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -48,7 +74,7 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
       leading: IconButton(
         icon: const Icon(Icons.close),
         onPressed: () {
-          // meterProvider.removeAllSelectedMeters();
+          ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
         },
       ),
     );
@@ -60,26 +86,17 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   // MaterialPageRoute(
-            //       // builder: (context) => const AddScreen(
-            //       //   meter: null,
-            //       //   room: null,
-            //       // ),
-            //       // ),
-            // );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddMeterScreen(),
+              ),
+            );
           },
           icon: const Icon(Icons.add),
           tooltip: 'Zähler erstellen',
         ),
-        IconButton(
-          onPressed: () {
-            // SortMeterCards().getFilter(context: context);
-          },
-          icon: const Icon(Icons.filter_list),
-          tooltip: 'Sortieren',
-        ),
+        SortIconButton(),
         IconButton(
           onPressed: () {
             Navigator.of(context).pushNamed('settings');
@@ -102,7 +119,7 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
     final buttons = [
       TextButton(
         onPressed: () {
-          // meterProvider.resetSelectedMeters(db);
+          ref.read(meterListProvider.notifier).resetAllSelectedMeters();
         },
         style: buttonStyle,
         child: const Column(
@@ -121,6 +138,7 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
       ),
       TextButton(
         onPressed: () {
+          // TODO archiv meters
           // backup.setHasUpdate(true);
           // meterProvider.updateStateArchived(db, true);
         },
@@ -141,7 +159,8 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
       ),
       TextButton(
         onPressed: () {
-          // meterProvider.deleteSelectedMeters(db);
+          ref.read(meterListProvider.notifier).deleteAllSelectedMeters();
+          // databaseSettingsProvider.setHasUpdate(true);
         },
         style: buttonStyle,
         child: const Column(

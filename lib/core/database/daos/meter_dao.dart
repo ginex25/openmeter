@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
-import '../local_database.dart';
 import '../../model/meter_with_room.dart';
+import '../local_database.dart';
 import '../tables/entries.dart';
 import '../tables/meter.dart';
 import '../tables/room.dart';
@@ -82,7 +82,7 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
         .write(MeterCompanion(isArchived: Value(isArchived)));
   }
 
-  Future<List<MeterWithRoom>> getAllMeterWithRooms() {
+  Future<List<MeterWithRoom>> getAllMeterWithRooms({bool? isArchived}) {
     final query = select(db.meter).join([
       leftOuterJoin(
         db.meterInRoom,
@@ -95,6 +95,10 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
         // useColumns: false,
       ),
     ]);
+
+    if (isArchived != null) {
+      query.where(meter.isArchived.equals(isArchived));
+    }
 
     return query
         .map(

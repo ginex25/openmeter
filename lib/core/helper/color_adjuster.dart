@@ -35,7 +35,7 @@ extension ColorUitl on Color {
     green = green.clamp(0, 255);
     blue = blue.clamp(0, 255);
 
-    return Color.fromRGBO(red, green, blue, 0.5);
+    return Color.fromRGBO(red, green, blue, 1);
   }
 
   Color brighterColor({double percent = 0.25}) {

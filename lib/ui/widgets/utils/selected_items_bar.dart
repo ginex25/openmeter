@@ -17,7 +17,7 @@ class SelectedItemsBar extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Card(
           elevation: 10,
-          color: Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+          color: Theme.of(context).cardColor,
           child: SizedBox(
             width: double.infinity,
             child: Row(

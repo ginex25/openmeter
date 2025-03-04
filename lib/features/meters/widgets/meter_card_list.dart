@@ -1,57 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:openmeter/core/provider/entry_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/core/enums/current_screen.dart';
+import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
+import 'package:openmeter/features/meters/provider/sort_provider.dart';
+import 'package:openmeter/utils/convert_count.dart';
+import 'package:openmeter/utils/custom_colors.dart';
 
-import '../../../core/database/local_database.dart';
-import '../../../core/enums/current_screen.dart';
-import '../../../core/model/meter_dto.dart';
-import '../../../core/model/meter_with_room.dart';
-import '../../../core/model/room_dto.dart';
-import '../../../core/provider/database_settings_provider.dart';
-import '../../../core/provider/meter_provider.dart';
-import '../../../core/provider/sort_provider.dart';
-import '../../../ui/widgets/utils/empty_archiv.dart';
-import '../../../ui/widgets/utils/empty_data.dart';
-import '../../../utils/convert_count.dart';
-import '../../../utils/custom_colors.dart';
 import 'meter_card.dart';
 
-class MeterCardList extends StatefulWidget {
-  final Stream<List<MeterWithRoom>> stream;
-  final bool isHomescreen;
+class MeterCardList extends ConsumerWidget {
+  final List<MeterDto> meters;
+  final Function(MeterDto) onLongPress;
+  final Function(MeterDto) onDelete;
 
-  const MeterCardList(
-      {super.key, required this.stream, required this.isHomescreen});
+  const MeterCardList(this.onLongPress, this.onDelete,
+      {super.key, required this.meters});
 
-  @override
-  State<MeterCardList> createState() => _MeterCardListState();
-}
-
-class _MeterCardListState extends State<MeterCardList> {
-  bool isHomescreen = true;
-  int _archivLength = 0;
-
-  @override
-  initState() {
-    super.initState();
-    isHomescreen = widget.isHomescreen;
-  }
-
-  _groupBy(String sortBy, MeterWithRoom element) {
+  _groupBy(String sortBy, MeterDto meter) {
     dynamic sortedElement;
 
     switch (sortBy) {
       case 'room':
-        if (element.room != null) {
-          sortedElement = element.room!.name;
-        } else {
-          sortedElement = '';
-        }
+        sortedElement = meter.room ?? '';
         break;
       case 'meter':
-        sortedElement = element.meter.typ;
+        sortedElement = meter.typ;
         break;
       default:
         sortedElement = 'room';
@@ -71,168 +47,76 @@ class _MeterCardListState extends State<MeterCardList> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final db = Provider.of<LocalDatabase>(context);
-    final sortProvider = Provider.of<SortProvider>(context);
-    final meterProvider = Provider.of<MeterProvider>(context);
-    final databaseSettingsProvider =
-        Provider.of<DatabaseSettingsProvider>(context, listen: false);
-    final entryProvider = Provider.of<EntryProvider>(context, listen: false);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int selectedMetersCount = ref.watch(selectedMetersCountProvider);
 
-    final sortBy = sortProvider.getSort;
-    final orderBy = sortProvider.getOrder;
+    final sortProvider = ref.watch(sortProviderProvider);
 
-    bool hasSelectedItems = meterProvider.getStateHasSelectedMeters;
-    bool hasUpdate = meterProvider.getStateHasUpdate;
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8),
+      child: GroupedListView(
+        shrinkWrap: true,
+        stickyHeaderBackgroundColor: Theme.of(context).canvasColor,
+        floatingHeader: false,
+        elements: meters,
+        groupBy: (element) {
+          return _groupBy(sortProvider.sort, element);
+        },
+        order: _orderBy(sortProvider.order),
+        groupSeparatorBuilder: (element) => Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 2),
+          child: Text(
+            element,
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+        ),
+        itemBuilder: (context, meter) {
+          final DateTime? date;
+          final String count;
 
-    return StreamBuilder(
-        stream: widget.stream,
-        builder: (context, snapshot) {
-          final data = snapshot.data ?? [];
+          if (meter.lastEntry == null) {
+            date = null;
+            count = 'none';
+          } else {
+            date = meter.lastEntry!.date;
 
-          if (data.length != meterProvider.getAllMetersLength ||
-              hasUpdate == true) {
-            meterProvider.setAllMeters(data);
-            meterProvider.setStateHasUpdate(false);
+            count = ConvertCount.convertCount(meter.lastEntry!.count);
           }
 
-          List<MeterWithRoom> meters = meterProvider.getAllMeters;
-
-          if (isHomescreen == false) {
-            meterProvider.setArchivMetersLength(meters.length);
-          }
-
-          if (meters.isEmpty) {
-            if (isHomescreen) {
-              return const EmptyData();
-            } else {
-              return const EmptyArchiv(
-                  titel: 'Es wurden noch keine Zähler archiviert.');
-            }
-          }
-
-          _archivLength = meterProvider.getArchivMetersLength;
-
-          return ListView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8),
-                child: GroupedListView(
-                  stickyHeaderBackgroundColor: Theme.of(context).canvasColor,
-                  floatingHeader: false,
-                  elements: meters,
-                  groupBy: (element) {
-                    return _groupBy(sortBy, element);
-                  },
-                  order: _orderBy(orderBy),
-                  groupSeparatorBuilder: (element) => Padding(
-                    padding: const EdgeInsets.only(top: 8.0, left: 2),
-                    child: Text(
-                      element,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
+          return GestureDetector(
+            onLongPress: () => onLongPress(meter),
+            child: selectedMetersCount > 0
+                ? MeterCard(
+                    meter: meter,
+                    roomName: meter.room ?? '',
+                    date: date,
+                    count: count,
+                    isSelected: meter.isSelected,
+                    currentScreen: CurrentScreen.homescreen,
+                  )
+                : _cardWithSlide(
+                    meterItem: meter,
+                    roomName: meter.room ?? '',
+                    isSelected: meter.isSelected,
+                    date: date,
+                    count: count,
+                    hasSelectedItems: selectedMetersCount > 0,
                   ),
-                  shrinkWrap: true,
-                  itemBuilder: (context, element) {
-                    final meterItem = element.meter;
-
-                    final RoomDto? room = element.room == null
-                        ? null
-                        : RoomDto.fromData(element.room!);
-
-                    return StreamBuilder(
-                      stream: db.entryDao.watchNewestEntry(meterItem.id),
-                      builder: (context, snapshot2) {
-                        final entryList = snapshot2.data;
-
-                        final DateTime? date;
-                        final String count;
-
-                        if (entryList == null) {
-                          date = null;
-                          count = 'none';
-                        } else {
-                          date = entryList.date;
-
-                          count = ConvertCount.convertCount(entryList.count);
-                        }
-
-                        return GestureDetector(
-                          onLongPress: () {
-                            meterProvider.toggleSelectedMeter(meterItem);
-                          },
-                          child: hasSelectedItems == true
-                              ? _cardWithoutSlide(
-                                  db: db,
-                                  meterItem: MeterDto.fromData(meterItem,
-                                      entryList == null ? false : true),
-                                  room: room,
-                                  date: date,
-                                  count: count,
-                                  isSelected: element.isSelected,
-                                  hasSelectedItems: hasSelectedItems,
-                                  entryProvider: entryProvider,
-                                  meterProvider: meterProvider,
-                                )
-                              : _cardWithSlide(
-                                  meterProvider: meterProvider,
-                                  db: db,
-                                  meterItem: MeterDto.fromData(meterItem,
-                                      entryList == null ? false : true),
-                                  room: room,
-                                  date: date,
-                                  count: count,
-                                  isSelected: element.isSelected,
-                                  databaseSettingsProvider:
-                                      databaseSettingsProvider,
-                                  entryProvider: entryProvider,
-                                  hasSelectedItems: hasSelectedItems,
-                                ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              if (isHomescreen)
-                TextButton(
-                  onPressed: () {
-                    if (hasSelectedItems) {
-                      meterProvider.removeAllSelectedMeters(notify: false);
-                    }
-                    Navigator.of(context).pushNamed('archive');
-                  },
-                  child: Text(
-                    'Archivierte Zähler ($_archivLength)',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ),
-              if (hasSelectedItems)
-                const SizedBox(
-                  height: 90,
-                ),
-            ],
           );
-        });
+        },
+      ),
+    );
   }
 
-  Widget _cardWithSlide({
-    required LocalDatabase db,
-    required MeterDto meterItem,
-    required RoomDto? room,
-    required DateTime? date,
-    required String count,
-    required bool isSelected,
-    required MeterProvider meterProvider,
-    required DatabaseSettingsProvider databaseSettingsProvider,
-    required bool hasSelectedItems,
-    required EntryProvider entryProvider,
-  }) {
-    String label = isHomescreen ? 'Archivieren' : 'Wiederherstellen';
-    IconData icon = isHomescreen ? Icons.archive : Icons.unarchive;
+  Widget _cardWithSlide(
+      {required MeterDto meterItem,
+      required DateTime? date,
+      required String count,
+      required bool isSelected,
+      required bool hasSelectedItems,
+      required String roomName}) {
+    String label = 'Archivieren';
+    IconData icon = Icons.archive;
 
     return Slidable(
       endActionPane: ActionPane(
@@ -240,9 +124,9 @@ class _MeterCardListState extends State<MeterCardList> {
         children: [
           SlidableAction(
             onPressed: (context) {
-              meterProvider.deleteSingleMeter(db, meterItem.id!, room);
+              onDelete(meterItem);
 
-              databaseSettingsProvider.setHasUpdate(true);
+              // databaseSettingsProvider.setHasUpdate(true);
             },
             icon: Icons.delete,
             label: 'Löschen',
@@ -256,9 +140,9 @@ class _MeterCardListState extends State<MeterCardList> {
         children: [
           SlidableAction(
             onPressed: (context) async {
-              await db.meterDao.updateArchived(meterItem.id!, isHomescreen);
-              meterProvider.setArchivMetersLength(_archivLength + 1);
-              databaseSettingsProvider.setHasUpdate(true);
+              // await db.meterDao.updateArchived(meterItem.id!, isHomescreen);
+              // meterProvider.setArchivMetersLength(_archivLength + 1);
+              // databaseSettingsProvider.setHasUpdate(true);
             },
             icon: icon,
             label: label,
@@ -270,33 +154,12 @@ class _MeterCardListState extends State<MeterCardList> {
       ),
       child: MeterCard(
         meter: meterItem,
-        room: room,
+        roomName: roomName,
         date: date,
         count: count,
         isSelected: isSelected,
         currentScreen: CurrentScreen.homescreen,
       ),
-    );
-  }
-
-  Widget _cardWithoutSlide({
-    required LocalDatabase db,
-    required MeterDto meterItem,
-    required RoomDto? room,
-    required DateTime? date,
-    required String count,
-    required bool isSelected,
-    required bool hasSelectedItems,
-    required EntryProvider entryProvider,
-    required MeterProvider meterProvider,
-  }) {
-    return MeterCard(
-      meter: meterItem,
-      room: room,
-      date: date,
-      count: count,
-      isSelected: isSelected,
-      currentScreen: CurrentScreen.homescreen,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/tags_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
@@ -54,6 +55,11 @@ class TagRepository {
     final data = await _tagsDao.getTagsForMeter(meterId);
 
     return data.map((e) => TagDto.fromData(e)).toList();
+  }
+
+  Future<int> createMeterWithTag(int meterId, String tagId) async {
+    return await _tagsDao.createMeterWithTag(
+        MeterWithTagsCompanion(meterId: Value(meterId), tagId: Value(tagId)));
   }
 }
 

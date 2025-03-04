@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+
 import '../database/local_database.dart';
 
 class EntryDto {
@@ -12,6 +14,19 @@ class EntryDto {
   bool isReset;
   bool isSelected = false;
   String? imagePath;
+
+  EntryDto(
+      {this.id,
+      this.meterId,
+      required this.count,
+      this.usage = -1,
+      this.days = -1,
+      this.note,
+      required this.date,
+      this.transmittedToProvider = false,
+      this.isReset = false,
+      this.isSelected = false,
+      this.imagePath});
 
   EntryDto.fromData(Entry entry)
       : count = entry.count,
@@ -56,4 +71,16 @@ class EntryDto {
         isReset = companion.isReset.value,
         transmittedToProvider = companion.transmittedToProvider.value,
         imagePath = companion.imagePath.value;
+
+  EntriesCompanion toCompanion() => EntriesCompanion(
+        count: Value(count),
+        date: Value(DateTime.now()),
+        meter: Value(meterId!),
+        usage: Value(usage),
+        days: Value(days),
+        note: Value(note),
+        transmittedToProvider: Value(transmittedToProvider),
+        imagePath: Value(imagePath),
+        isReset: Value(isReset),
+      );
 }

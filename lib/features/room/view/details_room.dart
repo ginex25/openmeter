@@ -114,7 +114,7 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
                             child: selectedMetersCount > 0
                                 ? MeterCard(
                                     meter: meter,
-                                    room: room,
+                                    roomName: room.name,
                                     date: meter.lastEntry?.date,
                                     count: count,
                                     isSelected: meter.isSelected,
@@ -170,7 +170,7 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
       ),
       child: MeterCard(
         meter: meter,
-        room: room,
+        roomName: room.name,
         date: date,
         count: count,
         isSelected: false,

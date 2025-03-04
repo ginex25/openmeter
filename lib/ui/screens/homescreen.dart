@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:openmeter/features/meters/view/meter_list_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/database/local_database.dart';
 import '../../core/provider/database_settings_provider.dart';
 import '../../core/provider/meter_provider.dart';
-import '../../features/meters/widgets/meter_card_list.dart';
-import '../widgets/meter/sort_meter_cards.dart';
 import '../widgets/utils/selected_items_bar.dart';
-import 'meters/add_meter.dart';
+import 'meters/add_meter_old.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,27 +25,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
     bool hasSelectedItems = meterProvider.getStateHasSelectedMeters;
 
-    return Scaffold(
-      appBar: hasSelectedItems == true
-          ? _selectedAppBar(meterProvider, db, autoBackup)
-          : _unselectedAppBar(meterProvider),
-      body: PopScope(
-        onPopInvokedWithResult: (bool didPop, _) async {
-          if (hasSelectedItems) {
-            meterProvider.removeAllSelectedMeters();
-          }
-        },
-        canPop: !hasSelectedItems,
-        child: Stack(
-          children: [
-            MeterCardList(
-                stream: db.meterDao.watchAllMeterWithRooms(false),
-                isHomescreen: true),
-            if (hasSelectedItems) _selectedItems(meterProvider, db, autoBackup),
-          ],
-        ),
-      ),
-    );
+    return const MeterListScreen();
+
+    // return Scaffold(
+    //   appBar: hasSelectedItems == true
+    //       ? _selectedAppBar(meterProvider, db, autoBackup)
+    //       : _unselectedAppBar(meterProvider),
+    //   body: PopScope(
+    //     onPopInvokedWithResult: (bool didPop, _) async {
+    //       if (hasSelectedItems) {
+    //         meterProvider.removeAllSelectedMeters();
+    //       }
+    //     },
+    //     canPop: !hasSelectedItems,
+    //     child: Stack(
+    //       children: [
+    //         // MeterCardListOld(
+    //         //     stream: db.meterDao.watchAllMeterWithRooms(false),
+    //         //     isHomescreen: true),
+    //         const MeterListScreen(),
+    //         if (hasSelectedItems) _selectedItems(meterProvider, db, autoBackup),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   _selectedItems(
@@ -146,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AddScreen(
+                  builder: (context) => const AddScreenOld(
                     meter: null,
                     room: null,
                   ),
@@ -157,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         IconButton(
           onPressed: () {
-            SortMeterCards().getFilter(context: context);
+            // SortMeterCardsOld().getFilter(context: context);
           },
           icon: const Icon(Icons.filter_list),
           tooltip: 'Sortieren',

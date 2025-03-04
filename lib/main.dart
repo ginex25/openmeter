@@ -23,7 +23,6 @@ import 'core/provider/entry_provider.dart';
 import 'core/provider/meter_provider.dart';
 import 'core/provider/refresh_provider.dart';
 import 'core/provider/room_provider.dart';
-import 'core/provider/sort_provider.dart';
 import 'core/provider/stats_provider.dart';
 import 'core/theme/view/design_screen.dart';
 import 'features/contract/view/archive_contracts.dart';
@@ -86,7 +85,6 @@ class MyApp extends ConsumerWidget {
     return p.MultiProvider(
       providers: [
         p.ChangeNotifierProvider<CostProvider>.value(value: CostProvider()),
-        p.ChangeNotifierProvider<SortProvider>.value(value: SortProvider()),
         p.ChangeNotifierProvider<RefreshProvider>.value(
             value: RefreshProvider()),
         p.ChangeNotifierProvider<EntryProvider>.value(value: EntryProvider()),

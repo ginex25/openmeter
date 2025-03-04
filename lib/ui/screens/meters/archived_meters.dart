@@ -5,7 +5,6 @@ import '../../../core/database/local_database.dart';
 import '../../../core/model/meter_with_room.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/meter_provider.dart';
-import '../../../features/meters/widgets/meter_card_list.dart';
 import '../../widgets/utils/selected_items_bar.dart';
 
 class ArchivedMeters extends StatefulWidget {
@@ -43,7 +42,7 @@ class _ArchivedMetersState extends State<ArchivedMeters> {
         },
         child: Stack(
           children: [
-            MeterCardList(stream: stream, isHomescreen: false),
+            // MeterCardListOld(stream: stream, isHomescreen: false),
             if (hasSelectedItems) _selectedItems(meterProvider, db, autoBackup),
           ],
         ),

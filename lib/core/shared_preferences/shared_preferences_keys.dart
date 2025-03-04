@@ -17,4 +17,7 @@ class SharedPreferencesKeys {
   static const String themeDynamicColor = 'dynamic_color';
   static const String themeFontSize = 'font_size';
   static const String themeCompactNavBar = 'compact_navigation_bar';
+
+  static const String meterSort = 'sort';
+  static const String meterOrder = 'order';
 }

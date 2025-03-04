@@ -87,6 +87,10 @@ class RoomRepository {
     await _roomDao.deleteRoom(room.uuid);
   }
 
+  Future<int> deleteMeterFromRoom(int meterId) async {
+    return await _roomDao.deleteMeter(meterId);
+  }
+
   Future updateRoom(RoomDto room) async {
     return await _roomDao.updateRoom(room.toData());
   }
