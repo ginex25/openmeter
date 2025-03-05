@@ -1,6 +1,7 @@
 import 'package:openmeter/core/exception/null_value.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/provider/archived_meters_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -138,5 +139,57 @@ class MeterList extends _$MeterList {
     currentMeters.add(newMeter);
 
     state = AsyncData(currentMeters);
+  }
+
+  Future<void> archiveMeter(MeterDto meter) async {
+    if (state.value == null) {
+      throw NullValueException();
+    }
+
+    await ref.read(archivedMetersListProvider.notifier).addMeterToArchiv(meter);
+
+    final currentMeters = state.value!;
+
+    currentMeters.remove(meter);
+
+    state = AsyncData(currentMeters);
+  }
+
+  Future<void> addMeter(MeterDto meter) async {
+    if (state.value == null) {
+      throw NullValueException();
+    }
+
+    final currentMeters = state.value!;
+
+    currentMeters.add(meter);
+
+    state = AsyncData(currentMeters);
+  }
+
+  Future<void> archiveSelectedMeters() async {
+    if (state.value == null) {
+      throw NullValueException();
+    }
+
+    final currentMeters = state.value!;
+
+    final List<MeterDto> result = List.of(currentMeters);
+
+    result.removeWhere(
+      (element) => element.isSelected,
+    );
+
+    for (MeterDto meter in currentMeters) {
+      if (meter.isSelected) {
+        await ref
+            .read(archivedMetersListProvider.notifier)
+            .addMeterToArchiv(meter);
+      }
+    }
+
+    ref.read(selectedMetersCountProvider.notifier).setSelectedState(0);
+
+    state = AsyncData(result);
   }
 }

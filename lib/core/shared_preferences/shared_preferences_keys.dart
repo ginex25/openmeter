@@ -20,4 +20,5 @@ class SharedPreferencesKeys {
 
   static const String meterSort = 'sort';
   static const String meterOrder = 'order';
+  static const String meterLastArchiveCount = 'meter_archive_count';
 }

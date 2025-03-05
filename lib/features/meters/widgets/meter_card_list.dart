@@ -13,11 +13,21 @@ import 'meter_card.dart';
 
 class MeterCardList extends ConsumerWidget {
   final List<MeterDto> meters;
-  final Function(MeterDto) onLongPress;
-  final Function(MeterDto) onDelete;
+  final Function(MeterDto meter) onLongPress;
+  final Function(MeterDto meter) onDelete;
+  final Function(MeterDto meter) onSidePanelAction;
+  final String startPanelLabel;
+  final IconData startPanelIcon;
 
-  const MeterCardList(this.onLongPress, this.onDelete,
-      {super.key, required this.meters});
+  const MeterCardList({
+    super.key,
+    required this.meters,
+    required this.onLongPress,
+    required this.onDelete,
+    required this.onSidePanelAction,
+    this.startPanelLabel = 'Archivieren',
+    this.startPanelIcon = Icons.archive,
+  });
 
   _groupBy(String sortBy, MeterDto meter) {
     dynamic sortedElement;
@@ -115,9 +125,6 @@ class MeterCardList extends ConsumerWidget {
       required bool isSelected,
       required bool hasSelectedItems,
       required String roomName}) {
-    String label = 'Archivieren';
-    IconData icon = Icons.archive;
-
     return Slidable(
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
@@ -139,13 +146,14 @@ class MeterCardList extends ConsumerWidget {
         motion: const DrawerMotion(),
         children: [
           SlidableAction(
-            onPressed: (context) async {
+            onPressed: (context) {
               // await db.meterDao.updateArchived(meterItem.id!, isHomescreen);
               // meterProvider.setArchivMetersLength(_archivLength + 1);
               // databaseSettingsProvider.setHasUpdate(true);
+              onSidePanelAction(meterItem);
             },
-            icon: icon,
-            label: label,
+            icon: startPanelIcon,
+            label: startPanelLabel,
             foregroundColor: Colors.white,
             backgroundColor: CustomColors.blue,
             borderRadius: const BorderRadius.all(Radius.circular(8)),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/provider/archvied_meters_count_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/view/add_meter_screen.dart';
@@ -23,6 +24,8 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
 
     final meterProvider = ref.watch(meterListProvider);
 
+    final int archivedMetersLength = ref.watch(archivedMetersCountProvider);
+
     return Scaffold(
       appBar: selectedMetersCount > 0
           ? _selectedAppBar(selectedMetersCount)
@@ -44,16 +47,39 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
             canPop: selectedMetersCount == 0,
             child: Stack(
               children: [
-                MeterCardList(
-                  meters: data,
-                  (MeterDto selectedMeter) {
-                    ref
-                        .read(meterListProvider.notifier)
-                        .toggleMeterSelectedState(selectedMeter);
-                  },
-                  (MeterDto meter) {
-                    ref.read(meterListProvider.notifier).deleteMeter(meter);
-                  },
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      MeterCardList(
+                        meters: data,
+                        onLongPress: (MeterDto selectedMeter) {
+                          ref
+                              .read(meterListProvider.notifier)
+                              .toggleMeterSelectedState(selectedMeter);
+                        },
+                        onDelete: (MeterDto meter) {
+                          ref
+                              .read(meterListProvider.notifier)
+                              .deleteMeter(meter);
+                        },
+                        onSidePanelAction: (meter) {
+                          ref
+                              .read(meterListProvider.notifier)
+                              .archiveMeter(meter);
+                        },
+                      ),
+                      if (selectedMetersCount == 0)
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('archive');
+                          },
+                          child: Text(
+                            'Archivierte Zähler ($archivedMetersLength)',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 if (selectedMetersCount > 0) _selectedItems(),
               ],
@@ -137,10 +163,9 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
         ),
       ),
       TextButton(
-        onPressed: () {
-          // TODO archiv meters
+        onPressed: () async {
           // backup.setHasUpdate(true);
-          // meterProvider.updateStateArchived(db, true);
+          await ref.read(meterListProvider.notifier).archiveSelectedMeters();
         },
         style: buttonStyle,
         child: const Column(
