@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:openmeter/core/enums/current_screen.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/model/room_dto.dart';
 import 'package:openmeter/features/meters/widgets/meter_card.dart';
@@ -114,17 +113,25 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
                             child: selectedMetersCount > 0
                                 ? MeterCard(
                                     meter: meter,
-                                    roomName: room.name,
                                     date: meter.lastEntry?.date,
                                     count: count,
-                                    isSelected: meter.isSelected,
-                                    currentScreen: CurrentScreen.detailsRoom,
+                                    onTap: () {
+                                      if (selectedMetersCount > 0) {
+                                        ref
+                                            .read(detailsRoomProvider(room.id!)
+                                                .notifier)
+                                            .toggleSelectMeterState(meter);
+                                      } else {
+                                        // TODO open details meter
+                                      }
+                                    },
                                   )
                                 : _meterCardWithSlide(
                                     room: room,
                                     meter: meter,
                                     count: count,
                                     date: meter.lastEntry?.date,
+                                    selectedMetersCount: selectedMetersCount,
                                   ),
                           );
                         },
@@ -149,6 +156,7 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
     required DateTime? date,
     required String count,
     required RoomDto room,
+    required int selectedMetersCount,
   }) {
     return Slidable(
       endActionPane: ActionPane(
@@ -170,11 +178,17 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
       ),
       child: MeterCard(
         meter: meter,
-        roomName: room.name,
         date: date,
         count: count,
-        isSelected: false,
-        currentScreen: CurrentScreen.detailsRoom,
+        onTap: () {
+          if (selectedMetersCount > 0) {
+            ref
+                .read(detailsRoomProvider(room.id!).notifier)
+                .toggleSelectMeterState(meter);
+          } else {
+            // TODO open details meter
+          }
+        },
       ),
     );
   }

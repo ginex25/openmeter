@@ -64,6 +64,15 @@ class _ArchivedMetersScreenState extends ConsumerState<ArchivedMetersScreen> {
                   },
                   startPanelLabel: 'Wiederherstellen',
                   startPanelIcon: Icons.unarchive,
+                  onCardTap: (meter) {
+                    if (selectedMetersCount > 0) {
+                      ref
+                          .read(archivedMetersListProvider.notifier)
+                          .toggleMeterSelectedState(meter);
+                    } else {
+                      // Todo open details meter
+                    }
+                  },
                 ),
                 if (selectedMetersCount > 0) _selectedItems(),
               ],

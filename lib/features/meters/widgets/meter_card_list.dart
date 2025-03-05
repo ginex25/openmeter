@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:openmeter/core/enums/current_screen.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/provider/sort_provider.dart';
@@ -18,6 +17,7 @@ class MeterCardList extends ConsumerWidget {
   final Function(MeterDto meter) onSidePanelAction;
   final String startPanelLabel;
   final IconData startPanelIcon;
+  final Function(MeterDto meter) onCardTap;
 
   const MeterCardList({
     super.key,
@@ -27,6 +27,7 @@ class MeterCardList extends ConsumerWidget {
     required this.onSidePanelAction,
     this.startPanelLabel = 'Archivieren',
     this.startPanelIcon = Icons.archive,
+    required this.onCardTap,
   });
 
   _groupBy(String sortBy, MeterDto meter) {
@@ -98,11 +99,11 @@ class MeterCardList extends ConsumerWidget {
             child: selectedMetersCount > 0
                 ? MeterCard(
                     meter: meter,
-                    roomName: meter.room ?? '',
                     date: date,
                     count: count,
-                    isSelected: meter.isSelected,
-                    currentScreen: CurrentScreen.homescreen,
+                    onTap: () {
+                      onCardTap(meter);
+                    },
                   )
                 : _cardWithSlide(
                     meterItem: meter,
@@ -162,11 +163,11 @@ class MeterCardList extends ConsumerWidget {
       ),
       child: MeterCard(
         meter: meterItem,
-        roomName: roomName,
         date: date,
         count: count,
-        isSelected: isSelected,
-        currentScreen: CurrentScreen.homescreen,
+        onTap: () {
+          onCardTap(meterItem);
+        },
       ),
     );
   }

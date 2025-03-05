@@ -67,6 +67,15 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
                               .read(meterListProvider.notifier)
                               .archiveMeter(meter);
                         },
+                        onCardTap: (meter) {
+                          if (selectedMetersCount > 0) {
+                            ref
+                                .read(meterListProvider.notifier)
+                                .toggleMeterSelectedState(meter);
+                          } else {
+                            // Todo open details meter
+                          }
+                        },
                       ),
                       if (selectedMetersCount == 0)
                         TextButton(

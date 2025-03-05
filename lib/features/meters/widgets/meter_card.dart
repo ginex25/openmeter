@@ -1,236 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/enums/current_screen.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/core/model/meter_typ.dart';
+import 'package:openmeter/features/meters/model/sort_model.dart';
+import 'package:openmeter/features/meters/provider/sort_provider.dart';
+import 'package:openmeter/features/tags/provider/show_tags_provider.dart';
+import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
+import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/utils/meter_typ.dart';
 
-import '../../../core/database/local_database.dart';
-import '../../../core/model/meter_dto.dart';
-import '../../../core/model/meter_typ.dart';
-import '../../../core/model/room_dto.dart';
-import '../../../core/provider/cost_provider.dart';
-import '../../../core/provider/entry_provider.dart';
-import '../../../core/provider/meter_provider.dart';
-import '../../../core/provider/room_provider.dart';
-import '../../../ui/screens/meters/details_single_meter.dart';
 import '../../../utils/convert_meter_unit.dart';
-import '../../../utils/meter_typ.dart';
 import 'meter_circle_avatar.dart';
 
-class MeterCard extends StatefulWidget {
+class MeterCard extends ConsumerWidget {
   final MeterDto meter;
-  final String roomName;
   final DateTime? date;
   final String count;
-  final bool isSelected;
-  final Function? refreshState;
-  final CurrentScreen currentScreen;
+  final Function()? onTap;
 
   const MeterCard({
     super.key,
     required this.meter,
-    required this.roomName,
-    required this.date,
+    this.date,
     required this.count,
-    required this.isSelected,
-    this.refreshState,
-    required this.currentScreen,
+    this.onTap,
   });
 
   @override
-  State<MeterCard> createState() => _MeterCardState();
-}
-
-class _MeterCardState extends State<MeterCard> {
-  bool hasTags = false;
-
-  late MeterData _meterData;
-
-  @override
-  void initState() {
-    _meterData = widget.meter.toMeterData();
-    super.initState();
-  }
-
-  setHasTags(bool value) {
-    hasTags = value;
-  }
-
-  _meterInformation() {
-    return Table(
-      columnWidths: const {
-        0: FlexColumnWidth(),
-        1: FlexColumnWidth(),
-        2: FixedColumnWidth(100),
-      },
-      children: [
-        TableRow(
-          children: [
-            Column(
-              children: [
-                Text(
-                  widget.meter.number,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  "Zählernummer",
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                if (widget.count != 'none')
-                  ConvertMeterUnit().getUnitWidget(
-                    count: widget.count,
-                    unit: widget.meter.unit,
-                    textStyle: Theme.of(context).textTheme.bodyMedium!,
-                  ),
-                if (widget.count == 'none')
-                  Text(
-                    "Kein Eintrag",
-                    style: Theme.of(context).textTheme.bodyMedium!,
-                    textAlign: TextAlign.center,
-                  ),
-                Text(
-                  "Zählerstand",
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                Text(
-                  widget.meter.note.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall!
-                      .copyWith(fontSize: 14),
-                ),
-              ],
-            )
-          ],
-        ),
-      ],
-    );
-  }
-
-  Future<Object?> _openDetailsSingleMeter(
-    RoomDto? room,
-    EntryProvider entryProvider,
-  ) async {
-    entryProvider.setCurrentCount(widget.count);
-    entryProvider.setOldDate(widget.date ?? DateTime.now());
-    entryProvider.setHasEntries(widget.meter.hasEntry);
-
-    return await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          entryProvider.setMeterUnit(widget.meter.unit);
-
-          return DetailsSingleMeter(
-            meter: widget.meter,
-            room: room,
-            hasTags: hasTags,
-          );
-        },
-      ),
-    );
-  }
-
-  _handleOnTapFromMeterCardList({
-    required bool hasSelectedItems,
-    required MeterProvider meterProvider,
-    required EntryProvider entryProvider,
-  }) {
-    if (hasSelectedItems == true) {
-      meterProvider.toggleSelectedMeter(_meterData);
-    } else {
-      _openDetailsSingleMeter(null, entryProvider).then((value) {
-        if (mounted) {
-          Provider.of<CostProvider>(context, listen: false).resetValues();
-          Provider.of<RoomProvider>(context, listen: false).setHasUpdate(true);
-        }
-
-        entryProvider.removeAllSelectedEntries();
-      });
-    }
-  }
-
-  _handleOnTapFromDetailsRoom({
-    required RoomProvider roomProvider,
-    required EntryProvider entryProvider,
-  }) {
-    if (roomProvider.getHasSelectedMeters) {
-      roomProvider.toggleSelectedMeters(MeterDto.fromData(_meterData, false));
-    } else {
-      // room = roomProvider.getCurrentRoom;
-      //
-      // _openDetailsSingleMeter(room, entryProvider).then((value) {
-      //   if (mounted) {
-      //     Provider.of<CostProvider>(context, listen: false).resetValues();
-      //   }
-      //
-      //   entryProvider.removeAllSelectedEntries();
-      //
-      //   final newRoom = roomProvider.getNewRoom;
-
-      // if (newRoom == null || room?.id != newRoom.id) {
-      //   roomProvider.setHasUpdate(true);
-      //   roomProvider.setMeterCount(-1);
-      // }
-      // });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final meterProvider = Provider.of<MeterProvider>(context);
-    final roomProvider = Provider.of<RoomProvider>(context);
-
-    bool hasSelectedItems = meterProvider.getStateHasSelectedMeters;
-
-    String roomName = widget.roomName;
-
-    final entryProvider = Provider.of<EntryProvider>(context, listen: false);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final CustomAvatar avatarData =
+        meterTyps.firstWhere((element) => element.meterTyp == meter.typ).avatar;
 
     String dateText = 'none';
 
-    if (widget.date != null) {
-      dateText = DateFormat('dd.MM.yyyy').format(widget.date!);
+    if (date != null) {
+      dateText = DateFormat(DateTimeFormats.germanDate).format(date!);
     }
 
-    final CustomAvatar avatarData = meterTyps
-        .firstWhere((element) => element.meterTyp == widget.meter.typ)
-        .avatar;
-
-    final themeContext = Theme.of(context);
+    final bool showTags = ref.watch(showTagsProvider);
+    final SortModel sortModel = ref.watch(sortProviderProvider);
 
     return GestureDetector(
-      onTap: () {
-        switch (widget.currentScreen) {
-          case CurrentScreen.homescreen:
-            _handleOnTapFromMeterCardList(
-              hasSelectedItems: hasSelectedItems,
-              meterProvider: meterProvider,
-              entryProvider: entryProvider,
-            );
-            break;
-          case CurrentScreen.detailsRoom:
-            _handleOnTapFromDetailsRoom(
-              roomProvider: roomProvider,
-              entryProvider: entryProvider,
-            );
-            break;
-        }
-      },
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.only(left: 4.0, right: 4),
         child: Card(
-          elevation: themeContext.cardTheme.elevation,
-          color: widget.isSelected == true
-              ? themeContext.highlightColor
-              : themeContext.cardTheme.color,
+          elevation: Theme.of(context).cardTheme.elevation,
+          color: meter.isSelected
+              ? Theme.of(context).highlightColor
+              : Theme.of(context).cardTheme.color,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -248,44 +67,99 @@ class _MeterCardState extends State<MeterCard> {
                           width: 10,
                         ),
                         Text(
-                          widget.meter.typ,
-                          style: themeContext.textTheme.bodyLarge,
+                          meter.typ,
+                          style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
                     ),
-                    // TODO implment new sort provider
-                    // if (sortProvider.getSort == 'meter')
-                    //   Text(
-                    //     roomName,
-                    //     style: themeContext.textTheme.bodyMedium,
-                    //   ),
+                    if (sortModel.sort == 'meter')
+                      Text(
+                        meter.room ?? '',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                   ],
                 ),
                 const SizedBox(
                   height: 5,
                 ),
-                _meterInformation(),
+                _meterInformation(context),
                 const SizedBox(
                   height: 10,
                 ),
-                // TODO get state with riverpod
-                // if (smallProvider.getShowTags)
-                //   HorizontalTagsList(
-                //     meterId: widget.meter.id!,
-                //     setHasTags: (p0) => setHasTags(p0),
-                //   ),
+                if (showTags && meter.id != null)
+                  HorizontalTagsList(meterId: meter.id!),
                 const SizedBox(
                   height: 10,
                 ),
                 Text(
                   'zuletzt geändert: $dateText',
-                  style: themeContext.textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  _meterInformation(BuildContext context) {
+    return Table(
+      columnWidths: const {
+        0: FlexColumnWidth(),
+        1: FlexColumnWidth(),
+        2: FixedColumnWidth(100),
+      },
+      children: [
+        TableRow(
+          children: [
+            Column(
+              children: [
+                Text(
+                  meter.number,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Text(
+                  "Zählernummer",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                if (count != 'none')
+                  ConvertMeterUnit().getUnitWidget(
+                    count: count,
+                    unit: meter.unit,
+                    textStyle: Theme.of(context).textTheme.bodyMedium!,
+                  ),
+                if (count == 'none')
+                  Text(
+                    "Kein Eintrag",
+                    style: Theme.of(context).textTheme.bodyMedium!,
+                    textAlign: TextAlign.center,
+                  ),
+                Text(
+                  "Zählerstand",
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ],
+            ),
+            Column(
+              children: [
+                Text(
+                  meter.note.toString(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelSmall!
+                      .copyWith(fontSize: 14),
+                ),
+              ],
+            )
+          ],
+        ),
+      ],
     );
   }
 }
