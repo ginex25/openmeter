@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../enums/entry_filters.dart';
+import '../../features/meters/model/entry_filter_model.dart';
 import '../helper/filter_entry.dart';
 import '../model/entry_dto.dart';
-import '../model/entry_filter.dart';
 
 class EntryFilterProvider extends ChangeNotifier {
   Set<EntryFilters?> _activeFilters = {};
@@ -27,11 +26,11 @@ class EntryFilterProvider extends ChangeNotifier {
 
   DateTime? get filterByDateEnd => _filterByDateEnd;
 
-  EntryFilterModel get getEntryFilter => EntryFilterModel(
-        _activeFilters,
-        _filterByDateBegin,
-        _filterByDateEnd,
-      );
+  // EntryFilterModel get getEntryFilter => EntryFilterModel(
+  //       _activeFilters,
+  //       _filterByDateBegin,
+  //       _filterByDateEnd,
+  //     );
 
   resetFilters({bool notify = true}) {
     _activeFilters.clear();

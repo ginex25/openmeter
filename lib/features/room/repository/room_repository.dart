@@ -172,6 +172,12 @@ class RoomRepository {
       await _roomDao.updateMeterInRoom(data);
     }
   }
+
+  Future<RoomDto?> findByMeterId(int meterId) async {
+    final data = await _roomDao.findByMeterId(meterId);
+
+    return data != null ? RoomDto.fromData(data) : null;
+  }
 }
 
 @riverpod

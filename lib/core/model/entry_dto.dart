@@ -74,7 +74,7 @@ class EntryDto {
 
   EntriesCompanion toCompanion() => EntriesCompanion(
         count: Value(count),
-        date: Value(DateTime.now()),
+        date: Value(date),
         meter: Value(meterId!),
         usage: Value(usage),
         days: Value(days),

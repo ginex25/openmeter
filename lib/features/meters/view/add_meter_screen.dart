@@ -14,7 +14,9 @@ import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/meter_typ.dart';
 
 class AddMeterScreen extends ConsumerStatefulWidget {
-  const AddMeterScreen({super.key});
+  final MeterDto? meter;
+
+  const AddMeterScreen({super.key, this.meter});
 
   @override
   ConsumerState createState() => _AddMeterScreenState();

@@ -1,4 +1,4 @@
-import '../enums/entry_filters.dart';
+import '../../features/meters/model/entry_filter_model.dart';
 
 class EntryFilterModel {
   Set<EntryFilters?> activeFilters = {};

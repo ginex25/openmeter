@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/enums/entry_filters.dart';
 import '../../../../core/provider/entry_filter_provider.dart';
 
 class EntryFilterSheet extends StatefulWidget {

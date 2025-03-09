@@ -14,11 +14,11 @@ import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/entry_filter_provider.dart';
 import '../../../core/provider/entry_provider.dart';
 import '../../../core/provider/room_provider.dart';
+import '../../../features/meters/widgets/details_meter/add_entry.dart';
 import '../../widgets/details_meter/charts/count_line_chart.dart';
 import '../../widgets/details_meter/charts/usage_bar_charts/card.dart';
 import '../../widgets/details_meter/charts/usage_line_chart.dart';
 import '../../widgets/details_meter/costs/costs.dart';
-import '../../widgets/details_meter/entry/add_entry.dart';
 import '../../widgets/details_meter/entry/entry_card.dart';
 import '../../widgets/utils/selected_items_bar.dart';
 import 'add_meter_old.dart';
@@ -144,8 +144,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
                   if (widget.hasTags)
                     HorizontalTagsList(
                       meterId: _meter.id!,
-                      setTags: (tags) => getTags(tags),
-                      setHasTags: null,
+                      tags: [],
                     ),
                   EntryCard(meter: widget.meter),
                   const SizedBox(

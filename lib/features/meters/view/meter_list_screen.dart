@@ -5,6 +5,7 @@ import 'package:openmeter/features/meters/provider/archvied_meters_count_provide
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/view/add_meter_screen.dart';
+import 'package:openmeter/features/meters/view/details_meter_screen.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
 import 'package:openmeter/features/meters/widgets/sort_icon_button.dart';
 import 'package:openmeter/ui/widgets/utils/empty_data.dart';
@@ -73,7 +74,10 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
                                 .read(meterListProvider.notifier)
                                 .toggleMeterSelectedState(meter);
                           } else {
-                            // Todo open details meter
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailsMeterScreen(meterId: meter.id!),
+                            ));
                           }
                         },
                       ),

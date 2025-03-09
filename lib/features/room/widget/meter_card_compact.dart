@@ -89,7 +89,10 @@ class MeterCompactTile extends StatelessWidget {
                   ),
               ],
             ),
-            HorizontalTagsList(meterId: data.meter.id!),
+            HorizontalTagsList(
+              meterId: data.meter.id!,
+              tags: [],
+            ),
             if (data.isInARoom)
               Text(
                 'Bereits im ${roomData?.name}',

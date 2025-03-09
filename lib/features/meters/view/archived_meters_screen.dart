@@ -6,6 +6,8 @@ import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
 import 'package:openmeter/ui/widgets/utils/empty_archiv.dart';
 import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
 
+import 'details_meter_screen.dart';
+
 class ArchivedMetersScreen extends ConsumerStatefulWidget {
   const ArchivedMetersScreen({super.key});
 
@@ -70,7 +72,10 @@ class _ArchivedMetersScreenState extends ConsumerState<ArchivedMetersScreen> {
                           .read(archivedMetersListProvider.notifier)
                           .toggleMeterSelectedState(meter);
                     } else {
-                      // Todo open details meter
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            DetailsMeterScreen(meterId: meter.id!),
+                      ));
                     }
                   },
                 ),

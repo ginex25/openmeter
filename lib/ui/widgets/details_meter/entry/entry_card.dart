@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/database/local_database.dart';
 import '../../../../core/model/entry_dto.dart';
-import '../../../../core/model/entry_filter.dart';
 import '../../../../core/model/meter_dto.dart';
 import '../../../../core/provider/cost_provider.dart';
 import '../../../../core/provider/entry_filter_provider.dart';
@@ -86,10 +85,10 @@ class EntryCard extends StatelessWidget {
               List<EntryDto> entries = [];
 
               if (hasFilter) {
-                final EntryFilterModel entryFilter =
-                    entryFilterProvider.getEntryFilter;
+                // final EntryFilterModel entryFilter =
+                //     entryFilterProvider.getEntryFilter;
 
-                entries = entryProvider.getFilteredEntries(entryFilter);
+                // entries = entryProvider.getFilteredEntries(entryFilter);
 
                 if (entries.isEmpty) {
                   return Padding(

@@ -1,4 +1,4 @@
-import '../enums/entry_filters.dart';
+import '../../features/meters/model/entry_filter_model.dart';
 import '../model/entry_dto.dart';
 
 class FilterEntry {

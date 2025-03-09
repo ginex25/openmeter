@@ -148,8 +148,6 @@ class MeterCardList extends ConsumerWidget {
         children: [
           SlidableAction(
             onPressed: (context) {
-              // await db.meterDao.updateArchived(meterItem.id!, isHomescreen);
-              // meterProvider.setArchivMetersLength(_archivLength + 1);
               // databaseSettingsProvider.setHasUpdate(true);
               onSidePanelAction(meterItem);
             },

@@ -192,4 +192,20 @@ class MeterList extends _$MeterList {
 
     state = AsyncData(result);
   }
+
+  void updateMeterInfo(MeterDto meter) {
+    if (state.value == null) {
+      throw NullValueException();
+    }
+
+    final currentMeters = state.value!;
+
+    final List<MeterDto> result = List.of(currentMeters);
+
+    result[result.indexWhere(
+      (element) => element.id == meter.id,
+    )] = meter;
+
+    state = AsyncData(result);
+  }
 }

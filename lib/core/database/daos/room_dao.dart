@@ -129,4 +129,15 @@ class RoomDao extends DatabaseAccessor<LocalDatabase> with _$RoomDaoMixin {
 
     return await query.getSingle();
   }
+
+  Future<RoomData?> findByMeterId(int meterId) async {
+    final query = select(db.room).join(
+      [
+        leftOuterJoin(
+            db.meterInRoom, db.meterInRoom.roomId.equalsExp(room.uuid)),
+      ],
+    )..where(meterInRoom.meterId.equals(meterId));
+
+    return await query.map((p) => p.readTable(room)).getSingleOrNull();
+  }
 }

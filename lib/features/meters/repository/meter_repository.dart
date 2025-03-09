@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/meter_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
@@ -7,21 +6,25 @@ import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/model/meter_with_room.dart';
 import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/helper/entry_helper.dart';
+import 'package:openmeter/features/meters/model/details_meter_model.dart';
+import 'package:openmeter/features/meters/model/entry_filter_model.dart';
+import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
 import 'package:openmeter/features/tags/repository/tag_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../core/database/daos/entry_dao.dart';
 
 part 'meter_repository.g.dart';
 
 class MeterRepository {
   final MeterDao _meterDao;
-  final EntryDao _entryDao;
+  final EntryRepository _entryRepository;
   final RoomRepository _roomRepository;
   final TagRepository _tagRepository;
 
-  MeterRepository(this._meterDao, this._entryDao, this._roomRepository,
+  final EntryHelper _entryHelper = EntryHelper();
+
+  MeterRepository(this._meterDao, this._entryRepository, this._roomRepository,
       this._tagRepository);
 
   Future<List<MeterDto>> fetchMeters({bool isArchived = false}) async {
@@ -30,10 +33,11 @@ class MeterRepository {
     List<MeterDto> result = [];
 
     for (MeterWithRoom m in data) {
-      final Entry? entry = await _entryDao.getNewestEntry(m.meter.id);
+      final EntryDto? entry =
+          await _entryRepository.getNewestEntryForMeter(m.meter.id);
 
       final meterDto = MeterDto.fromData(m.meter, entry != null);
-      meterDto.lastEntry = entry != null ? EntryDto.fromData(entry) : null;
+      meterDto.lastEntry = entry;
       meterDto.room = m.room?.name ?? '';
 
       result.add(meterDto);
@@ -55,23 +59,21 @@ class MeterRepository {
   }
 
   Future<MeterDto> resetMeter(MeterDto meter) async {
-    final EntriesCompanion entry = EntriesCompanion(
-      meter: Value(meter.id!),
-      date: Value(DateTime.now()),
-      count: const Value(0),
-      usage: const Value(-1),
-      days: const Value(-1),
-      isReset: const Value(true),
-      transmittedToProvider: const Value(false),
+    final EntryDto entry = EntryDto(
+      count: 0,
+      usage: -1,
+      days: -1,
+      isReset: true,
+      transmittedToProvider: false,
+      date: DateTime.now(),
+      meterId: meter.id,
     );
 
-    final int entryId = await _entryDao.createEntry(entry);
+    final int entryId = await _entryRepository.createEntry(entry);
 
-    final EntryDto lastEntry = EntryDto.fromEntriesCompanion(entry);
+    entry.id = entryId;
 
-    lastEntry.id = entryId;
-
-    meter.lastEntry = lastEntry;
+    meter.lastEntry = entry;
 
     return meter;
   }
@@ -89,7 +91,7 @@ class MeterRepository {
       meterId: meter.id,
     );
 
-    entry.id = await _entryDao.createEntry(entry.toCompanion());
+    entry.id = await _entryRepository.createEntry(entry);
 
     meter.lastEntry = entry;
 
@@ -114,12 +116,47 @@ class MeterRepository {
   Future<void> saveMeterArchiveState(MeterDto meter) async {
     await _meterDao.updateArchived(meter.id!, meter.isArchived);
   }
+
+  Future<DetailsMeterModel> fetchDetailsMeter(
+      int meterId, EntryFilterModel entryFilter) async {
+    final MeterData meterData = await _meterDao.getSingleMeter(meterId);
+    final MeterDto meter = MeterDto.fromData(meterData, false);
+
+    List<EntryDto> entries =
+        await _entryRepository.fetchEntriesForMeter(meterId);
+
+    meter.hasEntry = entries.isNotEmpty;
+    meter.lastEntry = entries.firstOrNull;
+
+    if (entryFilter.hasActiveFilter()) {
+      entries =
+          _entryHelper.filterEntries(filter: entryFilter, entries: entries);
+    }
+
+    final RoomDto? room = await _roomRepository.findByMeterId(meterId);
+
+    if (room != null) {
+      meter.room = room.name;
+    }
+
+    String predictedCount = '';
+
+    if (entries.length > 3) {
+      predictedCount = _entryHelper.predictCount(entries.first, entries.last);
+    }
+
+    return DetailsMeterModel(
+        meter: meter,
+        entries: entries,
+        room: room,
+        predictCount: predictedCount);
+  }
 }
 
 @riverpod
 MeterRepository meterRepository(Ref ref) {
   final db = ref.watch(localDbProvider);
 
-  return MeterRepository(db.meterDao, db.entryDao,
+  return MeterRepository(db.meterDao, ref.watch(entryRepositoryProvider),
       ref.watch(roomRepositoryProvider), ref.watch(tagRepositoryProvider));
 }

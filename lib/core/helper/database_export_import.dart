@@ -15,16 +15,16 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../features/contract/model/contract_dto.dart';
 import '../../features/contract/model/provider_dto.dart';
+import '../../features/meters/service/meter_image_helper.dart';
 import '../../utils/log.dart';
 import '../database/local_database.dart';
 import '../model/entry_dto.dart';
 import '../model/meter_with_room.dart';
 import '../model/room_dto.dart';
 import '../provider/meter_provider.dart';
-import 'meter_image_helper.dart';
 
 class DatabaseExportImportHelper {
-  final MeterImageHelper _meterImageHelper = MeterImageHelper();
+  final MeterImageService _meterImageHelper = MeterImageService();
 
   List<MeterWithRoom> _metersWithRoom = [];
   List<RoomDto> _rooms = [];

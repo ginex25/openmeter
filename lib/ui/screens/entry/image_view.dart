@@ -5,10 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/helper/meter_image_helper.dart';
 import '../../../core/model/entry_dto.dart';
 import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/entry_provider.dart';
+import '../../../features/meters/service/meter_image_helper.dart';
 import '../../../utils/convert_count.dart';
 import '../../../utils/convert_meter_unit.dart';
 
@@ -24,7 +24,7 @@ class ImageView extends StatefulWidget {
 
 class _ImageViewState extends State<ImageView>
     with SingleTickerProviderStateMixin {
-  final MeterImageHelper _meterImageHelper = MeterImageHelper();
+  final MeterImageService _meterImageHelper = MeterImageService();
 
   final _transformationController = TransformationController();
   TapDownDetails? _doubleTapDetails;

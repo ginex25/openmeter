@@ -3,18 +3,18 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../features/meters/service/meter_image_helper.dart';
 import '../../utils/convert_count.dart';
 import '../database/local_database.dart';
 import '../helper/entry_helper.dart';
 import '../helper/filter_entry.dart';
-import '../helper/meter_image_helper.dart';
 import '../helper/usage_helper.dart';
 import '../model/entry_dto.dart';
 import '../model/entry_filter.dart';
 
 class EntryProvider extends ChangeNotifier {
   final EntryHelper entryService = EntryHelper();
-  final MeterImageHelper _meterImageHelper = MeterImageHelper();
+  final MeterImageService _meterImageHelper = MeterImageService();
 
   List<EntryDto> _entries = [];
   int _selectedEntriesLength = 0;

@@ -87,7 +87,10 @@ class MeterCard extends ConsumerWidget {
                   height: 10,
                 ),
                 if (showTags && meter.id != null)
-                  HorizontalTagsList(meterId: meter.id!),
+                  HorizontalTagsList(
+                    meterId: meter.id!,
+                    tags: [],
+                  ),
                 const SizedBox(
                   height: 10,
                 ),
