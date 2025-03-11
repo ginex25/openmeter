@@ -6,6 +6,7 @@ import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/model/meter_with_room.dart';
 import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
@@ -145,11 +146,60 @@ class MeterRepository {
       predictedCount = _entryHelper.predictCount(entries.first, entries.last);
     }
 
+    List<TagDto> tags = await _tagRepository.getTagsForMeter(meterId);
+    meter.tags = tags
+        .map(
+          (e) => e.uuid!,
+        )
+        .toList();
+
     return DetailsMeterModel(
         meter: meter,
         entries: entries,
         room: room,
         predictCount: predictedCount);
+  }
+
+  Future<MeterDto> updateMeter(
+      {required MeterDto oldMeter,
+      RoomDto? newRoom,
+      required List<String> tags,
+      required MeterDto newMeter}) async {
+    if (newRoom == null && oldMeter.room != null) {
+      await _roomRepository.removeMeterFromRoom(oldMeter);
+    }
+
+    if (newRoom != null) {
+      await _roomRepository.updateAssoziation(newRoom, oldMeter);
+    }
+
+    if (tags.isEmpty && oldMeter.tags.isNotEmpty) {
+      for (String tag in oldMeter.tags) {
+        await _tagRepository.removeAssoziation(oldMeter, tag);
+      }
+    }
+
+    if (tags.isNotEmpty) {
+      for (String tag in tags) {
+        if (oldMeter.tags.contains(tag)) {
+          await _tagRepository.removeAssoziation(oldMeter, tag);
+          continue;
+        }
+
+        await _tagRepository.createMeterWithTag(oldMeter.id!, tag);
+      }
+    }
+
+    newMeter.tags = tags + oldMeter.tags;
+    newMeter.id = oldMeter.id;
+    newMeter.lastEntry = oldMeter.lastEntry;
+    newMeter.hasEntry = oldMeter.hasEntry;
+    newMeter.isArchived = oldMeter.isArchived;
+    newMeter.room = newRoom?.name;
+
+    await _meterDao.updateMeter(newMeter.toMeterData());
+
+    return newMeter;
   }
 }
 

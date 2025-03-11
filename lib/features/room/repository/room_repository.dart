@@ -178,6 +178,21 @@ class RoomRepository {
 
     return data != null ? RoomDto.fromData(data) : null;
   }
+
+  Future updateAssoziation(RoomDto room, MeterDto meter) async {
+    final inRoom = await _roomDao.findByMeterId(meter.id!);
+
+    final MeterInRoomCompanion companion = MeterInRoomCompanion(
+        meterId: Value(meter.id!), roomId: Value(room.uuid));
+
+    if (inRoom == null) {
+      await _roomDao.createMeterInRoom(companion);
+
+      return;
+    }
+
+    await _roomDao.updateMeterInRoom(companion);
+  }
 }
 
 @riverpod

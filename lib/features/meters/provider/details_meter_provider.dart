@@ -1,6 +1,7 @@
 import 'package:openmeter/core/exception/null_value.dart';
 import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/core/model/room_dto.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
@@ -8,6 +9,7 @@ import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
+import 'package:openmeter/features/tags/provider/meter_tags_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'details_meter_provider.g.dart';
@@ -118,6 +120,28 @@ class DetailsMeter extends _$DetailsMeter {
 
     final newDetails =
         state.value!.copyWith(entries: currentEntries, meter: meter);
+
+    state = AsyncData(newDetails);
+  }
+
+  Future<void> updateMeter(
+      MeterDto meter, RoomDto? newRoom, List<String> tags) async {
+    if (state.value == null) {
+      throw NullValueException();
+    }
+
+    final MeterRepository repo = ref.watch(meterRepositoryProvider);
+
+    final newMeter = await repo.updateMeter(
+        oldMeter: state.value!.meter,
+        tags: tags,
+        newMeter: meter,
+        newRoom: newRoom);
+
+    final newDetails = state.value!.copyWith(meter: newMeter, room: newRoom);
+
+    ref.read(meterListProvider.notifier).updateMeterInfo(newMeter);
+    ref.invalidate(meterTagsListProvider(meterId));
 
     state = AsyncData(newDetails);
   }

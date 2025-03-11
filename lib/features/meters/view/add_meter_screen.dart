@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/model/room_dto.dart';
 import 'package:openmeter/core/model/tag_dto.dart';
+import 'package:openmeter/features/meters/model/details_meter_model.dart';
+import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/widgets/meter_type_dropdown.dart';
 import 'package:openmeter/features/room/widget/room_dropdown.dart';
@@ -14,9 +16,9 @@ import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/meter_typ.dart';
 
 class AddMeterScreen extends ConsumerStatefulWidget {
-  final MeterDto? meter;
+  final DetailsMeterModel? detailsMeter;
 
-  const AddMeterScreen({super.key, this.meter});
+  const AddMeterScreen({super.key, this.detailsMeter});
 
   @override
   ConsumerState createState() => _AddMeterScreenState();
@@ -38,15 +40,72 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
 
   RoomDto? _room;
 
+  @override
+  void initState() {
+    if (widget.detailsMeter == null) {
+      return;
+    }
+
+    _setController();
+
+    if (widget.detailsMeter?.room != null) {
+      _roomId = widget.detailsMeter!.room!.uuid;
+      _room = widget.detailsMeter!.room!;
+    } else {
+      _roomId = "-1";
+    }
+
+    final MeterDto meter = widget.detailsMeter!.meter;
+
+    if (meter.tags.isNotEmpty) {
+      _tagsId.addAll(meter.tags);
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _meterNote.dispose();
+    _meterNumber.dispose();
+    _meterValue.dispose();
+
+    super.dispose();
+  }
+
+  /*
+    init values when meter is to be updated
+   */
+  void _setController() {
+    final MeterDto meter = widget.detailsMeter!.meter;
+
+    _pageTitle = meter.number;
+    _meterNumber.text = meter.number;
+    _meterNote.text = meter.note;
+    _meterType = meter.typ;
+    _updateMeterState = true;
+  }
+
   void handleOnSave() async {
     if (_formKey.currentState!.validate()) {
       final MeterDto meter = MeterDto(
           unit: _meterUnit,
           number: _meterNumber.text,
           typ: _meterType,
-          note: _meterNote.text);
+          note: _meterNote.text,
+          tags: []);
 
       if (_updateMeterState) {
+        await ref
+            .read(detailsMeterProvider(widget.detailsMeter!.meter.id!).notifier)
+            .updateMeter(meter, _room, _tagsId)
+            .then(
+          (value) {
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        );
       } else {
         await ref
             .read(meterListProvider.notifier)
@@ -76,7 +135,7 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
               //   isTorchOn = !isTorchOn;
               // });
             },
-            icon: true
+            icon: false
                 ? const Icon(
                     Icons.flashlight_on,
                     // color: darkMode ? Colors.white : Colors.black,

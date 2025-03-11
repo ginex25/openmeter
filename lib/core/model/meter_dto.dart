@@ -11,8 +11,7 @@ class MeterDto {
   String note;
   String? room;
   bool isArchived;
-  // Todo make List<String>?
-  List<dynamic>? tags;
+  List<String> tags;
   bool isSelected;
   bool hasEntry = false;
   EntryDto? lastEntry;
@@ -25,7 +24,7 @@ class MeterDto {
       this.note = '',
       this.room,
       this.isArchived = false,
-      this.tags,
+      required this.tags,
       this.isSelected = false,
       this.hasEntry = false,
       this.lastEntry});
@@ -37,7 +36,8 @@ class MeterDto {
         note = data.note,
         isArchived = data.isArchived,
         isSelected = false,
-        id = data.id;
+        id = data.id,
+        tags = [];
 
   MeterDto.fromJson(Map<String, dynamic> json)
       : typ = json['typ'],

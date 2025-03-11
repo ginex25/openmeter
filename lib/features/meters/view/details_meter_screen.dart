@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
@@ -29,8 +30,7 @@ class DetailsMeterScreen extends ConsumerWidget {
               : _unselectedAppBar(
                   context,
                   ref,
-                  detailsMeter.meter,
-                  detailsMeter.predictCount,
+                  detailsMeter,
                 ),
           body: PopScope(
             canPop: selectedEntriesCount == 0,
@@ -134,11 +134,10 @@ class DetailsMeterScreen extends ConsumerWidget {
   AppBar _unselectedAppBar(
     BuildContext context,
     WidgetRef ref,
-    MeterDto meter,
-    String predictedCount,
+    DetailsMeterModel detailsMeter,
   ) {
     return AppBar(
-      title: SelectableText(meter.number),
+      title: SelectableText(detailsMeter.meter.number),
       leading: BackButton(
         onPressed: () {
           ref.invalidate(entryFilterProvider);
@@ -146,13 +145,16 @@ class DetailsMeterScreen extends ConsumerWidget {
         },
       ),
       actions: [
-        AddEntry(meter: meter, predictedCount: predictedCount),
+        AddEntry(
+            meter: detailsMeter.meter,
+            predictedCount: detailsMeter.predictCount),
         IconButton(
           onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddMeterScreen(meter: meter),
+                  builder: (context) =>
+                      AddMeterScreen(detailsMeter: detailsMeter),
                 ));
           },
           icon: const Icon(Icons.edit),
