@@ -7,8 +7,8 @@ import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../../core/helper/torch_controller.dart';
-import '../../../../core/model/meter_dto.dart';
+import '../../../../../core/helper/torch_controller.dart';
+import '../../../../../core/model/meter_dto.dart';
 import 'add_image_popup_menu.dart';
 
 class AddEntry extends ConsumerStatefulWidget {

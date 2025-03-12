@@ -1,12 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../core/database/local_database.dart';
 import '../../../core/model/meter_dto.dart';
 import '../../../core/model/room_dto.dart';
 import '../../../core/provider/chart_provider.dart';
@@ -14,14 +10,13 @@ import '../../../core/provider/database_settings_provider.dart';
 import '../../../core/provider/entry_filter_provider.dart';
 import '../../../core/provider/entry_provider.dart';
 import '../../../core/provider/room_provider.dart';
-import '../../../features/meters/widgets/details_meter/add_entry.dart';
+import '../../../features/meters/widgets/details_meter/entry/add_entry.dart';
 import '../../widgets/details_meter/charts/count_line_chart.dart';
 import '../../widgets/details_meter/charts/usage_bar_charts/card.dart';
 import '../../widgets/details_meter/charts/usage_line_chart.dart';
 import '../../widgets/details_meter/costs/costs.dart';
 import '../../widgets/details_meter/entry/entry_card.dart';
 import '../../widgets/utils/selected_items_bar.dart';
-import 'add_meter_old.dart';
 
 class DetailsSingleMeter extends StatefulWidget {
   final MeterDto meter;
@@ -46,9 +41,6 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
 
   int _activeChartWidget = 0;
 
-  List<TagDto> _tags = [];
-  bool _updateTags = false;
-
   @override
   void initState() {
     _meterName = widget.meter.number;
@@ -56,10 +48,6 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
     _room = widget.room;
     _roomName = widget.room?.name ?? '';
     super.initState();
-  }
-
-  getTags(List<TagDto> tags) {
-    _tags = tags;
   }
 
   Widget _meterInformationWidget() {
@@ -81,33 +69,14 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
     );
   }
 
-  Future _getTagsById(LocalDatabase db) async {
-    final data = await db.tagsDao.getTagsForMeter(_meter.id!);
-
-    _tags = data
-        .map(
-          (e) => TagDto.fromData(e),
-        )
-        .toList();
-
-    setState(() {
-      _updateTags = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final entryProvider = Provider.of<EntryProvider>(context);
     final entryFilterProvider = Provider.of<EntryFilterProvider>(context);
     final chartProvider = Provider.of<ChartProvider>(context);
     final roomProvider = Provider.of<RoomProvider>(context);
-    final db = Provider.of<LocalDatabase>(context);
 
     bool hasSelectedEntries = entryProvider.getHasSelectedEntries;
-
-    if (_updateTags == true) {
-      _getTagsById(db);
-    }
 
     _meter.hasEntry = entryProvider.getHasEntries;
 
@@ -266,38 +235,7 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
       actions: [
         AddEntry(meter: meter),
         IconButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddScreenOld(
-                    meter: _meter.toMeterData(),
-                    room: _room,
-                    tags: _tags
-                        .map(
-                          (e) => e.toData(),
-                        )
-                        .toList(),
-                  ),
-                )).then((value) {
-              if (value == null) {
-                return;
-              }
-
-              _meter = value[0] as MeterDto;
-              _room = value[1] as RoomDto?;
-              _updateTags = value[2] as bool;
-
-              entryProvider.setMeterUnit(_meter.unit);
-
-              setState(
-                () {
-                  _meterName = _meter.number;
-                  _roomName = _room?.name ?? '';
-                },
-              );
-            });
-          },
+          onPressed: () {},
           icon: const Icon(Icons.edit),
           tooltip: 'Zähler bearbeiten',
         ),

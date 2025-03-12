@@ -2,6 +2,7 @@ import 'package:openmeter/core/exception/null_value.dart';
 import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
@@ -142,6 +143,44 @@ class DetailsMeter extends _$DetailsMeter {
 
     ref.read(meterListProvider.notifier).updateMeterInfo(newMeter);
     ref.invalidate(meterTagsListProvider(meterId));
+
+    state = AsyncData(newDetails);
+  }
+
+  Future<void> updateEntry(EntryDto entry) async {
+    if (state.value == null) {
+      throw NullValueException();
+    }
+
+    final currentEntries = state.value!.entries;
+
+    int index = currentEntries.indexWhere(
+      (element) => element.id == entry.id,
+    );
+
+    if (entry.isReset) {
+      entry.usage = -1;
+      entry.days = -1;
+    } else if (entry.usage == -1 &&
+        entry.days == -1 &&
+        currentEntries.length > 1) {
+      final helper = EntryHelper();
+
+      final prevEntry = currentEntries.elementAtOrNull(index + 1);
+
+      if (prevEntry != null) {
+        entry.usage = helper.calcUsage(prevEntry.count.toString(), entry.count);
+        entry.days = helper.calcDays(entry.date, prevEntry.date);
+      }
+    }
+
+    final EntryRepository repo = ref.watch(entryRepositoryProvider);
+
+    await repo.updateEntry(entry);
+
+    currentEntries[index] = entry;
+
+    final newDetails = state.value!.copyWith(entries: currentEntries);
 
     state = AsyncData(newDetails);
   }

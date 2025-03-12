@@ -10,7 +10,8 @@ import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
-import 'package:openmeter/features/meters/widgets/details_meter/entry_filter_sheet.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_details.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_filter_sheet.dart';
 import 'package:openmeter/utils/convert_count.dart';
 import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/datetime_formats.dart';
@@ -98,13 +99,30 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
 
                   return GestureDetector(
                     onTap: () async {
-                      // TODO impl open details
-
                       if (selectedEntriesCount > 0) {
                         ref
                             .read(
                                 detailsMeterProvider(widget.meter.id!).notifier)
                             .toggleSelectedEntry(item);
+                      } else {
+                        showModalBottomSheet(
+                          backgroundColor: Theme.of(context).cardTheme.color,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(20),
+                            ),
+                          ),
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) => Padding(
+                            padding: MediaQuery.of(context).viewInsets,
+                            child: SizedBox(
+                              height: MediaQuery.sizeOf(context).height * 0.6,
+                              child: EntryDetails(
+                                  entry: item, meter: widget.meter),
+                            ),
+                          ),
+                        );
                       }
                     },
                     onLongPress: () {

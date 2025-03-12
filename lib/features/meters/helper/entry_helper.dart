@@ -15,6 +15,12 @@ class EntryHelper {
     return entry.usage;
   }
 
+  String getDailyUsage(int usage, int days) {
+    double div = usage / days;
+
+    return ConvertCount.convertDouble(div);
+  }
+
   getColors(int count, int usage) {
     if (usage <= 0) {
       return;

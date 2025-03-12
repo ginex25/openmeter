@@ -17,7 +17,6 @@ import '../../../../features/meters/service/meter_image_helper.dart';
 import '../../../../utils/convert_count.dart';
 import '../../../../utils/convert_meter_unit.dart';
 import '../../../../utils/custom_icons.dart';
-import '../../../screens/entry/image_view.dart';
 
 class DetailsEntry extends StatefulWidget {
   final EntryDto entry;
@@ -345,20 +344,20 @@ class _DetailsEntryState extends State<DetailsEntry> {
     required EntryDto entry,
   }) {
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(
-          builder: (context) =>
-              ImageView(image: File(_imagePath!), entry: _entry),
-        ))
-            .then((value) async {
-          bool deleteImage = value ?? false;
-
-          if (deleteImage) {
-            await _deleteImage();
-          }
-        });
-      },
+      // onTap: () {
+      //   Navigator.of(context)
+      //       .push(MaterialPageRoute(
+      //     builder: (context) =>
+      //         ImageView(image: File(_imagePath!), entry: _entry),
+      //   ))
+      //       .then((value) async {
+      //     bool deleteImage = value ?? false;
+      //
+      //     if (deleteImage) {
+      //       await _deleteImage();
+      //     }
+      //   });
+      // },
       child: Image.file(
         File(_imagePath!),
       ),

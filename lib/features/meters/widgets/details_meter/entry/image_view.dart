@@ -2,21 +2,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/utils/datetime_formats.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../core/model/entry_dto.dart';
-import '../../../core/provider/database_settings_provider.dart';
-import '../../../core/provider/entry_provider.dart';
-import '../../../features/meters/service/meter_image_helper.dart';
-import '../../../utils/convert_count.dart';
-import '../../../utils/convert_meter_unit.dart';
+import '../../../../../core/model/entry_dto.dart';
+import '../../../../../core/provider/database_settings_provider.dart';
+import '../../../../../utils/convert_count.dart';
+import '../../../../../utils/convert_meter_unit.dart';
+import '../../../service/meter_image_helper.dart';
 
 class ImageView extends StatefulWidget {
-  final File image;
   final EntryDto entry;
+  final MeterDto meter;
 
-  const ImageView({super.key, required this.image, required this.entry});
+  const ImageView({super.key, required this.meter, required this.entry});
 
   @override
   State<ImageView> createState() => _ImageViewState();
@@ -55,9 +56,7 @@ class _ImageViewState extends State<ImageView>
 
   @override
   Widget build(BuildContext context) {
-    final entryProvider = Provider.of<EntryProvider>(context);
-    String unit = entryProvider.getMeterUnit;
-    String meterNumber = entryProvider.getMeterNumber;
+    String meterNumber = widget.meter.number;
 
     return Scaffold(
       appBar: AppBar(
@@ -73,13 +72,13 @@ class _ImageViewState extends State<ImageView>
                 ),
                 ConvertMeterUnit().getUnitWidget(
                   count: ConvertCount.convertCount(widget.entry.count),
-                  unit: unit,
+                  unit: widget.meter.unit,
                   textStyle: Theme.of(context).textTheme.bodyMedium!,
                 ),
               ],
             ),
             Text(
-              DateFormat('dd.MM.yyyy').format(widget.entry.date),
+              DateFormat(DateTimeFormats.germanDate).format(widget.entry.date),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],
@@ -112,7 +111,7 @@ class _ImageViewState extends State<ImageView>
           transformationController: _transformationController,
           minScale: 0.2,
           maxScale: _scale,
-          child: Center(child: Image.file(widget.image)),
+          child: Center(child: Image.file(File(widget.entry.imagePath!))),
         ),
       ),
       bottomNavigationBar: _bottomBar(),
@@ -160,7 +159,7 @@ class _ImageViewState extends State<ImageView>
                 TextButton(
                   onPressed: () async {
                     bool success = await _meterImageHelper
-                        .saveImageToGallery(widget.image);
+                        .saveImageToGallery(File(widget.entry.imagePath!));
 
                     if (mounted) {
                       if (success) {
@@ -193,7 +192,8 @@ class _ImageViewState extends State<ImageView>
                 TextButton(
                   onPressed: () async {
                     databaseSettingsProvider.toggleInAppActionState();
-                    await Share.shareXFiles([XFile(widget.image.path)]).then(
+                    await Share.shareXFiles([XFile(widget.entry.imagePath!)])
+                        .then(
                       (value) =>
                           databaseSettingsProvider.toggleInAppActionState(),
                     );
@@ -207,7 +207,7 @@ class _ImageViewState extends State<ImageView>
                 TextButton(
                   onPressed: () async {
                     await _meterImageHelper
-                        .deleteImage(widget.image.path)
+                        .deleteImage(widget.entry.imagePath!)
                         .then((value) {
                       if (mounted) {
                         Navigator.of(context).pop(true);

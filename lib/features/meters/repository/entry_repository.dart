@@ -132,6 +132,10 @@ class EntryRepository {
 
     await _entryDao.deleteEntry(entry.id!);
   }
+
+  Future<int> updateEntry(EntryDto entry) async {
+    return await _entryDao.updateEntry(entry.id!, entry.toCompanion());
+  }
 }
 
 @riverpod

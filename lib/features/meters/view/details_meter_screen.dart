@@ -6,8 +6,8 @@ import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/view/add_meter_screen.dart';
-import 'package:openmeter/features/meters/widgets/details_meter/add_entry.dart';
-import 'package:openmeter/features/meters/widgets/details_meter/entry_card_list.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/entry/add_entry.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_card_list.dart';
 import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
 import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
 
