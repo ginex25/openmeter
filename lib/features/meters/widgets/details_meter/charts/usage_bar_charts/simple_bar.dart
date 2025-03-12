@@ -2,17 +2,18 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
+import 'package:openmeter/utils/datetime_formats.dart';
 
-import '../../../../../core/helper/chart_helper.dart';
-import '../../../../../core/model/entry_monthly_sums.dart';
-import '../../../../../core/model/meter_dto.dart';
-import '../../../../../core/provider/chart_provider.dart';
-import '../../../../../utils/convert_count.dart';
-import '../../../../../utils/convert_meter_unit.dart';
+import '../../../../../../core/model/entry_monthly_sums.dart';
+import '../../../../../../core/model/meter_dto.dart';
+import '../../../../../../utils/convert_count.dart';
+import '../../../../../../utils/convert_meter_unit.dart';
+import '../../../../helper/chart_helper.dart';
 
-class SimpleUsageBarChart extends StatelessWidget {
+class SimpleUsageBarChart extends ConsumerWidget {
   final ChartHelper _helper = ChartHelper();
   final ConvertMeterUnit _convertMeterUnit = ConvertMeterUnit();
 
@@ -116,9 +117,7 @@ class SimpleUsageBarChart extends StatelessWidget {
     return barData;
   }
 
-  BarTouchData _barTouchData(BuildContext context) {
-    final chartProvider = Provider.of<ChartProvider>(context);
-
+  BarTouchData _barTouchData(BuildContext context, WidgetRef ref) {
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
         getTooltipColor: (_) => Theme.of(context).primaryColor,
@@ -127,7 +126,8 @@ class SimpleUsageBarChart extends StatelessWidget {
         getTooltipItem: (group, groupIndex, rod, rodIndex) {
           DateTime date = DateTime.fromMillisecondsSinceEpoch(group.x.toInt());
 
-          String formatDate = DateFormat('MM.yyyy').format(date);
+          String formatDate =
+              DateFormat(DateTimeFormats.monthLongYear).format(date);
 
           String text =
               '$formatDate \n  ${ConvertCount.convertCount(rod.toY.toInt())} ${_convertMeterUnit.getUnitString(meter.unit)}';
@@ -146,12 +146,12 @@ class SimpleUsageBarChart extends StatelessWidget {
         if (event is FlLongPressStart ||
             event is FlTapDownEvent ||
             event is FlPanStartEvent) {
-          chartProvider.setFocusDiagram(true);
+          ref.read(chartHasFocusProvider.notifier).setState(true);
         }
         if (event is FlLongPressEnd ||
             event is FlTapUpEvent ||
             event is FlPanEndEvent) {
-          chartProvider.setFocusDiagram(false);
+          ref.read(chartHasFocusProvider.notifier).setState(false);
         }
       },
     );
@@ -172,10 +172,9 @@ class SimpleUsageBarChart extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final chartProvider = Provider.of<ChartProvider>(context);
-
+  Widget build(BuildContext context, WidgetRef ref) {
     final mediaWidth = MediaQuery.sizeOf(context).width - 35;
+    final bool chartHasFocus = ref.watch(chartHasFocusProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,9 +192,8 @@ class SimpleUsageBarChart extends StatelessWidget {
           width: 440,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            physics: chartProvider.getFocusDiagram
-                ? const NeverScrollableScrollPhysics()
-                : null,
+            physics:
+                chartHasFocus ? const NeverScrollableScrollPhysics() : null,
             child: Container(
               padding: const EdgeInsets.only(top: 4),
               width: showTwelveMonths
@@ -205,7 +203,7 @@ class SimpleUsageBarChart extends StatelessWidget {
                 BarChartData(
                   barGroups: _barData(context, data),
                   titlesData: _titlesData(),
-                  barTouchData: _barTouchData(context),
+                  barTouchData: _barTouchData(context, ref),
                   borderData: _borderData(context),
                   gridData: _gridData(),
                 ),

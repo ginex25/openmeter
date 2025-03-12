@@ -11,11 +11,7 @@ import '../../../core/provider/entry_filter_provider.dart';
 import '../../../core/provider/entry_provider.dart';
 import '../../../core/provider/room_provider.dart';
 import '../../../features/meters/widgets/details_meter/entry/add_entry.dart';
-import '../../widgets/details_meter/charts/count_line_chart.dart';
-import '../../widgets/details_meter/charts/usage_bar_charts/card.dart';
-import '../../widgets/details_meter/charts/usage_line_chart.dart';
 import '../../widgets/details_meter/costs/costs.dart';
-import '../../widgets/details_meter/entry/entry_card.dart';
 import '../../widgets/utils/selected_items_bar.dart';
 
 class DetailsSingleMeter extends StatefulWidget {
@@ -115,7 +111,6 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
                       meterId: _meter.id!,
                       tags: [],
                     ),
-                  EntryCard(meter: widget.meter),
                   const SizedBox(
                     height: 10,
                   ),
@@ -159,14 +154,14 @@ class _DetailsSingleMeterState extends State<DetailsSingleMeter> {
               });
             },
             children: [
-              if (!chartProvider.getLineChart)
-                UsageBarCard(
-                  meter: _meter,
-                ),
-              if (chartProvider.getLineChart) UsageLineChart(meter: _meter),
-              CountLineChart(
-                meter: _meter,
-              ),
+              // if (!chartProvider.getLineChart)
+              //   UsageBarCard(
+              //     meter: _meter,
+              //   ),
+              // if (chartProvider.getLineChart) UsageLineChart(meter: _meter),
+              // CountLineChart(
+              //   meter: _meter,
+              // ),
             ],
           ),
         ),

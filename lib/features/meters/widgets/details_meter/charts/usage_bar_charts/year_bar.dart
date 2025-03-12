@@ -1,15 +1,15 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
 
-import '../../../../../core/helper/chart_helper.dart';
-import '../../../../../core/model/entry_monthly_sums.dart';
-import '../../../../../core/model/meter_dto.dart';
-import '../../../../../core/provider/chart_provider.dart';
-import '../../../../../utils/convert_count.dart';
-import '../../../../../utils/convert_meter_unit.dart';
+import '../../../../../../core/model/entry_monthly_sums.dart';
+import '../../../../../../core/model/meter_dto.dart';
+import '../../../../../../utils/convert_count.dart';
+import '../../../../../../utils/convert_meter_unit.dart';
+import '../../../../helper/chart_helper.dart';
 
-class YearBarChart extends StatelessWidget {
+class YearBarChart extends ConsumerWidget {
   final ChartHelper _helper = ChartHelper();
   final ConvertMeterUnit _convertMeterUnit = ConvertMeterUnit();
 
@@ -97,7 +97,7 @@ class YearBarChart extends StatelessWidget {
     );
   }
 
-  BarTouchData _barTouchData(Color color, ChartProvider chartProvider) {
+  BarTouchData _barTouchData(Color color, WidgetRef ref) {
     return BarTouchData(
       touchTooltipData: BarTouchTooltipData(
         getTooltipColor: (_) => color,
@@ -120,12 +120,12 @@ class YearBarChart extends StatelessWidget {
         if (event is FlLongPressStart ||
             event is FlTapDownEvent ||
             event is FlPanStartEvent) {
-          chartProvider.setFocusDiagram(true);
+          ref.read(chartHasFocusProvider.notifier).setState(true);
         }
         if (event is FlLongPressEnd ||
             event is FlTapUpEvent ||
             event is FlPanEndEvent) {
-          chartProvider.setFocusDiagram(false);
+          ref.read(chartHasFocusProvider.notifier).setState(false);
         }
       },
     );
@@ -146,9 +146,7 @@ class YearBarChart extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final chartProvider = Provider.of<ChartProvider>(context);
-
+  Widget build(BuildContext context, WidgetRef ref) {
     Map<int, int> finalData = _helper.splitListInYears(data);
 
     final primaryColor = Theme.of(context).primaryColor;
@@ -173,7 +171,7 @@ class YearBarChart extends StatelessWidget {
             BarChartData(
               barGroups: _barGroups(primaryColor, finalData),
               titlesData: _titlesData(),
-              barTouchData: _barTouchData(primaryColor, chartProvider),
+              barTouchData: _barTouchData(primaryColor, ref),
               borderData: _borderData(Theme.of(context).hintColor),
               gridData: _gridData(),
             ),

@@ -2,28 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
+import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
+import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
 import 'package:openmeter/features/meters/view/add_meter_screen.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/charts/count_line_chart.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/charts/uasge_line_chart.dart';
+import 'package:openmeter/features/meters/widgets/details_meter/charts/usage_bar_charts/card.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/add_entry.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_card_list.dart';
 import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
 import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class DetailsMeterScreen extends ConsumerWidget {
+class DetailsMeterScreen extends ConsumerStatefulWidget {
   final int meterId;
 
   const DetailsMeterScreen({super.key, required this.meterId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final detailsProvider = ref.watch(detailsMeterProvider(meterId));
+  ConsumerState createState() => _DetailsMeterScreenState();
+}
+
+class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
+  int _activeChartWidget = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final detailsProvider = ref.watch(detailsMeterProvider(widget.meterId));
 
     final int selectedEntriesCount = ref.watch(selectedEntriesCountProvider);
 
     return detailsProvider.when(
       data: (detailsMeter) {
+        final bool showLineChart = ref.watch(showLineChartProvider);
+
+        final bool chartHasFocus = ref.watch(chartHasFocusProvider);
+
         return Scaffold(
           appBar: selectedEntriesCount > 0
               ? _selectedAppBar(ref, selectedEntriesCount)
@@ -37,7 +54,7 @@ class DetailsMeterScreen extends ConsumerWidget {
             onPopInvokedWithResult: (bool didPop, _) async {
               if (selectedEntriesCount > 0) {
                 ref
-                    .read(detailsMeterProvider(meterId).notifier)
+                    .read(detailsMeterProvider(widget.meterId).notifier)
                     .removeSelectedEntitiesState();
               } else {
                 ref.invalidate(entryFilterProvider);
@@ -54,7 +71,7 @@ class DetailsMeterScreen extends ConsumerWidget {
                       _meterInformationWidget(context, detailsMeter.meter),
                       const Divider(),
                       HorizontalTagsList(
-                        meterId: meterId,
+                        meterId: widget.meterId,
                         tags: [],
                       ),
                       const SizedBox(
@@ -67,7 +84,49 @@ class DetailsMeterScreen extends ConsumerWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      // if (_meter.hasEntry) _detailsWidgets(chartProvider),
+                      if (detailsMeter.meter.lastEntry != null)
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 410,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: PageView(
+                                  physics: chartHasFocus
+                                      ? const NeverScrollableScrollPhysics()
+                                      : null,
+                                  onPageChanged: (value) {
+                                    setState(() {
+                                      _activeChartWidget = value;
+                                    });
+                                  },
+                                  children: [
+                                    if (!showLineChart)
+                                      UsageBarChartCard(
+                                          entries: detailsMeter.entries,
+                                          meter: detailsMeter.meter),
+                                    if (showLineChart)
+                                      UsageLineChart(
+                                          entries: detailsMeter.entries,
+                                          meter: detailsMeter.meter),
+                                    CountLineChart(
+                                        entries: detailsMeter.entries,
+                                        meter: detailsMeter.meter),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            AnimatedSmoothIndicator(
+                              activeIndex: _activeChartWidget,
+                              count: 2,
+                              effect: WormEffect(
+                                activeDotColor: Theme.of(context).primaryColor,
+                                dotHeight: 10,
+                                dotWidth: 10,
+                              ),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
@@ -81,7 +140,8 @@ class DetailsMeterScreen extends ConsumerWidget {
                           //     .setHasUpdate(true);
 
                           ref
-                              .read(detailsMeterProvider(meterId).notifier)
+                              .read(
+                                  detailsMeterProvider(widget.meterId).notifier)
                               .deleteSelectedEntries();
                         },
                         style: ButtonStyle(
@@ -171,7 +231,7 @@ class DetailsMeterScreen extends ConsumerWidget {
         icon: const Icon(Icons.close),
         onPressed: () {
           ref
-              .read(detailsMeterProvider(meterId).notifier)
+              .read(detailsMeterProvider(widget.meterId).notifier)
               .removeSelectedEntitiesState();
         },
       ),

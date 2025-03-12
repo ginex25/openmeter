@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 
-import '../model/entry_dto.dart';
-import '../model/entry_monthly_sums.dart';
+import '../../../core/model/entry_dto.dart';
+import '../../../core/model/entry_monthly_sums.dart';
 
 class ChartHelper {
   ChartHelper();
@@ -137,5 +137,18 @@ class ChartHelper {
     }
 
     return result;
+  }
+
+  double calcAverageCountUsage(
+      {required List<EntryMonthlySums> entries, required int length}) {
+    double usage = 0.0;
+
+    for (var entry in entries) {
+      if (entry.usage != -1) {
+        usage += entry.usage;
+      }
+    }
+
+    return usage / length;
   }
 }
