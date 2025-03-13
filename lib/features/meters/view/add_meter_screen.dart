@@ -57,6 +57,8 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
 
     final MeterDto meter = widget.detailsMeter!.meter;
 
+    _meterUnit = meter.unit;
+
     if (meter.tags.isNotEmpty) {
       _tagsId.addAll(meter.tags);
     }

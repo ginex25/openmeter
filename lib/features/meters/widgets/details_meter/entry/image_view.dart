@@ -78,7 +78,8 @@ class _ImageViewState extends State<ImageView>
               ],
             ),
             Text(
-              DateFormat(DateTimeFormats.germanDate).format(widget.entry.date),
+              DateFormat(DateTimeFormats.dateGermanLong)
+                  .format(widget.entry.date),
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],

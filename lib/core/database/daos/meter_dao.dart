@@ -130,4 +130,38 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
         .map((row) => row.read(count))
         .getSingleOrNull();
   }
+
+  Future<MeterContractData?> getMeterContract(int meterId) async {
+    final query = select(db.meterContract)
+      ..where(
+        (tbl) => tbl.meterId.equals(meterId),
+      );
+
+    return query.getSingleOrNull();
+  }
+
+  Future<int> createMeterContract(int meterId, int contractId,
+      DateTime? startDate, DateTime? endDate) async {
+    return await db.into(db.meterContract).insert(
+          MeterContractCompanion(
+            endDate: Value(endDate),
+            startDate: Value(startDate),
+            contractId: Value(contractId),
+            meterId: Value(meterId),
+          ),
+        );
+  }
+
+  Future<void> updateContractForMeter(
+      int meterId, MeterContractCompanion companion) async {
+    await (update(db.meterContract)
+          ..where((tbl) => tbl.meterId.equals(meterId)))
+        .write(companion);
+  }
+
+  Future<void> removeContractFromMeter(int meterId) async {
+    await (delete(db.meterContract)
+          ..where((tbl) => tbl.meterId.equals(meterId)))
+        .go();
+  }
 }

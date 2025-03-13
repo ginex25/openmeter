@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/features/meters/provider/contract_list.dart';
+import 'package:openmeter/features/meters/provider/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/meter_cost_provider.dart';
 
-import '../../../../core/provider/cost_provider.dart';
-import '../../../../features/contract/model/contract_dto.dart';
+import '../../../../contract/model/contract_dto.dart';
 import 'select_contract_dialog.dart';
 
-class SelectContractCard extends StatefulWidget {
-  final List<ContractDto> contracts;
-
-  const SelectContractCard({super.key, required this.contracts});
+class SelectContractCard extends ConsumerStatefulWidget {
+  const SelectContractCard({
+    super.key,
+  });
 
   @override
-  State<SelectContractCard> createState() => _SelectContractCardState();
+  ConsumerState<SelectContractCard> createState() => _SelectContractCardState();
 }
 
-class _SelectContractCardState extends State<SelectContractCard> {
-  _showSelectionDialog() async {
+class _SelectContractCardState extends ConsumerState<SelectContractCard> {
+  _showSelectionDialog(List<ContractDto> contracts) async {
     return await showDialog(
       context: context,
       builder: (context) {
         return SelectContractDialog(
-          contracts: widget.contracts,
+          contracts: contracts,
         );
       },
     );
@@ -28,7 +30,7 @@ class _SelectContractCardState extends State<SelectContractCard> {
 
   @override
   Widget build(BuildContext context) {
-    final costProvider = Provider.of<CostProvider>(context);
+    final List<ContractDto> contracts = ref.watch(contractsForMeterProvider);
 
     return SizedBox(
       width: double.infinity,
@@ -58,10 +60,18 @@ class _SelectContractCardState extends State<SelectContractCard> {
                 width: MediaQuery.sizeOf(context).width * 0.8,
                 child: FilledButton.tonal(
                   onPressed: () async {
-                    int? selectedContractId = await _showSelectionDialog();
+                    ContractDto? selectedContract =
+                        await _showSelectionDialog(contracts);
 
-                    if (selectedContractId != null) {
-                      costProvider.saveSelectedContract(selectedContractId);
+                    if (selectedContract != null) {
+                      final detailsMeter =
+                          ref.watch(currentDetailsMeterProvider);
+
+                      ref
+                          .read(meterCostProviderProvider(
+                                  detailsMeter.meter, detailsMeter.entries)
+                              .notifier)
+                          .createMeterCosts(selectedContract, null, null);
                     }
                   },
                   child: const Text('Vertrag wählen'),

@@ -7,16 +7,14 @@ import 'package:openmeter/core/model/entry_monthly_sums.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/helper/chart_helper.dart';
 import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
+import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
 import 'package:openmeter/utils/convert_count.dart';
 import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/datetime_formats.dart';
 
 class CountLineChart extends ConsumerStatefulWidget {
-  final List<EntryDto> entries;
-  final MeterDto meter;
-
-  const CountLineChart({super.key, required this.entries, required this.meter});
+  const CountLineChart({super.key});
 
   @override
   ConsumerState createState() => _CountLineChartState();
@@ -40,20 +38,22 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.entries.isEmpty) {
+    final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
+    if (detailsMeter.entries.isEmpty) {
       return const NoEntry(
           text: 'Es sind keine oder zu wenige Einträge vorhanden');
     }
 
-    _getTimeValues(widget.entries);
+    _getTimeValues(detailsMeter.entries);
 
     if (_twelveMonths) {
-      finalEntries = _helper.getLastMonths(widget.entries);
+      finalEntries = _helper.getLastMonths(detailsMeter.entries);
     } else {
-      finalEntries = _helper.convertEntryList(widget.entries);
+      finalEntries = _helper.convertEntryList(detailsMeter.entries);
     }
 
-    _hasResetEntries = widget.entries.any((element) => element.isReset);
+    _hasResetEntries = detailsMeter.entries.any((element) => element.isReset);
 
     if (_hasResetEntries) {
       finalEntries =
@@ -86,7 +86,7 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
                   titlesData: _titlesData(),
                   borderData: _borderData(),
                   gridData: _gridData(),
-                  lineTouchData: _touchData(),
+                  lineTouchData: _touchData(detailsMeter.meter),
                 ),
               ),
             ),
@@ -99,7 +99,7 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
                 showCheckmark: false,
                 labelStyle: Theme.of(context).textTheme.bodySmall!,
                 onSelected: (value) {
-                  if (widget.entries.length > 12) {
+                  if (detailsMeter.entries.length > 12) {
                     setState(() {
                       _twelveMonths = value;
                     });
@@ -191,7 +191,7 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
           return Padding(
             padding: const EdgeInsets.only(top: 8, right: 8.0),
             child: Text(
-              DateFormat(DateTimeFormats.monthShortYear)
+              DateFormat(DateTimeFormats.dateMonthYearShort)
                   .format(date)
                   .toString(),
               style: const TextStyle(
@@ -255,7 +255,7 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
     return const FlGridData(show: false);
   }
 
-  LineTouchData _touchData() {
+  LineTouchData _touchData(MeterDto meter) {
     return LineTouchData(
       enabled: true,
       touchTooltipData: LineTouchTooltipData(
@@ -266,10 +266,10 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
             final DateTime date =
                 DateTime.fromMillisecondsSinceEpoch(e.x.toInt());
             final String dateFormat =
-                DateFormat(DateTimeFormats.germanDate).format(date);
+                DateFormat(DateTimeFormats.dateGermanLong).format(date);
 
             return LineTooltipItem(
-              '$dateFormat \n ${ConvertCount.convertCount(e.y.toInt())}  ${_convertMeterUnit.getUnitString(widget.meter.unit)}',
+              '$dateFormat \n ${ConvertCount.convertCount(e.y.toInt())}  ${_convertMeterUnit.getUnitString(meter.unit)}',
               const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

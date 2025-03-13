@@ -61,9 +61,10 @@ class MeterDto {
   }
 
   MeterCompanion toMeterCompanion() => MeterCompanion(
-      isArchived: Value(isArchived),
-      typ: Value(typ),
-      note: Value(note),
-      number: Value(number),
-      unit: Value(unit));
+        isArchived: Value(isArchived),
+        typ: Value(typ),
+        note: Value(note),
+        number: Value(number),
+        unit: Value(unit),
+      );
 }

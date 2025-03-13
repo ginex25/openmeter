@@ -83,7 +83,7 @@ class _DateFilterState extends ConsumerState<DateFilter> {
                 subtitle: Text(
                   _startDate == null
                       ? 'Datum auswählen'
-                      : DateFormat(DateTimeFormats.germanDate)
+                      : DateFormat(DateTimeFormats.dateGermanLong)
                           .format(_startDate!),
                 ),
                 subtitleTextStyle: Theme.of(context)
@@ -151,7 +151,7 @@ class _DateFilterState extends ConsumerState<DateFilter> {
                 subtitle: Text(
                   _endDate == null
                       ? 'Datum auswählen'
-                      : DateFormat(DateTimeFormats.germanDate)
+                      : DateFormat(DateTimeFormats.dateGermanLong)
                           .format(_endDate!),
                 ),
                 subtitleTextStyle: Theme.of(context)

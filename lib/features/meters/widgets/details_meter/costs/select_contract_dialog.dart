@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../features/contract/model/contract_dto.dart';
-import '../../../../features/contract/model/provider_dto.dart';
+import '../../../../contract/model/contract_dto.dart';
+import '../../../../contract/model/provider_dto.dart';
 
 class SelectContractDialog extends StatefulWidget {
   final List<ContractDto> contracts;
@@ -178,7 +178,9 @@ class _SelectContractDialogState extends State<SelectContractDialog> {
                   () => _showHint = true,
                 );
               } else {
-                Navigator.of(context).pop(_selectedContractId);
+                Navigator.of(context).pop(widget.contracts.firstWhere(
+                  (element) => element.id == _selectedContractId,
+                ));
               }
             },
             child: const Text('Speichern'),

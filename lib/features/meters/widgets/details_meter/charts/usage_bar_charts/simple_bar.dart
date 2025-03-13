@@ -127,7 +127,7 @@ class SimpleUsageBarChart extends ConsumerWidget {
           DateTime date = DateTime.fromMillisecondsSinceEpoch(group.x.toInt());
 
           String formatDate =
-              DateFormat(DateTimeFormats.monthLongYear).format(date);
+              DateFormat(DateTimeFormats.dateMonthYearLong).format(date);
 
           String text =
               '$formatDate \n  ${ConvertCount.convertCount(rod.toY.toInt())} ${_convertMeterUnit.getUnitString(meter.unit)}';

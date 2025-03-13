@@ -35,7 +35,7 @@ class MeterCard extends ConsumerWidget {
     String dateText = 'none';
 
     if (date != null) {
-      dateText = DateFormat(DateTimeFormats.germanDate).format(date!);
+      dateText = DateFormat(DateTimeFormats.dateGermanLong).format(date!);
     }
 
     final bool showTags = ref.watch(showTagsProvider);

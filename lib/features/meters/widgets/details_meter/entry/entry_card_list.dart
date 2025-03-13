@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/core/theme/model/font_size_value.dart';
 import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
+import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
@@ -17,10 +17,7 @@ import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/datetime_formats.dart';
 
 class EntryCardList extends ConsumerStatefulWidget {
-  final MeterDto meter;
-  final List<EntryDto> entries;
-
-  const EntryCardList({super.key, required this.entries, required this.meter});
+  const EntryCardList({super.key});
 
   @override
   ConsumerState<EntryCardList> createState() => _EntryCardListState();
@@ -41,6 +38,8 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
 
     final int selectedEntriesCount = ref.watch(selectedEntriesCountProvider);
 
+    final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8),
       child: Column(
@@ -60,7 +59,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
             height: 5,
           ),
           if (hasFilter) _showHintHasFilter(context),
-          if (hasFilter && widget.entries.isEmpty)
+          if (hasFilter && detailsMeter.entries.isEmpty)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -68,7 +67,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),
-          if (widget.entries.isEmpty && !hasFilter)
+          if (detailsMeter.entries.isEmpty && !hasFilter)
             Container(
               padding: const EdgeInsets.all(8),
               alignment: Alignment.center,
@@ -81,15 +80,15 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                 textAlign: TextAlign.center,
               ),
             ),
-          if (widget.entries.isNotEmpty)
+          if (detailsMeter.entries.isNotEmpty)
             SizedBox(
               height: isLargeText ? 150 : 130,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
-                itemCount: widget.entries.length,
+                itemCount: detailsMeter.entries.length,
                 itemBuilder: (context, index) {
-                  final EntryDto item = widget.entries.elementAt(index);
+                  final EntryDto item = detailsMeter.entries.elementAt(index);
 
                   bool hasNote = false;
 
@@ -101,8 +100,8 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                     onTap: () async {
                       if (selectedEntriesCount > 0) {
                         ref
-                            .read(
-                                detailsMeterProvider(widget.meter.id!).notifier)
+                            .read(detailsMeterProvider(detailsMeter.meter.id!)
+                                .notifier)
                             .toggleSelectedEntry(item);
                       } else {
                         showModalBottomSheet(
@@ -119,7 +118,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                             child: SizedBox(
                               height: MediaQuery.sizeOf(context).height * 0.6,
                               child: EntryDetails(
-                                  entry: item, meter: widget.meter),
+                                  entry: item, meter: detailsMeter.meter),
                             ),
                           ),
                         );
@@ -127,7 +126,8 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                     },
                     onLongPress: () {
                       ref
-                          .read(detailsMeterProvider(widget.meter.id!).notifier)
+                          .read(detailsMeterProvider(detailsMeter.meter.id!)
+                              .notifier)
                           .toggleSelectedEntry(item);
                     },
                     child: SizedBox(
@@ -150,7 +150,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                               const Divider(),
                               _showCountAndUsage(
                                 item: item,
-                                unit: widget.meter.unit,
+                                unit: detailsMeter.meter.unit,
                               ),
                             ],
                           ),
@@ -230,7 +230,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          DateFormat(DateTimeFormats.germanDate).format(item.date),
+          DateFormat(DateTimeFormats.dateGermanLong).format(item.date),
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: Colors.grey,
               ),

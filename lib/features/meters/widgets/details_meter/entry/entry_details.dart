@@ -8,6 +8,7 @@ import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
+import 'package:openmeter/features/meters/provider/entry_contract.dart';
 import 'package:openmeter/features/meters/service/meter_image_helper.dart';
 import 'package:openmeter/utils/convert_count.dart';
 import 'package:openmeter/utils/convert_meter_unit.dart';
@@ -105,6 +106,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
           ),
         ),
         ListView(
+          padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
           shrinkWrap: true,
           children: [
             const SizedBox(height: 10),
@@ -116,7 +118,8 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      DateFormat(DateTimeFormats.germanDate).format(entry.date),
+                      DateFormat(DateTimeFormats.dateGermanLong)
+                          .format(entry.date),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     convertMeterUnit.getUnitWidget(
@@ -149,7 +152,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
             ),
             const Divider(),
             SizedBox(
-              height: 280,
+              height: 300,
               child: PageView(
                 controller: _pageController,
                 onPageChanged: (value) {
@@ -174,7 +177,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
                           children: [
                             EntityCost(
                               entry: entry,
-                              unit: widget.meter.unit,
+                              meter: widget.meter,
                             ),
                             const Divider(),
                           ],
@@ -503,12 +506,12 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
 
 class EntityCost extends ConsumerWidget {
   final EntryDto entry;
-  final String unit;
+  final MeterDto meter;
 
   const EntityCost({
     super.key,
     required this.entry,
-    required this.unit,
+    required this.meter,
   });
 
   @override
@@ -516,21 +519,101 @@ class EntityCost extends ConsumerWidget {
     final ConvertMeterUnit convertMeterUnit = ConvertMeterUnit();
     final EntryHelper entryHelper = EntryHelper();
 
-    // TODO impl contract for meter
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+    final provider = ref.watch(entryContractProvider(meter));
+
+    return provider.when(
+      data: (data) {
+        if (data == null) {
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      convertMeterUnit.getUnitWidget(
+                        count: '+${ConvertCount.convertCount(entry.usage)}',
+                        unit: meter.unit,
+                        textStyle:
+                            Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: entryHelper.getColors(
+                                      entry.count, entry.usage),
+                                ),
+                      ),
+                      Text(
+                        'innerhalb ${entry.days} Tagen',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      convertMeterUnit.getUnitWidget(
+                        count:
+                            entryHelper.getDailyUsage(entry.usage, entry.days),
+                        unit: meter.unit,
+                        textStyle:
+                            Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                  color: entryHelper.getColors(
+                                      entry.count, entry.usage),
+                                ),
+                      ),
+                      Text(
+                        'pro Tag',
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 15),
+              Text(
+                'Für mehr Information füge einen Vertrag hinzu.',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          );
+        }
+
+        double usageCost = entryHelper.calcUsageForContract(
+            entry.usage, data.costs.energyPrice);
+        double dailyCost = usageCost / entry.days;
+
+        final String local = Platform.localeName;
+        final costFormat = NumberFormat.simpleCurrency(locale: local);
+
+        return Column(
           children: [
+            // full days
             Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                convertMeterUnit.getUnitWidget(
-                  count: '+${ConvertCount.convertCount(entry.usage)}',
-                  unit: unit,
-                  textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: entryHelper.getColors(entry.count, entry.usage),
-                      ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    convertMeterUnit.getUnitWidget(
+                      count: '+${ConvertCount.convertCount(entry.usage)}',
+                      unit: meter.unit,
+                      textStyle:
+                          Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: entryHelper.getColors(
+                                  entry.count,
+                                  entry.usage,
+                                ),
+                              ),
+                    ),
+                    Text(
+                      costFormat.format(usageCost),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
                 Text(
                   'innerhalb ${entry.days} Tagen',
@@ -538,15 +621,33 @@ class EntityCost extends ConsumerWidget {
                 ),
               ],
             ),
+            const SizedBox(
+              height: 15,
+            ),
+
+            // Daily
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                convertMeterUnit.getUnitWidget(
-                  count: entryHelper.getDailyUsage(entry.usage, entry.days),
-                  unit: unit,
-                  textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: entryHelper.getColors(entry.count, entry.usage),
-                      ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    convertMeterUnit.getUnitWidget(
+                      count: entryHelper.getDailyUsage(entry.usage, entry.days),
+                      unit: meter.unit,
+                      textStyle:
+                          Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: entryHelper.getColors(
+                                  entry.count,
+                                  entry.usage,
+                                ),
+                              ),
+                    ),
+                    Text(
+                      costFormat.format(dailyCost),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
                 Text(
                   'pro Tag',
@@ -555,17 +656,12 @@ class EntityCost extends ConsumerWidget {
               ],
             ),
           ],
-        ),
-        const SizedBox(height: 15),
-        Text(
-          'Für mehr Information füge einen Vertrag hinzu.',
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall!
-              .copyWith(color: Colors.grey),
-          textAlign: TextAlign.center,
-        ),
-      ],
+        );
+      },
+      error: (error, stackTrace) => throw error,
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

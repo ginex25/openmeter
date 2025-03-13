@@ -90,6 +90,7 @@ class EntryRepository {
 
       newEntry.id = await _entryDao.createEntry(newEntry.toCompanion());
 
+      print('newExntry.id = ${newEntry.id}');
       int index = currentEntries.indexWhere(
         (element) => element.date.isBefore(newEntry.date),
       );

@@ -6,6 +6,7 @@ import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
+import 'package:openmeter/features/meters/provider/meter_cost_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
@@ -45,6 +46,8 @@ class DetailsMeter extends _$DetailsMeter {
 
     final newDetails =
         state.value!.copyWith(entries: newEntriesList, meter: meter);
+
+    ref.invalidate(meterCostProviderProvider);
 
     state = AsyncData(newDetails);
   }
@@ -122,6 +125,8 @@ class DetailsMeter extends _$DetailsMeter {
     final newDetails =
         state.value!.copyWith(entries: currentEntries, meter: meter);
 
+    ref.invalidate(meterCostProviderProvider);
+
     state = AsyncData(newDetails);
   }
 
@@ -143,6 +148,8 @@ class DetailsMeter extends _$DetailsMeter {
 
     ref.read(meterListProvider.notifier).updateMeterInfo(newMeter);
     ref.invalidate(meterTagsListProvider(meterId));
+
+    ref.invalidate(meterCostProviderProvider);
 
     state = AsyncData(newDetails);
   }
@@ -181,6 +188,8 @@ class DetailsMeter extends _$DetailsMeter {
     currentEntries[index] = entry;
 
     final newDetails = state.value!.copyWith(entries: currentEntries);
+
+    ref.invalidate(meterCostProviderProvider);
 
     state = AsyncData(newDetails);
   }

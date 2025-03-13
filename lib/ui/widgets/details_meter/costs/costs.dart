@@ -7,9 +7,8 @@ import '../../../../core/database/local_database.dart';
 import '../../../../core/model/meter_dto.dart';
 import '../../../../core/provider/cost_provider.dart';
 import '../../../../features/contract/model/contract_dto.dart';
+import '../../../../features/meters/widgets/details_meter/costs/select_contract_dialog.dart';
 import 'cost_card.dart';
-import 'select_contract_card.dart';
-import 'select_contract_dialog.dart';
 
 enum CostOverviewOperator { changeContract, selectTimeSpan, removeTimeSpan }
 
@@ -110,7 +109,7 @@ class _MainViewCostsState extends State<MainViewCosts> {
             const SizedBox(
               height: 5,
             ),
-            if (contracts.length > 1) SelectContractCard(contracts: contracts),
+            // if (contracts.length > 1) SelectContractCard(contracts: contracts),
           ],
         );
       },

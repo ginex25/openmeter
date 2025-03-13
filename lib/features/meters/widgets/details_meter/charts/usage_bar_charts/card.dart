@@ -4,6 +4,7 @@ import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/model/entry_monthly_sums.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/helper/chart_helper.dart';
+import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
@@ -13,11 +14,7 @@ import 'package:openmeter/utils/convert_meter_unit.dart';
 import 'package:openmeter/utils/custom_icons.dart';
 
 class UsageBarChartCard extends ConsumerStatefulWidget {
-  final List<EntryDto> entries;
-  final MeterDto meter;
-
-  const UsageBarChartCard(
-      {super.key, required this.entries, required this.meter});
+  const UsageBarChartCard({super.key});
 
   @override
   ConsumerState createState() => _UsageBarChartCardState();
@@ -34,7 +31,9 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.entries.isEmpty) {
+    final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
+    if (detailsMeter.entries.isEmpty) {
       return const NoEntry(
           text: 'Es sind keine oder zu wenige Einträge vorhanden');
     }
@@ -43,7 +42,8 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
 
     List<EntryMonthlySums> sumMonths = [];
 
-    final List<EntryDto> reservedEntries = widget.entries.reversed.toList();
+    final List<EntryDto> reservedEntries =
+        detailsMeter.entries.reversed.toList();
 
     final totalSumMonths = _helper.getSumInMonths(reservedEntries);
 
@@ -56,8 +56,8 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
     final totalMonths = _compareYears ? totalSumMonths : sumMonths;
 
     final totalEntries = _compareYears
-        ? widget.entries.length
-        : (!_showOnlyLastTwelveMonths ? widget.entries.length : 12);
+        ? detailsMeter.entries.length
+        : (!_showOnlyLastTwelveMonths ? detailsMeter.entries.length : 12);
 
     _averageUsage = _helper.calcAverageCountUsage(
         entries: totalMonths, length: totalEntries);
@@ -71,23 +71,23 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _headline(textTheme: textTheme),
+            _headline(textTheme: textTheme, meter: detailsMeter.meter),
             const SizedBox(
               height: 15,
             ),
             if (!_compareYears)
               SimpleUsageBarChart(
                   data: sumMonths,
-                  meter: widget.meter,
+                  meter: detailsMeter.meter,
                   showTwelveMonths: _showOnlyLastTwelveMonths),
             if (_compareYears)
               YearBarChart(
                   data: _helper.getSumInMonths(reservedEntries),
-                  meter: widget.meter),
+                  meter: detailsMeter.meter),
             const Spacer(),
             _filterActions(
                 textTheme: textTheme,
-                entriesLength: widget.entries.length,
+                entriesLength: detailsMeter.entries.length,
                 hasFilters: entryFilter.hasActiveFilter()),
           ],
         ),
@@ -95,7 +95,7 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
     );
   }
 
-  Widget _headline({required TextStyle textTheme}) {
+  Widget _headline({required TextStyle textTheme, required MeterDto meter}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -121,7 +121,7 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
                     color: textTheme.color!,
                   ),
                   Text(
-                    '${_averageUsage.toStringAsFixed(2)} ${_convertMeterUnit.getUnitString(widget.meter.unit)}',
+                    '${_averageUsage.toStringAsFixed(2)} ${_convertMeterUnit.getUnitString(meter.unit)}',
                     style: textTheme,
                   ),
                 ],

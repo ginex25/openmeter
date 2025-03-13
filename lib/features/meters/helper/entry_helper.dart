@@ -139,4 +139,8 @@ class EntryHelper {
       return listToFilter;
     }
   }
+
+  double calcUsageForContract(int usage, double energyPrice) {
+    return (usage * energyPrice) / 100;
+  }
 }

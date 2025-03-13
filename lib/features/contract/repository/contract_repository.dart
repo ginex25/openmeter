@@ -83,7 +83,7 @@ class ContractRepository {
     await _contractDao.updateContract(data);
   }
 
-  Future<ContractDto> getContractById(int id) async {
+  Future<ContractDto> getById(int id) async {
     final ContractModel? data = await _contractDao.findById(id);
 
     if (data == null) {
@@ -95,6 +95,10 @@ class ContractRepository {
         : CompareCosts.fromData(data.costCompareData!);
 
     return ContractDto.fromData(data.contractData, data.providerData, costs);
+  }
+
+  Future<List<ContractDto>> getContractByType(String type) async {
+    return await _contractDao.getContractByTyp(type);
   }
 }
 

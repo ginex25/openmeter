@@ -18,7 +18,7 @@ class _TimePickerTileState extends ConsumerState<TimePickerTile> {
 
   DateTime _selectedTime = DateTime.now();
 
-  final DateFormat _timeFormat = DateFormat(DateTimeFormats.hourMinute);
+  final DateFormat _timeFormat = DateFormat(DateTimeFormats.timeShort);
 
   final DateTime _dateTimeNow = DateTime.now();
 

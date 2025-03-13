@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/model/entry_dto.dart';
+import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -12,10 +13,7 @@ import '../../../../../core/model/meter_dto.dart';
 import 'add_image_popup_menu.dart';
 
 class AddEntry extends ConsumerStatefulWidget {
-  final MeterDto meter;
-  final String predictedCount;
-
-  const AddEntry({super.key, required this.meter, this.predictedCount = ''});
+  const AddEntry({super.key});
 
   @override
   ConsumerState<AddEntry> createState() => _AddEntryState();
@@ -38,6 +36,8 @@ class _AddEntryState extends ConsumerState<AddEntry> {
   int _selectedWidgetView = 0;
   String? _imagePath;
   int _firstOpen = 0;
+
+  late MeterDto meter;
 
   @override
   void dispose() {
@@ -73,14 +73,14 @@ class _AddEntryState extends ConsumerState<AddEntry> {
       final entry = EntryDto(
         count: count,
         date: _selectedDate ?? DateTime.now(),
-        meterId: widget.meter.id!,
+        meterId: meter.id!,
         isReset: _isReset,
         transmittedToProvider: _isTransmitted,
         imagePath: _imagePath,
       );
 
       await ref
-          .read(detailsMeterProvider(widget.meter.id!).notifier)
+          .read(detailsMeterProvider(meter.id!).notifier)
           .addEntry(entry)
           .then(
         (value) {
@@ -363,7 +363,10 @@ class _AddEntryState extends ConsumerState<AddEntry> {
 
   @override
   Widget build(BuildContext context) {
-    _counterController.text = widget.predictedCount;
+    final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
+    _counterController.text = detailsMeter.predictCount;
+    meter = detailsMeter.meter;
 
     return IconButton(
       onPressed: () {

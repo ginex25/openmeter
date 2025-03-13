@@ -14,7 +14,7 @@ class DetailsContract extends _$DetailsContract {
   Future<ContractDto> build(int id) async {
     final ContractRepository repo = ref.watch(contractRepositoryProvider);
 
-    return await repo.getContractById(id);
+    return await repo.getById(id);
   }
 
   updateContract(ContractDto contract) {

@@ -7,6 +7,7 @@ import 'package:openmeter/core/model/entry_monthly_sums.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/helper/chart_helper.dart';
 import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
+import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
 import 'package:openmeter/utils/convert_count.dart';
@@ -15,14 +16,7 @@ import 'package:openmeter/utils/custom_icons.dart';
 import 'package:openmeter/utils/datetime_formats.dart';
 
 class UsageLineChart extends ConsumerStatefulWidget {
-  final List<EntryDto> entries;
-  final MeterDto meter;
-
-  const UsageLineChart({
-    super.key,
-    required this.entries,
-    required this.meter,
-  });
+  const UsageLineChart({super.key});
 
   @override
   ConsumerState createState() => _UsageLineChartState();
@@ -48,14 +42,17 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.entries.isEmpty) {
+    final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
+    if (detailsMeter.entries.isEmpty) {
       return const NoEntry(
           text: 'Es sind keine oder zu wenige Einträge vorhanden');
     }
 
-    _getTimeValues(widget.entries);
+    _getTimeValues(detailsMeter.entries);
 
-    final List<EntryDto> reservedEntries = widget.entries.reversed.toList();
+    final List<EntryDto> reservedEntries =
+        detailsMeter.entries.reversed.toList();
 
     if (_twelveMonths) {
       finalEntries = _helper.getLastMonths(reservedEntries);
@@ -65,10 +62,10 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
 
     _averageUsage = _helper.calcAverageCountUsage(
       entries: finalEntries as List<EntryMonthlySums>,
-      length: !_twelveMonths ? widget.entries.length : 12,
+      length: !_twelveMonths ? detailsMeter.entries.length : 12,
     );
 
-    _hasResetEntries = widget.entries.any((element) => element.isReset);
+    _hasResetEntries = detailsMeter.entries.any((element) => element.isReset);
 
     if (_hasResetEntries) {
       finalEntries =
@@ -84,7 +81,7 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _headLine(textTheme),
+            _headLine(textTheme, detailsMeter.meter),
             const SizedBox(
               height: 20,
             ),
@@ -92,7 +89,7 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
               padding: const EdgeInsets.only(left: 8.0, bottom: 5),
               child: _convertMeterUnit.getUnitWidget(
                 count: '',
-                unit: widget.meter.unit,
+                unit: detailsMeter.meter.unit,
                 textStyle: Theme.of(context).textTheme.bodySmall!,
               ),
             ),
@@ -105,19 +102,19 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
                   titlesData: _titlesData(),
                   borderData: _borderData(),
                   gridData: _gridData(),
-                  lineTouchData: _touchData(),
+                  lineTouchData: _touchData(detailsMeter.meter),
                 ),
               ),
             ),
             const Spacer(),
-            _filterActions(textTheme, widget.entries),
+            _filterActions(textTheme, detailsMeter.entries),
           ],
         ),
       ),
     );
   }
 
-  Widget _headLine(TextStyle textTheme) {
+  Widget _headLine(TextStyle textTheme, MeterDto meter) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -143,7 +140,7 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
                     color: textTheme.color!,
                   ),
                   Text(
-                    '${_averageUsage.toStringAsFixed(2)} ${_convertMeterUnit.getUnitString(widget.meter.unit)}',
+                    '${_averageUsage.toStringAsFixed(2)} ${_convertMeterUnit.getUnitString(meter.unit)}',
                     style: textTheme,
                   ),
                 ],
@@ -283,7 +280,7 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
           return Padding(
             padding: const EdgeInsets.only(top: 8, right: 8.0),
             child: Text(
-              DateFormat(DateTimeFormats.monthShortYear)
+              DateFormat(DateTimeFormats.dateMonthYearShort)
                   .format(date)
                   .toString(),
               style: const TextStyle(
@@ -347,7 +344,7 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
     return const FlGridData(show: false);
   }
 
-  LineTouchData _touchData() {
+  LineTouchData _touchData(MeterDto meter) {
     return LineTouchData(
       enabled: true,
       touchTooltipData: LineTouchTooltipData(
@@ -358,10 +355,10 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
             final DateTime date =
                 DateTime.fromMillisecondsSinceEpoch(e.x.toInt());
             final String dateFormat =
-                DateFormat(DateTimeFormats.germanDate).format(date);
+                DateFormat(DateTimeFormats.dateGermanLong).format(date);
 
             return LineTooltipItem(
-              '$dateFormat \n ${ConvertCount.convertCount(e.y.toInt())} ${_convertMeterUnit.getUnitString(widget.meter.unit)}',
+              '$dateFormat \n ${ConvertCount.convertCount(e.y.toInt())} ${_convertMeterUnit.getUnitString(meter.unit)}',
               const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

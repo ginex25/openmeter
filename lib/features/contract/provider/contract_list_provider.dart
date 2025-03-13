@@ -6,6 +6,7 @@ import 'package:openmeter/features/contract/provider/delete_provider_state.dart'
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/repository/contract_repository.dart';
 import 'package:openmeter/features/contract/repository/provider_repository.dart';
+import 'package:openmeter/features/meters/provider/contracts_meter_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'contract_list_provider.g.dart';
@@ -129,6 +130,8 @@ class ContractList extends _$ContractList {
 
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
 
+    ref.invalidate(contractsMeterTypeProvider);
+
     state = AsyncData(repo.splitContracts(allContracts));
   }
 
@@ -157,6 +160,8 @@ class ContractList extends _$ContractList {
     allContracts.sort(
       (a, b) => a.meterTyp.compareTo(b.meterTyp),
     );
+
+    ref.invalidate(contractsMeterTypeProvider);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }
@@ -201,6 +206,8 @@ class ContractList extends _$ContractList {
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
 
+    ref.invalidate(contractsMeterTypeProvider);
+
     return contractDto;
   }
 
@@ -219,6 +226,8 @@ class ContractList extends _$ContractList {
     );
 
     allContracts[index] = contract;
+
+    ref.invalidate(contractsMeterTypeProvider);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }
@@ -262,6 +271,8 @@ class ContractList extends _$ContractList {
     );
 
     allContracts[index] = contract;
+
+    ref.invalidate(contractsMeterTypeProvider);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }

@@ -4,6 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/core/database/tables/meter_contract.dart';
+import 'package:openmeter/utils/datetime_formats.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -35,7 +37,8 @@ part 'local_database.g.dart';
   c.Provider,
   Tags,
   MeterWithTags,
-  CostCompare
+  CostCompare,
+  MeterContract,
 ], daos: [
   MeterDao,
   EntryDao,
@@ -49,41 +52,51 @@ class LocalDatabase extends _$LocalDatabase {
       : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 10;
 
   @override
-  MigrationStrategy get migration => MigrationStrategy(
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-        onUpgrade: (m, from, to) async {
-          if (from < 2) {
-            await m.addColumn(meter, meter.isArchived);
-          }
-          if (from < 3) {
-            await m.addColumn(provider, provider.canceled);
-            await m.addColumn(provider, provider.renewal);
-          }
-          if (from < 4) {
-            await m.addColumn(provider, provider.canceledDate);
-          }
-          if (from < 5) {
-            await m.addColumn(entries, entries.isReset);
-          }
-          if (from < 6) {
-            await m.addColumn(entries, entries.transmittedToProvider);
-          }
-          if (from < 7) {
-            await m.addColumn(entries, entries.imagePath);
-          }
-        },
-      );
+  MigrationStrategy get migration =>
+      MigrationStrategy(beforeOpen: (details) async {
+        await customStatement('PRAGMA foreign_keys = ON');
+      }, onUpgrade: (m, from, to) async {
+        if (from < 2) {
+          await m.addColumn(meter, meter.isArchived);
+        }
+        if (from < 3) {
+          await m.addColumn(provider, provider.canceled);
+          await m.addColumn(provider, provider.renewal);
+        }
+        if (from < 4) {
+          await m.addColumn(provider, provider.canceledDate);
+        }
+        if (from < 5) {
+          await m.addColumn(entries, entries.isReset);
+        }
+        if (from < 6) {
+          await m.addColumn(entries, entries.transmittedToProvider);
+        }
+        if (from < 7) {
+          await m.addColumn(entries, entries.imagePath);
+        }
+        // TODO remove lines
+        // if (from < 8) {
+        //   await m.createTable(meterContract);
+        // }
+
+        // if (from < 9) {
+        //   await m.deleteTable('meter_contract');
+        //   await m.addColumn(meter, meter.contractId);
+        // }
+        if (from < 10) {
+          await m.createTable(meterContract);
+        }
+      });
 
   Future<void> exportInto(String path, bool isBackup) async {
     String newPath = '';
     DateTime date = DateTime.now();
 
-    String formattedDate = DateFormat('yyyy_mm_dd_hh_mm_ss').format(date);
+    String formattedDate = DateFormat(DateTimeFormats.timestamp).format(date);
 
     if (isBackup) {
       newPath = p.join(path, 'meter_$formattedDate.db');
