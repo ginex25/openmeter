@@ -87,14 +87,14 @@ class _AddEntryState extends ConsumerState<AddEntry> {
           // Provider.of<DatabaseSettingsProvider>(context, listen: false)
           //     .setHasUpdate(true);
 
-          if (mounted) {
-            Navigator.of(context).pop();
-          }
-
           _counterController.clear();
           _selectedDate = DateTime.now();
         },
       );
+
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 
@@ -297,6 +297,11 @@ class _AddEntryState extends ConsumerState<AddEntry> {
   _showBottomModel() {
     // _torchController.setStateTorch(torchProvider.getStateIsTorchOn);
 
+    final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
+    _counterController.text = detailsMeter.predictCount;
+    meter = detailsMeter.meter;
+
     return showModalBottomSheet(
       backgroundColor: Theme.of(context).cardTheme.color,
       shape: const RoundedRectangleBorder(
@@ -363,11 +368,6 @@ class _AddEntryState extends ConsumerState<AddEntry> {
 
   @override
   Widget build(BuildContext context) {
-    final detailsMeter = ref.watch(currentDetailsMeterProvider);
-
-    _counterController.text = detailsMeter.predictCount;
-    meter = detailsMeter.meter;
-
     return IconButton(
       onPressed: () {
         _showBottomModel();

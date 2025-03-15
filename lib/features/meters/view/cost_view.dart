@@ -19,8 +19,6 @@ class CostView extends ConsumerWidget {
 
     final meter = detailsMeter.meter;
 
-    print('entries len: ${detailsMeter.entries.length}');
-
     final costProvider =
         ref.watch(meterCostProviderProvider(meter, detailsMeter.entries));
 
