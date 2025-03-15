@@ -7,7 +7,7 @@ import 'package:openmeter/features/contract/provider/archived_contract_list_prov
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/widget/provider_bottom_sheet.dart';
 import 'package:openmeter/features/tags/widget/tag_chip.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
 
 class ProviderCard extends ConsumerStatefulWidget {
   final ProviderDto? provider;

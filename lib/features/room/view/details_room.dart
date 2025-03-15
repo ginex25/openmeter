@@ -7,7 +7,7 @@ import 'package:openmeter/features/meters/widgets/meter_card.dart';
 import 'package:openmeter/features/room/provider/details_room_provider.dart';
 import 'package:openmeter/features/room/provider/details_room_selected_meter.dart';
 import 'package:openmeter/features/room/widget/room_type_dropdown.dart';
-import 'package:openmeter/utils/custom_colors.dart';
+import 'package:openmeter/shared/constant/custom_colors.dart';
 
 import 'add_meter_to_room.dart';
 

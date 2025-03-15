@@ -12,9 +12,9 @@ import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_details.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_filter_sheet.dart';
-import 'package:openmeter/utils/convert_count.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
 class EntryCardList extends ConsumerStatefulWidget {
   const EntryCardList({super.key});

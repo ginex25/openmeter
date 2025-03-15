@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/features/reminder/model/reminder_model.dart';
 import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
 
 class TimePickerTile extends ConsumerStatefulWidget {
   const TimePickerTile({super.key});

@@ -10,7 +10,7 @@ import 'package:provider/provider.dart' as p;
 
 import '../../core/provider/database_settings_provider.dart';
 import '../../features/contract/view/add_contract.dart';
-import '../widgets/utils/selected_items_bar.dart';
+import '../../shared/widgets/selected_items_bar.dart';
 
 class ObjectsScreen extends ConsumerStatefulWidget {
   const ObjectsScreen({super.key});

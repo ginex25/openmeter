@@ -5,7 +5,7 @@ import 'package:openmeter/features/contract/model/contract_costs.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/provider/details_contract_provider.dart';
 import 'package:openmeter/features/contract/widget/number_text_field.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
 class AddCosts extends ConsumerStatefulWidget {
   final ContractDto contract;

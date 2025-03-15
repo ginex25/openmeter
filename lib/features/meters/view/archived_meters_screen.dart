@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/features/meters/provider/archived_meters_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
-import 'package:openmeter/ui/widgets/utils/empty_archiv.dart';
-import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
+import 'package:openmeter/shared/widgets/empty_archiv.dart';
+import 'package:openmeter/shared/widgets/selected_items_bar.dart';
 
 import 'details_meter_screen.dart';
 

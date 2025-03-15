@@ -8,8 +8,8 @@ import 'package:openmeter/features/meters/view/add_meter_screen.dart';
 import 'package:openmeter/features/meters/view/details_meter_screen.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
 import 'package:openmeter/features/meters/widgets/sort_icon_button.dart';
-import 'package:openmeter/ui/widgets/utils/empty_data.dart';
-import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
+import 'package:openmeter/shared/widgets/empty_data.dart';
+import 'package:openmeter/shared/widgets/selected_items_bar.dart';
 
 class MeterListScreen extends ConsumerStatefulWidget {
   const MeterListScreen({super.key});

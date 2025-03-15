@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 
-import '../../utils/log.dart';
+import '../../shared/constant/log.dart';
 
 class TorchController {
   static const _channel = MethodChannel('com.example.openmeter/main');

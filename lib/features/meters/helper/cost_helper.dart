@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/utils/log.dart';
+import 'package:openmeter/shared/constant/log.dart';
 
 import '../../../core/helper/usage_helper.dart';
 

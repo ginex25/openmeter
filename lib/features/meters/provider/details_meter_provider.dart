@@ -189,8 +189,6 @@ class DetailsMeter extends _$DetailsMeter {
 
     final newDetails = state.value!.copyWith(entries: currentEntries);
 
-    ref.invalidate(meterCostProviderProvider);
-
     state = AsyncData(newDetails);
   }
 }

@@ -5,8 +5,8 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/provider/sort_provider.dart';
-import 'package:openmeter/utils/convert_count.dart';
-import 'package:openmeter/utils/custom_colors.dart';
+import 'package:openmeter/shared/constant/custom_colors.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
 
 import 'meter_card.dart';
 

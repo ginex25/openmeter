@@ -12,8 +12,8 @@ import 'package:openmeter/features/room/widget/room_dropdown.dart';
 import 'package:openmeter/features/tags/provider/tag_list_provider.dart';
 import 'package:openmeter/features/tags/widget/add_tags.dart';
 import 'package:openmeter/features/tags/widget/tag_chip.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
 class AddMeterScreen extends ConsumerStatefulWidget {
   final DetailsMeterModel? detailsMeter;

@@ -6,7 +6,7 @@ import 'package:openmeter/features/meters/widgets/meter_circle_avatar.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/view/details_room.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
 
 class RoomCard extends ConsumerStatefulWidget {
   final RoomDto room;

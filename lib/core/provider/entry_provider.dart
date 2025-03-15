@@ -1,10 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
 import 'package:provider/provider.dart';
 
 import '../../features/meters/service/meter_image_helper.dart';
-import '../../utils/convert_count.dart';
 import '../database/local_database.dart';
 import '../helper/entry_helper.dart';
 import '../helper/filter_entry.dart';

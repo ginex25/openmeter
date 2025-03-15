@@ -4,7 +4,7 @@ import 'package:openmeter/features/contract/provider/details_contract_provider.d
 import 'package:openmeter/features/contract/widget/compare_contracts.dart';
 import 'package:openmeter/features/contract/widget/cost_card.dart';
 import 'package:openmeter/features/contract/widget/provider_card.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
 
 import 'add_contract.dart';
 

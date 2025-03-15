@@ -10,10 +10,10 @@ import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
-import 'package:openmeter/utils/convert_count.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/custom_icons.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/custom_icons.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
 class UsageLineChart extends ConsumerStatefulWidget {
   const UsageLineChart({super.key});

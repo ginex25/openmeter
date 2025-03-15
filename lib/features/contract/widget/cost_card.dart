@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../utils/convert_meter_unit.dart';
+import '../../../shared/utils/convert_meter_unit.dart';
 import '../model/contract_dto.dart';
 import 'add_costs.dart';
 

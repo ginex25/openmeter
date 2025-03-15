@@ -10,8 +10,8 @@ import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/usage_bar_charts/simple_bar.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/usage_bar_charts/year_bar.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/custom_icons.dart';
+import 'package:openmeter/shared/constant/custom_icons.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
 class UsageBarChartCard extends ConsumerStatefulWidget {
   const UsageBarChartCard({super.key});

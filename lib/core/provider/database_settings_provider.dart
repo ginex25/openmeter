@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../utils/log.dart';
+import '../../shared/constant/log.dart';
 
 class DatabaseSettingsProvider extends ChangeNotifier {
   bool _autoBackupState = false;

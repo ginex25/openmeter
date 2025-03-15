@@ -16,7 +16,7 @@ import 'package:openmeter/features/meters/widgets/details_meter/charts/usage_bar
 import 'package:openmeter/features/meters/widgets/details_meter/entry/add_entry.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_card_list.dart';
 import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
-import 'package:openmeter/ui/widgets/utils/selected_items_bar.dart';
+import 'package:openmeter/shared/widgets/selected_items_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class DetailsMeterScreen extends ConsumerStatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:openmeter/utils/room_typ.dart';
+import 'package:openmeter/shared/constant/room_typ.dart';
 
 class RoomTypeDropdown extends StatelessWidget {
   final String selectedType;

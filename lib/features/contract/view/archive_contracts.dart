@@ -7,9 +7,9 @@ import 'package:openmeter/features/contract/widget/contract_card.dart';
 import 'package:provider/provider.dart' as p;
 
 import '../../../core/provider/database_settings_provider.dart';
-import '../../../ui/widgets/utils/empty_archiv.dart';
-import '../../../ui/widgets/utils/selected_items_bar.dart';
-import '../../../utils/custom_colors.dart';
+import '../../../shared/constant/custom_colors.dart';
+import '../../../shared/widgets/empty_archiv.dart';
+import '../../../shared/widgets/selected_items_bar.dart';
 import '../model/contract_dto.dart';
 import 'details_contract.dart';
 

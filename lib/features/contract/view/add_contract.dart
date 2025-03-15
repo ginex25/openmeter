@@ -15,8 +15,8 @@ import 'package:openmeter/features/contract/provider/details_contract_provider.d
 import 'package:openmeter/features/contract/widget/add_provider.dart';
 import 'package:openmeter/features/contract/widget/number_text_field.dart';
 import 'package:openmeter/features/meters/widgets/meter_type_dropdown.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 import 'package:provider/provider.dart' as p;
 
 class AddContract extends ConsumerStatefulWidget {

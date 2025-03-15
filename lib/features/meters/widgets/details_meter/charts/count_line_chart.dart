@@ -9,9 +9,9 @@ import 'package:openmeter/features/meters/helper/chart_helper.dart';
 import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
-import 'package:openmeter/utils/convert_count.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
 class CountLineChart extends ConsumerStatefulWidget {
   const CountLineChart({super.key});

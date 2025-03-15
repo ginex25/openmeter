@@ -7,10 +7,10 @@ import 'package:openmeter/features/meters/model/sort_model.dart';
 import 'package:openmeter/features/meters/provider/sort_provider.dart';
 import 'package:openmeter/features/tags/provider/show_tags_provider.dart';
 import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
 
-import '../../../utils/convert_meter_unit.dart';
+import '../../../shared/utils/convert_meter_unit.dart';
 import 'meter_circle_avatar.dart';
 
 class MeterCard extends ConsumerWidget {

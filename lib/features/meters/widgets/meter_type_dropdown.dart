@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:openmeter/core/model/meter_typ.dart';
 import 'package:openmeter/features/meters/widgets/meter_circle_avatar.dart';
-import 'package:openmeter/utils/meter_typ.dart';
+import 'package:openmeter/shared/constant/meter_typ.dart';
 
 class MeterTypeDropdown extends StatelessWidget {
   final String defaultValue;

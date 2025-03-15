@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../../core/model/entry_dto.dart';
 import '../../../../../core/provider/database_settings_provider.dart';
-import '../../../../../utils/convert_count.dart';
-import '../../../../../utils/convert_meter_unit.dart';
+import '../../../../../shared/utils/convert_count.dart';
+import '../../../../../shared/utils/convert_meter_unit.dart';
 import '../../../service/meter_image_helper.dart';
 
 class ImageView extends StatefulWidget {

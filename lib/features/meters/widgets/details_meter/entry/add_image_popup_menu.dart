@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:openmeter/features/meters/service/meter_image_helper.dart';
-import 'package:openmeter/utils/custom_icons.dart';
+import 'package:openmeter/shared/constant/custom_icons.dart';
 
 class AddImagePopupMenu extends ConsumerStatefulWidget {
   final String? imagePath;

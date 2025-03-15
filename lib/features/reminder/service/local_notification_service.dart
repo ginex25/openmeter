@@ -9,7 +9,7 @@ import 'package:openmeter/features/reminder/exception/no_permission.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../../../utils/log.dart';
+import '../../../shared/constant/log.dart';
 
 class LocalNotificationService {
   late final FlutterLocalNotificationsPlugin _localNotification;

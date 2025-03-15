@@ -10,10 +10,10 @@ import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_contract.dart';
 import 'package:openmeter/features/meters/service/meter_image_helper.dart';
-import 'package:openmeter/utils/convert_count.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/custom_icons.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/custom_icons.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

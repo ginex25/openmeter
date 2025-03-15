@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../core/model/meter_typ.dart';
+import '../../core/model/meter_typ.dart';
 import 'custom_icons.dart';
 
 final List<MeterTyp> meterTyps = [

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/theme/model/theme_model.dart';
 import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
-import 'package:openmeter/utils/custom_colors.dart';
+import 'package:openmeter/shared/constant/custom_colors.dart';
 
-import '../../../utils/custom_icons.dart';
+import '../../../shared/constant/custom_icons.dart';
 
 class ChangePreview extends ConsumerWidget {
   const ChangePreview({super.key});

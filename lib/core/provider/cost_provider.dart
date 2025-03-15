@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import '../../utils/log.dart';
+import '../../shared/constant/log.dart';
 import '../database/local_database.dart';
 import '../helper/usage_helper.dart';
 import '../model/entry_dto.dart';

@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/features/meters/model/meter_cost_model.dart';
-import 'package:openmeter/utils/convert_meter_unit.dart';
-import 'package:openmeter/utils/datetime_formats.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
+import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
-import '../../../../../utils/custom_icons.dart';
+import '../../../../../shared/constant/custom_icons.dart';
 
 class CostCard extends ConsumerStatefulWidget {
   final MeterCostModel meterCosts;

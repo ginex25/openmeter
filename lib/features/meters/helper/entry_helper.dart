@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:openmeter/core/helper/usage_helper.dart';
 import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
-import 'package:openmeter/utils/convert_count.dart';
+import 'package:openmeter/shared/utils/convert_count.dart';
 
 class EntryHelper {
   final UsageHelper usageHelper = UsageHelper();
