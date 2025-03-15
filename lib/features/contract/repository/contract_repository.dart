@@ -100,6 +100,10 @@ class ContractRepository {
   Future<List<ContractDto>> getContractByType(String type) async {
     return await _contractDao.getContractByTyp(type);
   }
+
+  Future<int> getTableLength() async {
+    return await _contractDao.getTableLength() ?? 0;
+  }
 }
 
 @riverpod

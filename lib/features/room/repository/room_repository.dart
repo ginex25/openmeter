@@ -193,6 +193,10 @@ class RoomRepository {
 
     await _roomDao.updateMeterInRoom(companion);
   }
+
+  Future<int> getTableLength() async {
+    return await _roomDao.getTableLength() ?? 0;
+  }
 }
 
 @riverpod

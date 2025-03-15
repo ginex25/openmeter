@@ -66,6 +66,10 @@ class TagRepository {
   Future removeAssoziation(MeterDto meter, String tagUuid) async {
     return await _tagsDao.removeAssoziation(tagUuid, meter.id!);
   }
+
+  Future<int> getTableLength() async {
+    return await _tagsDao.getTableLength() ?? 0;
+  }
 }
 
 @riverpod

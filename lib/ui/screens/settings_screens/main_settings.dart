@@ -3,8 +3,8 @@ import 'package:openmeter/features/reminder/view/reading_reminder_tile.dart';
 import 'package:openmeter/features/torch/view/active_torch_tile.dart';
 
 import '../../../core/theme/widgets/desing_tile.dart';
+import '../../../features/database_settings/view/database_listtile.dart';
 import '../../../features/tags/view/tags_tile.dart';
-import '../../widgets/settings_screen/database_listtile.dart';
 
 class MainSettings extends StatelessWidget {
   const MainSettings({super.key});

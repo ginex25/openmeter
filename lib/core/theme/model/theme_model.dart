@@ -23,4 +23,6 @@ class ThemeModel {
           dynamicColor ?? this.dynamicColor,
           compactNavigation ?? this.compactNavigation,
           fontSize ?? this.fontSize);
+
+  bool get isLargeText => fontSize == FontSizeValue.large;
 }

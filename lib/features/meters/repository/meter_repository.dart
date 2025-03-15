@@ -201,6 +201,10 @@ class MeterRepository {
 
     return newMeter;
   }
+
+  Future<int> getTableLength() async {
+    return await _meterDao.getTableLength() ?? 0;
+  }
 }
 
 @riverpod

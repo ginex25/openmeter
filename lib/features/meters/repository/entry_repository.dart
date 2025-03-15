@@ -136,6 +136,10 @@ class EntryRepository {
   Future<int> updateEntry(EntryDto entry) async {
     return await _entryDao.updateEntry(entry.id!, entry.toCompanion());
   }
+
+  Future<int> getTableLength() async {
+    return await _entryDao.getTableLength() ?? 0;
+  }
 }
 
 @riverpod

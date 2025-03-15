@@ -27,8 +27,8 @@ import 'core/provider/room_provider.dart';
 import 'core/provider/stats_provider.dart';
 import 'core/theme/view/design_screen.dart';
 import 'features/contract/view/archive_contracts.dart';
+import 'features/database_settings/view/database_view.dart';
 import 'features/reminder/view/reminder_screen.dart';
-import 'ui/screens/settings_screens/database_screen.dart';
 import 'ui/screens/settings_screens/main_settings.dart';
 import 'ui/widgets/utils/bottom_nav_bar.dart';
 
@@ -134,7 +134,7 @@ class MyApp extends ConsumerWidget {
               'settings': (_) => const MainSettings(),
               // 'details_single_meter': (_) => DetailsSingleMeter(),
               'reminder': (_) => const ReminderScreen(),
-              'database_export_import': (_) => const DatabaseExportImport(),
+              'database_export_import': (_) => const DatabaseView(),
               'tags_screen': (_) => const TagsScreen(),
               'archive': (_) => const ArchivedMetersScreen(),
               'archive_contract': (_) => const ArchiveContract(),
