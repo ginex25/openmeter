@@ -24,7 +24,7 @@ class DetailsMeter extends _$DetailsMeter {
 
     final EntryFilterModel filter = ref.watch(entryFilterProvider);
 
-    return await repo.fetchDetailsMeter(meterId, filter);
+    return await repo.fetchDetailsMeter(meterId, filter, true);
   }
 
   Future<void> addEntry(EntryDto newEntry) async {

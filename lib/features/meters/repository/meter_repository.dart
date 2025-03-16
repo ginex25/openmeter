@@ -39,7 +39,7 @@ class MeterRepository {
 
       final meterDto = MeterDto.fromData(m.meter, entry != null);
       meterDto.lastEntry = entry;
-      meterDto.room = m.room?.name ?? '';
+      meterDto.room = m.room != null ? RoomDto.fromData(m.room!) : null;
 
       result.add(meterDto);
     }
@@ -97,7 +97,7 @@ class MeterRepository {
     meter.lastEntry = entry;
 
     if (room != null) {
-      meter.room = room.name;
+      meter.room = room;
 
       await _roomRepository
           .saveAllMetersWithRoom(roomId: room.uuid, meters: [meter]);
@@ -119,7 +119,7 @@ class MeterRepository {
   }
 
   Future<DetailsMeterModel> fetchDetailsMeter(
-      int meterId, EntryFilterModel entryFilter) async {
+      int meterId, EntryFilterModel entryFilter, bool predictCount) async {
     final MeterData meterData = await _meterDao.getSingleMeter(meterId);
     final MeterDto meter = MeterDto.fromData(meterData, false);
 
@@ -137,12 +137,12 @@ class MeterRepository {
     final RoomDto? room = await _roomRepository.findByMeterId(meterId);
 
     if (room != null) {
-      meter.room = room.name;
+      meter.room = room;
     }
 
     String predictedCount = '';
 
-    if (entries.length > 3) {
+    if (entries.length > 3 && predictCount) {
       predictedCount = _entryHelper.predictCount(entries.first, entries.last);
     }
 
@@ -195,7 +195,7 @@ class MeterRepository {
     newMeter.lastEntry = oldMeter.lastEntry;
     newMeter.hasEntry = oldMeter.hasEntry;
     newMeter.isArchived = oldMeter.isArchived;
-    newMeter.room = newRoom?.name;
+    newMeter.room = newRoom;
 
     await _meterDao.updateMeter(newMeter.toMeterData());
 

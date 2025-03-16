@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:openmeter/core/model/room_dto.dart';
 
 import '../database/local_database.dart';
 import 'entry_dto.dart';
@@ -9,7 +10,7 @@ class MeterDto {
   String number;
   String unit;
   String note;
-  String? room;
+  RoomDto? room;
   bool isArchived;
   List<String> tags;
   bool isSelected;

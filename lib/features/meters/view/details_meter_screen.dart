@@ -185,7 +185,7 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           Text(
-            meter.room ?? '',
+            meter.room?.name ?? '',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
         ],

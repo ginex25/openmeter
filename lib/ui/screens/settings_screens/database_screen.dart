@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/database/local_database.dart';
-import '../../../core/provider/database_settings_provider.dart';
-import '../../../core/provider/meter_provider.dart';
 import '../../../core/helper/database_export_import.dart';
 import '../../../core/helper/database_settings_helper.dart';
-import '../../widgets/settings_screen/database_stats.dart';
+import '../../../core/provider/database_settings_provider.dart';
+import '../../../core/provider/meter_provider.dart';
 
 class DatabaseExportImport extends StatefulWidget {
   const DatabaseExportImport({super.key});
@@ -148,7 +147,7 @@ class _DatabaseExportImportState extends State<DatabaseExportImport> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DatabaseStats(databaseSettingsHelper: _databaseHelper),
+                // DatabaseStats(databaseSettingsHelper: _databaseHelper),
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.cloud_upload),

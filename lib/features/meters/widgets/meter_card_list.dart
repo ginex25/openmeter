@@ -35,7 +35,7 @@ class MeterCardList extends ConsumerWidget {
 
     switch (sortBy) {
       case 'room':
-        sortedElement = meter.room ?? '';
+        sortedElement = meter.room?.name ?? '';
         break;
       case 'meter':
         sortedElement = meter.typ;
@@ -107,7 +107,7 @@ class MeterCardList extends ConsumerWidget {
                   )
                 : _cardWithSlide(
                     meterItem: meter,
-                    roomName: meter.room ?? '',
+                    roomName: meter.room?.name ?? '',
                     isSelected: meter.isSelected,
                     date: date,
                     count: count,

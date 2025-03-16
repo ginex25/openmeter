@@ -74,7 +74,7 @@ class MeterCard extends ConsumerWidget {
                     ),
                     if (sortModel.sort == 'meter')
                       Text(
-                        meter.room ?? '',
+                        meter.room?.name ?? '',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                   ],
