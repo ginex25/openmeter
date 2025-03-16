@@ -5,6 +5,8 @@ import 'package:openmeter/features/room/provider/selected_room_count_provider.da
 import 'package:openmeter/features/room/repository/room_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../database_settings/provider/has_update.dart';
+
 part 'room_list_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -32,6 +34,8 @@ class RoomList extends _$RoomList {
     List<RoomDto> rooms = state.value!.$1 + state.value!.$2;
 
     rooms.add(newRoom);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(repo.splitContracts(rooms));
   }
@@ -109,6 +113,8 @@ class RoomList extends _$RoomList {
 
     ref.read(selectedRoomCountProvider.notifier).setSelectedState(0);
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(repo.splitContracts(rooms));
   }
 
@@ -126,6 +132,8 @@ class RoomList extends _$RoomList {
     );
 
     rooms[updateIndex] = room;
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(repo.splitContracts(rooms));
   }

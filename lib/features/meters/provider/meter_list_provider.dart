@@ -6,6 +6,8 @@ import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../database_settings/provider/has_update.dart';
+
 part 'meter_list_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -73,6 +75,8 @@ class MeterList extends _$MeterList {
       (element) => element == meter,
     );
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(meters);
   }
 
@@ -95,6 +99,8 @@ class MeterList extends _$MeterList {
     );
 
     ref.read(selectedMetersCountProvider.notifier).setSelectedState(0);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(meters);
   }
@@ -137,6 +143,8 @@ class MeterList extends _$MeterList {
     final currentMeters = state.value!;
 
     currentMeters.add(newMeter);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(currentMeters);
   }
@@ -189,6 +197,8 @@ class MeterList extends _$MeterList {
     }
 
     ref.read(selectedMetersCountProvider.notifier).setSelectedState(0);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(result);
   }

@@ -6,6 +6,8 @@ import 'package:openmeter/features/contract/repository/compare_cost_repository.d
 import 'package:openmeter/features/contract/repository/contract_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../database_settings/provider/has_update.dart';
+
 part 'details_contract_provider.g.dart';
 
 @riverpod
@@ -34,6 +36,8 @@ class DetailsContract extends _$DetailsContract {
 
     currentContract.compareCosts = compare;
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(currentContract);
   }
 
@@ -56,6 +60,8 @@ class DetailsContract extends _$DetailsContract {
       await repo.updateCompare(compareCosts);
     }
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     currentContract.compareCosts = compareCosts;
     state = AsyncData(currentContract);
   }
@@ -68,6 +74,9 @@ class DetailsContract extends _$DetailsContract {
     await repo.deleteCompareCost(currentContract.compareCosts!);
 
     currentContract.compareCosts = null;
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(currentContract);
   }
 
@@ -78,5 +87,6 @@ class DetailsContract extends _$DetailsContract {
 
     ref.read(contractListProvider.notifier).addContract(newContract);
     ref.read(contractListProvider.notifier).removeContract(state.value!);
+    ref.read(hasUpdateProvider.notifier).setState(true);
   }
 }

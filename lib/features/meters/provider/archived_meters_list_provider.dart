@@ -6,6 +6,8 @@ import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../database_settings/provider/has_update.dart';
+
 part 'archived_meters_list_provider.g.dart';
 
 @Riverpod(keepAlive: true)
@@ -37,6 +39,7 @@ class ArchivedMetersList extends _$ArchivedMetersList {
     currentMeters.add(meter);
 
     setArchiveCount(currentMeters.length);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(currentMeters);
   }
@@ -84,6 +87,7 @@ class ArchivedMetersList extends _$ArchivedMetersList {
     ref.read(selectedMetersCountProvider.notifier).setSelectedState(0);
 
     setArchiveCount(result.length);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(result);
   }
@@ -145,6 +149,7 @@ class ArchivedMetersList extends _$ArchivedMetersList {
     );
 
     setArchiveCount(meters.length);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(meters);
   }
@@ -170,6 +175,7 @@ class ArchivedMetersList extends _$ArchivedMetersList {
     setArchiveCount(meters.length);
 
     ref.read(selectedMetersCountProvider.notifier).setSelectedState(0);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(meters);
   }

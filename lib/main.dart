@@ -10,6 +10,7 @@ import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/core/theme/repository/get_themes.dart';
 import 'package:openmeter/features/meters/view/archived_meters_screen.dart';
 import 'package:openmeter/features/tags/view/tags_screen.dart';
+import 'package:openmeter/ui/screens/settings_screen.dart';
 import 'package:provider/provider.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,7 +30,6 @@ import 'core/theme/view/design_screen.dart';
 import 'features/contract/view/archive_contracts.dart';
 import 'features/database_settings/view/database_view.dart';
 import 'features/reminder/view/reminder_screen.dart';
-import 'ui/screens/settings_screens/main_settings.dart';
 import 'ui/widgets/utils/bottom_nav_bar.dart';
 
 void main() async {
@@ -131,7 +131,7 @@ class MyApp extends ConsumerWidget {
               '/': (_) => const BottomNavBar(),
               // 'add_meter': (_) => AddScreen(),
               // 'add_contract': (_) => const AddContract(),
-              'settings': (_) => const MainSettings(),
+              'settings': (_) => const SettingsScreen(),
               // 'details_single_meter': (_) => DetailsSingleMeter(),
               'reminder': (_) => const ReminderScreen(),
               'database_export_import': (_) => const DatabaseView(),

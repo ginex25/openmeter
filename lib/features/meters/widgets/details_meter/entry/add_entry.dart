@@ -84,9 +84,6 @@ class _AddEntryState extends ConsumerState<AddEntry> {
           .addEntry(entry)
           .then(
         (value) {
-          // Provider.of<DatabaseSettingsProvider>(context, listen: false)
-          //     .setHasUpdate(true);
-
           _counterController.clear();
           _selectedDate = DateTime.now();
         },

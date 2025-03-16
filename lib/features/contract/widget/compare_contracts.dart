@@ -351,9 +351,6 @@ class _CompareContractPopupMenuState
             _openBottomSheet(context);
             break;
         }
-
-        // Provider.of<DatabaseSettingsProvider>(context, listen: false)
-        //     .setHasUpdate(true);
       },
       itemBuilder: (context) => [
         PopupMenuItem(

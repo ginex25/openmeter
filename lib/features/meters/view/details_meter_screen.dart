@@ -136,10 +136,6 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
                       buttons: [
                         TextButton(
                           onPressed: () {
-                            // TODO impl DatabaseSettingsProvider.setHasUpdate
-                            // Provider.of<DatabaseSettingsProvider>(context, listen: false)
-                            //     .setHasUpdate(true);
-
                             ref
                                 .read(detailsMeterProvider(widget.meterId)
                                     .notifier)

@@ -3,6 +3,8 @@ import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/features/tags/repository/tag_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../database_settings/provider/has_update.dart';
+
 part 'tag_list_provider.g.dart';
 
 @riverpod
@@ -29,6 +31,8 @@ class TagList extends _$TagList {
       (element) => element.id == tag.id,
     );
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(currentTags);
   }
 
@@ -44,6 +48,8 @@ class TagList extends _$TagList {
     final currentTags = state.value!;
 
     currentTags.add(newTag);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(currentTags);
   }

@@ -102,7 +102,6 @@ class _ArchivedMetersScreenState extends ConsumerState<ArchivedMetersScreen> {
     final buttons = [
       TextButton(
         onPressed: () {
-          // backup.setHasUpdate(true);
           ref
               .read(archivedMetersListProvider.notifier)
               .unarchiveSelectedMeters();

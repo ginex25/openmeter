@@ -6,6 +6,8 @@ import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../database_settings/provider/has_update.dart';
+
 part 'all_room_list.g.dart';
 
 @riverpod
@@ -33,5 +35,6 @@ class AllRoomList extends _$AllRoomList {
 
     ref.read(detailsRoomProvider(roomId).notifier).updateRoom(room);
     ref.invalidate(roomListProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
   }
 }

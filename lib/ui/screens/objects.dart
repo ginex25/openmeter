@@ -6,9 +6,7 @@ import 'package:openmeter/features/contract/view/contract_view.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/view/room_view.dart';
-import 'package:provider/provider.dart' as p;
 
-import '../../core/provider/database_settings_provider.dart';
 import '../../features/contract/view/add_contract.dart';
 import '../../shared/widgets/selected_items_bar.dart';
 
@@ -172,11 +170,6 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
       TextButton(
         onPressed: () async {
           ref.read(contractListProvider.notifier).archiveAllSelectedContracts();
-
-          if (mounted) {
-            p.Provider.of<DatabaseSettingsProvider>(context, listen: false)
-                .setHasUpdate(true);
-          }
         },
         style: buttonStyle,
         child: const Column(
@@ -196,9 +189,6 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
       TextButton(
         onPressed: () {
           ref.read(contractListProvider.notifier).deleteAllSelectedContracts();
-
-          p.Provider.of<DatabaseSettingsProvider>(context, listen: false)
-              .setHasUpdate(true);
         },
         style: buttonStyle,
         child: const Column(

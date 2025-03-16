@@ -177,7 +177,6 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
       ),
       TextButton(
         onPressed: () async {
-          // backup.setHasUpdate(true);
           await ref.read(meterListProvider.notifier).archiveSelectedMeters();
         },
         style: buttonStyle,
@@ -198,7 +197,6 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
       TextButton(
         onPressed: () {
           ref.read(meterListProvider.notifier).deleteAllSelectedMeters();
-          // databaseSettingsProvider.setHasUpdate(true);
         },
         style: buttonStyle,
         child: const Column(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/service/permission_service.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
+import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
 import 'package:openmeter/features/database_settings/provider/stats_provider.dart';
 import 'package:openmeter/features/database_settings/repository/delete_table_repository.dart';
 import 'package:openmeter/features/database_settings/repository/export_repository.dart';
@@ -36,7 +37,8 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
   }
 
   _handleExport() async {
-    // TODO handle has update
+    ref.read(inAppActionProvider.notifier).setState(true);
+
     bool hasPermission =
         await _permissionService.askForExternalStoragePermission();
 
@@ -71,6 +73,8 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
         .runIsolateExportAsJson(
             path: path, isAutoBackup: false, clearBackupFiles: false);
 
+    ref.read(inAppActionProvider.notifier).setState(false);
+
     setState(() {
       _isLoading = false;
     });
@@ -95,14 +99,13 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
   }
 
   Future<void> _handleImport() async {
-    // TODO handle has update
-    // provider.setHasUpdate(false);
+    ref.read(inAppActionProvider.notifier).setState(true);
 
     bool permissionGranted =
         await _permissionService.askForExternalStoragePermission();
 
     if (!permissionGranted) {
-      // provider.setHasUpdate(true);
+      ref.read(inAppActionProvider.notifier).setState(false);
       _showSnackbar('Es wurden keine Rechte erteilt.');
       return;
     }
@@ -115,7 +118,7 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
     );
 
     if (path == null) {
-      // provider.setHasUpdate(true);
+      ref.read(inAppActionProvider.notifier).setState(false);
       _showSnackbar('Es wurden keine Datei ausgewählt.');
       return;
     }
@@ -124,13 +127,11 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
       _isLoading = true;
     });
 
-    bool success = await ref
+    await ref
         .read(importRepositoryProvider)
         .importFromJson(path: path.files.single.path!);
 
-    if (success == false) {
-      // provider.setHasUpdate(true);
-    }
+    ref.read(inAppActionProvider.notifier).setState(false);
 
     setState(() {
       _isLoading = false;

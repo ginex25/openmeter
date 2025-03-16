@@ -23,4 +23,8 @@ class SharedPreferencesKeys {
   static const String meterLastArchiveCount = 'meter_archive_count';
 
   static const String showLineChart = 'show_line_chart';
+
+  static const String autoBackupDir = 'auto-backup-dir';
+  static const String autoBackupState = 'auto-backup-state';
+  static const String autoBackupClearFiles = 'auto-backup-clear-state';
 }

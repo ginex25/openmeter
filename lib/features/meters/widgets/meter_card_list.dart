@@ -133,8 +133,6 @@ class MeterCardList extends ConsumerWidget {
           SlidableAction(
             onPressed: (context) {
               onDelete(meterItem);
-
-              // databaseSettingsProvider.setHasUpdate(true);
             },
             icon: Icons.delete,
             label: 'Löschen',
@@ -148,7 +146,6 @@ class MeterCardList extends ConsumerWidget {
         children: [
           SlidableAction(
             onPressed: (context) {
-              // databaseSettingsProvider.setHasUpdate(true);
               onSidePanelAction(meterItem);
             },
             icon: startPanelIcon,

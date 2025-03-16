@@ -1,28 +1,34 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/theme/model/theme_model.dart';
+import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
+import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
+import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
+import 'package:openmeter/features/database_settings/model/autobackup_model.dart';
+import 'package:openmeter/features/database_settings/provider/autobackup_provider.dart';
+import 'package:openmeter/features/database_settings/provider/has_update.dart';
+import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
+import 'package:openmeter/features/database_settings/repository/export_repository.dart';
+import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
+import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
+import 'package:openmeter/features/room/provider/room_list_provider.dart';
+import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 
-import '../../../core/database/local_database.dart';
-import '../../../core/helper/database_settings_helper.dart';
-import '../../../core/provider/contract_provider.dart';
-import '../../../core/provider/database_settings_provider.dart';
-import '../../../core/provider/design_provider.dart';
-import '../../../core/provider/meter_provider.dart';
-import '../../../core/provider/room_provider.dart';
 import '../../../shared/constant/custom_icons.dart';
 import '../../../shared/constant/log.dart';
 import '../../screens/homescreen.dart';
 import '../../screens/objects.dart';
 
-class BottomNavBar extends StatefulWidget {
+class BottomNavBar extends ConsumerStatefulWidget {
   const BottomNavBar({super.key});
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  ConsumerState<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar>
+class _BottomNavBarState extends ConsumerState<BottomNavBar>
     with WidgetsBindingObserver {
   int _currentIndex = 0;
 
@@ -31,10 +37,6 @@ class _BottomNavBarState extends State<BottomNavBar>
     // StatsScreen(),
     ObjectsScreen(),
   ];
-
-  late DatabaseSettingsProvider databaseSettingsProvider;
-  late DatabaseSettingsHelper databaseSettingsHelper;
-  late LocalDatabase db;
 
   @override
   void initState() {
@@ -52,35 +54,38 @@ class _BottomNavBarState extends State<BottomNavBar>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
 
+    final AutoBackupModel autoBackup = ref.watch(autoBackupProvider);
+    final bool isInAppAction = ref.watch(inAppActionProvider);
+    final bool hasUpdate = ref.watch(hasUpdateProvider);
+
     log(state.toString(), name: LogNames.appLifecycle);
 
-    if (databaseSettingsProvider.checkIfAutoBackupIsPossible() &&
+    if (autoBackup.backupIsPossible &&
+        hasUpdate &&
+        !isInAppAction &&
         state == AppLifecycleState.paused) {
-      await databaseSettingsHelper.autoBackupExport(
-          db, databaseSettingsProvider);
+      ref.read(hasUpdateProvider.notifier).setState(false);
+
+      await ref.read(exportRepositoryProvider).runIsolateExportAsJson(
+          path: autoBackup.path,
+          isAutoBackup: true,
+          clearBackupFiles: autoBackup.deleteOldBackups);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    databaseSettingsProvider = Provider.of<DatabaseSettingsProvider>(context);
+    final ThemeModel themeMode = ref.watch(themeModeProviderProvider);
 
-    databaseSettingsHelper = DatabaseSettingsHelper(context);
+    final int selectedMeters = ref.watch(selectedMetersCountProvider);
+    final int selectedRooms = ref.watch(selectedRoomCountProvider);
+    final int selectedContracts = ref.watch(selectedContractCountProvider);
 
-    db = Provider.of<LocalDatabase>(context);
-
-    final roomProvider = Provider.of<RoomProvider>(context);
-    final meterProvider = Provider.of<MeterProvider>(context);
-    final contractProvider = Provider.of<ContractProvider>(context);
-    final designProvider = Provider.of<DesignProvider>(context);
-
-    bool compactNavBar = designProvider.getStateCompactNavBar;
+    bool compactNavBar = themeMode.compactNavigation;
 
     bool hasSelectedItems = false;
 
-    if (meterProvider.getStateHasSelectedMeters ||
-        roomProvider.getStateHasSelected ||
-        contractProvider.getHasSelectedItems) {
+    if (selectedMeters > 0 || selectedRooms > 0 || selectedContracts > 0) {
       hasSelectedItems = true;
     }
 
@@ -95,14 +100,18 @@ class _BottomNavBarState extends State<BottomNavBar>
                   : NavigationDestinationLabelBehavior.alwaysShow,
               selectedIndex: _currentIndex,
               onDestinationSelected: (value) {
-                if (roomProvider.getStateHasSelected) {
-                  roomProvider.removeAllSelected();
+                if (selectedRooms > 0) {
+                  ref.read(roomListProvider.notifier).removeAllSelectedState();
                 }
-                if (contractProvider.getHasSelectedItems) {
-                  contractProvider.removeAllSelectedItems(true);
+                if (selectedContracts > 0) {
+                  ref
+                      .read(contractListProvider.notifier)
+                      .removeAllSelectedState();
                 }
-                if (meterProvider.getStateHasSelectedMeters) {
-                  meterProvider.removeAllSelectedMeters();
+                if (selectedMeters > 0) {
+                  ref
+                      .read(meterListProvider.notifier)
+                      .removeAllSelectedMetersState();
                 }
 
                 setState(() {

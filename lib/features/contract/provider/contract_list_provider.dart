@@ -6,6 +6,7 @@ import 'package:openmeter/features/contract/provider/delete_provider_state.dart'
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/repository/contract_repository.dart';
 import 'package:openmeter/features/contract/repository/provider_repository.dart';
+import 'package:openmeter/features/database_settings/provider/has_update.dart';
 import 'package:openmeter/features/meters/provider/contracts_meter_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -107,6 +108,7 @@ class ContractList extends _$ContractList {
 
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
     ref.invalidate(archivedContractListProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(repo.splitContracts(allContracts));
   }
@@ -131,6 +133,7 @@ class ContractList extends _$ContractList {
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
 
     ref.invalidate(contractsMeterTypeProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(repo.splitContracts(allContracts));
   }
@@ -161,6 +164,7 @@ class ContractList extends _$ContractList {
       (a, b) => a.meterTyp.compareTo(b.meterTyp),
     );
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
     ref.invalidate(contractsMeterTypeProvider);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
@@ -207,6 +211,7 @@ class ContractList extends _$ContractList {
     state = AsyncData(contractRepo.splitContracts(allContracts));
 
     ref.invalidate(contractsMeterTypeProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     return contractDto;
   }
@@ -228,6 +233,7 @@ class ContractList extends _$ContractList {
     allContracts[index] = contract;
 
     ref.invalidate(contractsMeterTypeProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }
@@ -273,6 +279,7 @@ class ContractList extends _$ContractList {
     allContracts[index] = contract;
 
     ref.invalidate(contractsMeterTypeProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }
@@ -292,6 +299,7 @@ class ContractList extends _$ContractList {
     );
 
     allContracts[index] = contract;
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(contractRepo.splitContracts(allContracts));
   }

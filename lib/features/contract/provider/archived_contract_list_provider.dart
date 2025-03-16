@@ -4,6 +4,7 @@ import 'package:openmeter/features/contract/provider/contract_list_provider.dart
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/repository/contract_repository.dart';
 import 'package:openmeter/features/contract/repository/provider_repository.dart';
+import 'package:openmeter/features/database_settings/provider/has_update.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'archived_contract_list_provider.g.dart';
@@ -84,6 +85,8 @@ class ArchivedContractList extends _$ArchivedContractList {
       (element) => element.id == contract.id,
     );
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(allContracts);
   }
 
@@ -105,6 +108,7 @@ class ArchivedContractList extends _$ArchivedContractList {
     allContracts.removeWhere((element) => element.isSelected);
 
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(allContracts);
   }
@@ -124,6 +128,8 @@ class ArchivedContractList extends _$ArchivedContractList {
 
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
     ref.invalidate(contractListProvider);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(allContracts);
   }
@@ -148,6 +154,8 @@ class ArchivedContractList extends _$ArchivedContractList {
     ref.read(selectedContractCountProvider.notifier).setSelectedState(0);
     ref.invalidate(contractListProvider);
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(allContracts);
   }
 
@@ -165,6 +173,8 @@ class ArchivedContractList extends _$ArchivedContractList {
     );
 
     allContracts[index] = contract;
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(allContracts);
   }
@@ -189,6 +199,8 @@ class ArchivedContractList extends _$ArchivedContractList {
 
     state = AsyncData(allContracts);
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     return provider;
   }
 
@@ -207,6 +219,8 @@ class ArchivedContractList extends _$ArchivedContractList {
 
     allContracts[index] = contract;
 
+    ref.read(hasUpdateProvider.notifier).setState(true);
+
     state = AsyncData(allContracts);
   }
 
@@ -224,6 +238,8 @@ class ArchivedContractList extends _$ArchivedContractList {
     );
 
     allContracts[index] = contract;
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(allContracts);
   }
