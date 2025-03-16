@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/service/permission_service.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/database_settings/provider/stats_provider.dart';
+import 'package:openmeter/features/database_settings/repository/delete_table_repository.dart';
 import 'package:openmeter/features/database_settings/repository/export_repository.dart';
 import 'package:openmeter/features/database_settings/repository/import_repository.dart';
 import 'package:openmeter/features/database_settings/widget/auto_backup.dart';
@@ -35,6 +36,7 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
   }
 
   _handleExport() async {
+    // TODO handle has update
     bool hasPermission =
         await _permissionService.askForExternalStoragePermission();
 
@@ -93,6 +95,7 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
   }
 
   Future<void> _handleImport() async {
+    // TODO handle has update
     // provider.setHasUpdate(false);
 
     bool permissionGranted =
@@ -138,8 +141,49 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
     ref.invalidate(contractListProvider);
     ref.invalidate(roomListProvider);
     ref.invalidate(meterListProvider);
+  }
 
-    // provider.resetStats();
+  _deleteTableAlert() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Zurücksetzen?'),
+        content: const Text(
+            'Möchten Sie Ihre Datenbank wirklich zurücksetzen und somit alle Daten löschen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final success =
+                  await ref.read(deleteTableRepositoryProvider).deleteTable();
+
+              if (success) {
+                _showSnackbar('Datenbank wurde erfolgreich zurückgesetzt!');
+              } else {
+                _showSnackbar('Etwas ist schief gelaufen!');
+              }
+
+              ref.invalidate(databaseStatsProvider);
+              ref.invalidate(tagListProvider);
+              ref.invalidate(contractListProvider);
+              ref.invalidate(roomListProvider);
+              ref.invalidate(meterListProvider);
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
+            },
+            child: const Text(
+              'Zurücksetzen',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -198,8 +242,7 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
                     'Lösche alle gespeicherten Daten.',
                   ),
                   onTap: () {
-                    // TODO handle delete
-                    // _databaseHelper.deleteDB(context, db);
+                    _deleteTableAlert();
                   },
                 ),
                 const Divider(),
