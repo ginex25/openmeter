@@ -1,21 +1,101 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/service/permission_service.dart';
+import 'package:openmeter/features/database_settings/repository/export_repository.dart';
 import 'package:openmeter/features/database_settings/widget/auto_backup.dart';
 import 'package:openmeter/features/database_settings/widget/stats_card.dart';
+import 'package:openmeter/shared/widgets/custom_loading_indicator.dart';
 
-class DatabaseView extends ConsumerWidget {
+class DatabaseView extends ConsumerStatefulWidget {
   const DatabaseView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState createState() => _DatabaseViewState();
+}
+
+class _DatabaseViewState extends ConsumerState<DatabaseView> {
+  final _permissionService = PermissionService();
+
+  bool _isLoading = false;
+
+  _showSnackbar(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        text,
+      ),
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
+  _handleExport() async {
+    bool hasPermission =
+        await _permissionService.askForExternalStoragePermission();
+
+    if (!hasPermission) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      _showSnackbar('Es wurden keine Rechte erteilt.');
+
+      return;
+    }
+
+    String? path = await FilePicker.platform.getDirectoryPath();
+
+    if (path == null) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      _showSnackbar('Es wurden kein Speicherort ausgewählt.');
+
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    bool success = await ref
+        .read(exportRepositoryProvider)
+        .runIsolateExportAsJson(
+            path: path, isAutoBackup: false, clearBackupFiles: false);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+            'Datenbank wurde erfolgreich exportiert!',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+            'Datenbank konnte nicht exportiert werden!',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daten und Speicher'),
       ),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DatabaseStatsCard(),
@@ -30,8 +110,7 @@ class DatabaseView extends ConsumerWidget {
                     'Erstelle und speichere ein Backup deiner Daten.',
                   ),
                   onTap: () {
-                    // TODO impl export
-                    // _handleExport(db, provider);
+                    _handleExport();
                   },
                 ),
                 const SizedBox(
@@ -72,18 +151,9 @@ class DatabaseView extends ConsumerWidget {
                 const AutoBackup(),
               ],
             ),
-            // if (_loadData == true)
-            //   Container(
-            //     height: MediaQuery.of(context).size.height,
-            //     alignment: Alignment.center,
-            //     child: const SizedBox(
-            //       height: 80,
-            //       width: 80,
-            //       child: CircularProgressIndicator(strokeWidth: 8),
-            //     ),
-            //   ),
-          ],
-        ),
+          ),
+          if (_isLoading == true) const CustomLoadingIndicator(),
+        ],
       ),
     );
   }

@@ -14,7 +14,7 @@ class MeterList extends _$MeterList {
   Future<List<MeterDto>> build() async {
     final MeterRepository repo = ref.watch(meterRepositoryProvider);
 
-    return await repo.fetchMeters();
+    return await repo.fetchMeters(isArchived: false);
   }
 
   void toggleMeterSelectedState(MeterDto selectedMeter) {

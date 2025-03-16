@@ -26,4 +26,6 @@ class TagDto {
       );
 
   Tag toData() => Tag(uuid: uuid!, name: name, color: color, id: id!);
+
+  Map<String, dynamic> toJson() => {'uuid': uuid, 'name': name, 'color': color};
 }

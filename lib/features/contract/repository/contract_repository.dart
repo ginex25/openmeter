@@ -14,9 +14,9 @@ class ContractRepository {
 
   ContractRepository(this._contractDao);
 
-  Future<List<ContractDto>> fetchContracts(bool isArchived) async {
+  Future<List<ContractDto>> fetchContracts({bool? isArchived}) async {
     final List<ContractModel> data =
-        await _contractDao.getAllContracts(isArchived);
+        await _contractDao.getAllContracts(isArchived: isArchived);
 
     if (data.isEmpty) {
       return [];

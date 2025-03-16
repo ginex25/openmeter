@@ -480,7 +480,7 @@ class DatabaseExportImportHelper {
         }
       }
 
-      String? room = meterDto.room;
+      String? room = meterDto.room?.name;
 
       if (room != null) {
         final MeterInRoomCompanion meterInRoom = MeterInRoomCompanion(

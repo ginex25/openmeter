@@ -28,7 +28,7 @@ class MeterRepository {
   MeterRepository(this._meterDao, this._entryRepository, this._roomRepository,
       this._tagRepository);
 
-  Future<List<MeterDto>> fetchMeters({bool isArchived = false}) async {
+  Future<List<MeterDto>> fetchMeters({bool? isArchived}) async {
     final data = await _meterDao.getAllMeterWithRooms(isArchived: isArchived);
 
     List<MeterDto> result = [];

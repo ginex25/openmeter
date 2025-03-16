@@ -96,7 +96,8 @@ class LocalDatabase extends _$LocalDatabase {
     String newPath = '';
     DateTime date = DateTime.now();
 
-    String formattedDate = DateFormat(DateTimeFormats.timestamp).format(date);
+    String formattedDate =
+        DateFormat(DateTimeFormats.timestamp12H).format(date);
 
     if (isBackup) {
       newPath = p.join(path, 'meter_$formattedDate.db');

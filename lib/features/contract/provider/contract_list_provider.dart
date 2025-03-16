@@ -17,7 +17,7 @@ class ContractList extends _$ContractList {
   FutureOr<(List<ContractDto>, List<ContractDto>)?> build() async {
     final repo = ref.watch(contractRepositoryProvider);
 
-    final result = await repo.fetchContracts(false);
+    final result = await repo.fetchContracts(isArchived: false);
 
     return repo.splitContracts(result);
   }

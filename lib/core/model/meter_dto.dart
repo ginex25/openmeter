@@ -30,6 +30,17 @@ class MeterDto {
       this.hasEntry = false,
       this.lastEntry});
 
+  Map<String, dynamic> toJson(List<EntryDto> entries) => {
+        'typ': typ,
+        'number': number,
+        'unit': unit,
+        'note': note,
+        'isArchived': isArchived,
+        'room': room?.uuid,
+        'entries': entries.map((e) => e.toJson()).toList(),
+        'tags': tags
+      };
+
   MeterDto.fromData(MeterData data, this.hasEntry)
       : typ = data.typ,
         number = data.number,

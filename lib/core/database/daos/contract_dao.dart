@@ -31,15 +31,18 @@ class ContractDao extends DatabaseAccessor<LocalDatabase>
         .watch();
   }
 
-  Future<List<ContractModel>> getAllContracts(bool isArchived) async {
+  Future<List<ContractModel>> getAllContracts({bool? isArchived}) async {
     final query = select(db.contract).join([
       leftOuterJoin(
           db.provider, db.provider.id.equalsExp(db.contract.provider)),
       leftOuterJoin(
           db.costCompare, db.costCompare.parentId.equalsExp(db.contract.id))
     ])
-      ..where(db.contract.isArchived.equals(isArchived))
       ..orderBy([OrderingTerm(expression: db.contract.meterTyp)]);
+
+    if (isArchived != null) {
+      query.where(db.contract.isArchived.equals(isArchived));
+    }
 
     return query
         .map((rows) => ContractModel(

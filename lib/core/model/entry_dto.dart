@@ -40,6 +40,17 @@ class EntryDto {
         meterId = entry.meter,
         imagePath = entry.imagePath;
 
+  Map<String, dynamic> toJson() => {
+        'count': count,
+        'usage': usage,
+        'days': days,
+        'note': note,
+        'date': date.toString(),
+        'transmittedToProvider': transmittedToProvider,
+        'isReset': isReset,
+        'imagePath': imagePath,
+      };
+
   EntryDto.fromJson(Map<String, dynamic> json)
       : count = json['count'],
         usage = json['usage'],

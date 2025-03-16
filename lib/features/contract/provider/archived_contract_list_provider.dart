@@ -14,7 +14,7 @@ class ArchivedContractList extends _$ArchivedContractList {
   FutureOr<List<ContractDto>> build() async {
     final repo = ref.watch(contractRepositoryProvider);
 
-    return await repo.fetchContracts(true);
+    return await repo.fetchContracts(isArchived: true);
   }
 
   Future toggleState(ContractDto contract) async {
