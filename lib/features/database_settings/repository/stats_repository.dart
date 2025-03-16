@@ -5,7 +5,7 @@ import 'package:openmeter/features/contract/repository/contract_repository.dart'
 import 'package:openmeter/features/database_settings/model/stats_model.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
-import 'package:openmeter/features/meters/service/meter_image_helper.dart';
+import 'package:openmeter/features/meters/service/meter_image_service.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
 import 'package:openmeter/features/tags/repository/tag_repository.dart';
 import 'package:path/path.dart' as p;

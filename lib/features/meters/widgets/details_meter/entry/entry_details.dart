@@ -9,7 +9,7 @@ import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_contract.dart';
-import 'package:openmeter/features/meters/service/meter_image_helper.dart';
+import 'package:openmeter/features/meters/service/meter_image_service.dart';
 import 'package:openmeter/shared/constant/custom_icons.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:openmeter/shared/utils/convert_count.dart';

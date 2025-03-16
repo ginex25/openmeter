@@ -81,20 +81,21 @@ class MeterRepository {
 
   Future<MeterDto> createMeter(
       {required MeterDto meter,
-      required int currentCount,
+      int? currentCount,
       RoomDto? room,
       required List<String> tags}) async {
     meter.id = await _meterDao.createMeter(meter.toMeterCompanion());
 
-    final EntryDto entry = EntryDto(
-      count: currentCount,
-      date: DateTime.now(),
-      meterId: meter.id,
-    );
+    if (currentCount != null) {
+      final EntryDto entry = EntryDto(
+        count: currentCount,
+        date: DateTime.now(),
+        meterId: meter.id,
+      );
+      entry.id = await _entryRepository.createEntry(entry);
 
-    entry.id = await _entryRepository.createEntry(entry);
-
-    meter.lastEntry = entry;
+      meter.lastEntry = entry;
+    }
 
     if (room != null) {
       meter.room = room;

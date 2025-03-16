@@ -11,7 +11,7 @@ import '../../../../../core/model/entry_dto.dart';
 import '../../../../../core/provider/database_settings_provider.dart';
 import '../../../../../shared/utils/convert_count.dart';
 import '../../../../../shared/utils/convert_meter_unit.dart';
-import '../../../service/meter_image_helper.dart';
+import '../../../service/meter_image_service.dart';
 
 class ImageView extends StatefulWidget {
   final EntryDto entry;

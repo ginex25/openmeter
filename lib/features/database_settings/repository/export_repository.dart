@@ -16,7 +16,7 @@ import 'package:openmeter/features/contract/repository/contract_repository.dart'
 import 'package:openmeter/features/database_settings/helper/file_helper.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
-import 'package:openmeter/features/meters/service/meter_image_helper.dart';
+import 'package:openmeter/features/meters/service/meter_image_service.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:openmeter/shared/constant/log.dart';

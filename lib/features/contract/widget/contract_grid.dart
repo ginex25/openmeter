@@ -39,10 +39,10 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
     return contractsProvider.when(
       data: (data) {
         if (data == null || data.$1.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
               'Es wurden noch keine Verträge erstellt. \n Drücke jetzt auf das Plus um ein Vertrag zu erstellen.',
-              style: TextStyle(color: Colors.grey),
+              style: Theme.of(context).textTheme.labelMedium,
               textAlign: TextAlign.center,
             ),
           );

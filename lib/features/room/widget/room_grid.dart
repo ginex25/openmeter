@@ -26,7 +26,7 @@ class _RoomGridState extends ConsumerState<RoomGrid> {
           return Center(
             child: Text(
               'Es wurden noch keine Zimmer erstellt. \n Drücke jetzt auf das Plus um ein Zimmer zu erstellen.',
-              style: Theme.of(context).textTheme.labelSmall,
+              style: Theme.of(context).textTheme.labelMedium,
               textAlign: TextAlign.center,
             ),
           );

@@ -56,10 +56,9 @@ class MeterDto {
         number = json['number'],
         unit = json['unit'],
         note = json['note'],
-        room = json['room'],
-        tags = json['tags'],
         isArchived = json['isArchived'],
-        isSelected = false;
+        isSelected = false,
+        tags = [];
 
   MeterData toMeterData() {
     return MeterData(

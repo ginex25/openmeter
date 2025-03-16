@@ -2,9 +2,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/service/permission_service.dart';
+import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
+import 'package:openmeter/features/database_settings/provider/stats_provider.dart';
 import 'package:openmeter/features/database_settings/repository/export_repository.dart';
+import 'package:openmeter/features/database_settings/repository/import_repository.dart';
 import 'package:openmeter/features/database_settings/widget/auto_backup.dart';
 import 'package:openmeter/features/database_settings/widget/stats_card.dart';
+import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
+import 'package:openmeter/features/room/provider/room_list_provider.dart';
+import 'package:openmeter/features/tags/provider/tag_list_provider.dart';
 import 'package:openmeter/shared/widgets/custom_loading_indicator.dart';
 
 class DatabaseView extends ConsumerStatefulWidget {
@@ -86,6 +92,56 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
     }
   }
 
+  Future<void> _handleImport() async {
+    // provider.setHasUpdate(false);
+
+    bool permissionGranted =
+        await _permissionService.askForExternalStoragePermission();
+
+    if (!permissionGranted) {
+      // provider.setHasUpdate(true);
+      _showSnackbar('Es wurden keine Rechte erteilt.');
+      return;
+    }
+
+    await FilePicker.platform.clearTemporaryFiles();
+
+    FilePickerResult? path = await FilePicker.platform.pickFiles(
+      allowedExtensions: ['json', 'zip'],
+      type: FileType.custom,
+    );
+
+    if (path == null) {
+      // provider.setHasUpdate(true);
+      _showSnackbar('Es wurden keine Datei ausgewählt.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    bool success = await ref
+        .read(importRepositoryProvider)
+        .importFromJson(path: path.files.single.path!);
+
+    if (success == false) {
+      // provider.setHasUpdate(true);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    ref.invalidate(databaseStatsProvider);
+    ref.invalidate(tagListProvider);
+    ref.invalidate(contractListProvider);
+    ref.invalidate(roomListProvider);
+    ref.invalidate(meterListProvider);
+
+    // provider.resetStats();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,9 +181,8 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
                   subtitle: const Text(
                     'Importiere deine gespeicherten Daten.',
                   ),
-                  onTap: () {
-                    // TODO impl import
-                    // _handleImport(db, provider, meterProvider);
+                  onTap: () async {
+                    await _handleImport();
                   },
                 ),
                 const SizedBox(

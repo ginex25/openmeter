@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
 
 import '../database/local_database.dart';
@@ -29,8 +30,7 @@ class RoomDto {
       : id = json['id'],
         uuid = json['uuid'],
         name = json['name'],
-        typ = json['typ'],
-        isSelected = json['isSelected'];
+        typ = json['typ'];
 
   Map<String, dynamic> toJson() {
     return {
@@ -38,7 +38,9 @@ class RoomDto {
       'uuid': uuid,
       'name': name,
       'typ': typ,
-      'isSelected': isSelected,
     };
   }
+
+  RoomCompanion toCompanion() =>
+      RoomCompanion(typ: Value(typ), name: Value(name), uuid: Value(uuid));
 }

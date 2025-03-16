@@ -33,7 +33,7 @@ class MeterImageService {
           name: LogNames.meterImageHelper,
           'Create image directory on path: ${_saveDir!.path}');
 
-      _saveDir!.create(recursive: true);
+      await _saveDir!.create(recursive: true);
     }
   }
 
