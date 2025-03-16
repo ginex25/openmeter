@@ -3,7 +3,6 @@ import 'package:drift/drift.dart' as drift;
 import '../../features/contract/model/contract_dto.dart';
 import '../../features/contract/model/provider_dto.dart';
 import '../database/local_database.dart';
-import '../provider/contract_provider.dart';
 
 class ProviderHelper {
   Future<ProviderDto> createProvider({
@@ -46,12 +45,12 @@ class ProviderHelper {
   deleteProvider({
     required LocalDatabase db,
     required ProviderDto provider,
-    required ContractProvider contractProvider,
+    // required ContractProvider contractProvider,
     required int contractId,
   }) async {
     await db.contractDao.deleteProvider(provider.id!);
 
-    contractProvider.removeProvider(contractId: contractId);
+    // contractProvider.removeProvider(contractId: contractId);
   }
 
   removeCanceledState({

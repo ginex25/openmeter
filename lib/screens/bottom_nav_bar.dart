@@ -16,10 +16,10 @@ import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 
-import '../../../shared/constant/custom_icons.dart';
-import '../../../shared/constant/log.dart';
-import '../../screens/homescreen.dart';
-import '../../screens/objects.dart';
+import '../../shared/constant/custom_icons.dart';
+import '../../shared/constant/log.dart';
+import 'homescreen.dart';
+import 'objects.dart';
 
 class BottomNavBar extends ConsumerStatefulWidget {
   const BottomNavBar({super.key});

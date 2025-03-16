@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/provider/database_settings_provider.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
@@ -17,7 +16,6 @@ import 'package:openmeter/features/contract/widget/number_text_field.dart';
 import 'package:openmeter/features/meters/widgets/meter_type_dropdown.dart';
 import 'package:openmeter/shared/constant/meter_typ.dart';
 import 'package:openmeter/shared/utils/convert_meter_unit.dart';
-import 'package:provider/provider.dart' as p;
 
 class AddContract extends ConsumerStatefulWidget {
   final ContractDto? contract;
@@ -186,11 +184,6 @@ class _AddContractState extends ConsumerState<AddContract> {
         await _updateEntry();
       } else {
         await _createEntry();
-      }
-
-      if (mounted) {
-        p.Provider.of<DatabaseSettingsProvider>(context, listen: false)
-            .setHasUpdate(true);
       }
     }
   }

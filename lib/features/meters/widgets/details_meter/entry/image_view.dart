@@ -1,29 +1,29 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../../core/model/entry_dto.dart';
-import '../../../../../core/provider/database_settings_provider.dart';
 import '../../../../../shared/utils/convert_count.dart';
 import '../../../../../shared/utils/convert_meter_unit.dart';
 import '../../../service/meter_image_service.dart';
 
-class ImageView extends StatefulWidget {
+class ImageView extends ConsumerStatefulWidget {
   final EntryDto entry;
   final MeterDto meter;
 
   const ImageView({super.key, required this.meter, required this.entry});
 
   @override
-  State<ImageView> createState() => _ImageViewState();
+  ConsumerState<ImageView> createState() => _ImageViewState();
 }
 
-class _ImageViewState extends State<ImageView>
+class _ImageViewState extends ConsumerState<ImageView>
     with SingleTickerProviderStateMixin {
   final MeterImageService _meterImageHelper = MeterImageService();
 
@@ -147,9 +147,6 @@ class _ImageViewState extends State<ImageView>
       ),
     );
 
-    final databaseSettingsProvider =
-        Provider.of<DatabaseSettingsProvider>(context);
-
     return SizedBox(
       height: MediaQuery.sizeOf(context).height * 0.1,
       child: Card(
@@ -192,11 +189,11 @@ class _ImageViewState extends State<ImageView>
                 ),
                 TextButton(
                   onPressed: () async {
-                    databaseSettingsProvider.toggleInAppActionState();
+                    ref.read(inAppActionProvider.notifier).setState(true);
                     await Share.shareXFiles([XFile(widget.entry.imagePath!)])
                         .then(
                       (value) =>
-                          databaseSettingsProvider.toggleInAppActionState(),
+                          ref.read(inAppActionProvider.notifier).setState(true),
                     );
                   },
                   child: _createButtons(

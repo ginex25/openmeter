@@ -4,9 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:openmeter/features/contract/provider/archived_contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/widget/contract_card.dart';
-import 'package:provider/provider.dart' as p;
 
-import '../../../core/provider/database_settings_provider.dart';
 import '../../../shared/constant/custom_colors.dart';
 import '../../../shared/widgets/empty_archiv.dart';
 import '../../../shared/widgets/selected_items_bar.dart';
@@ -103,9 +101,6 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
   }
 
   _slideCard({required ContractDto contract, required int hasSelectedItems}) {
-    final autoBackup =
-        p.Provider.of<DatabaseSettingsProvider>(context, listen: false);
-
     return Slidable(
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
@@ -115,10 +110,6 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
               ref
                   .read(archivedContractListProvider.notifier)
                   .deleteSingleContract(contract);
-
-              if (context.mounted) {
-                autoBackup.setHasUpdate(true);
-              }
             },
             icon: Icons.delete,
             label: 'Löschen',
@@ -135,10 +126,6 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
               ref
                   .read(archivedContractListProvider.notifier)
                   .unarchiveSingleContract(contract);
-
-              if (context.mounted) {
-                autoBackup.setHasUpdate(true);
-              }
             },
             icon: Icons.unarchive,
             label: 'Wiederherstellen',
@@ -171,9 +158,6 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
   }
 
   _selectedItemsBar() {
-    final backupProvider =
-        p.Provider.of<DatabaseSettingsProvider>(context, listen: false);
-
     final buttonStyle = ButtonStyle(
       foregroundColor: WidgetStateProperty.all(
         Theme.of(context).textTheme.bodyLarge!.color,
@@ -186,10 +170,6 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
           ref
               .read(archivedContractListProvider.notifier)
               .unarchiveAllSelectedContracts();
-
-          if (mounted) {
-            backupProvider.setHasUpdate(true);
-          }
         },
         style: buttonStyle,
         child: const Column(
@@ -211,8 +191,6 @@ class _ArchiveContractState extends ConsumerState<ArchiveContract> {
           await ref
               .read(archivedContractListProvider.notifier)
               .deleteAllSelectedContracts();
-
-          backupProvider.setHasUpdate(true);
         },
         style: buttonStyle,
         child: const Column(

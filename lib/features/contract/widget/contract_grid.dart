@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/theme/model/theme_model.dart';
+import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
@@ -61,10 +63,9 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
 
         double height = 180;
 
-        bool isLargeText =
-            false; //themeProvider.getFontSizeValue == FontSizeValue.large
-        //     ? true
-        //     : false;
+        final ThemeModel theme = ref.watch(themeModeProviderProvider);
+
+        bool isLargeText = theme.isLargeText;
 
         if (first.length == 1 && second.isEmpty) {
           if (isLargeText) {
