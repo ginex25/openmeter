@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 
-import '../database/local_database.dart';
+import '../../../core/database/local_database.dart';
 
 class RoomDto {
   int? id;

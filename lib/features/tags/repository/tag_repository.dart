@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/tags_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
 import 'package:openmeter/core/exception/null_value.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_keys.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,4 +1,4 @@
-import 'package:openmeter/core/enums/notifications_repeat_values.dart';
+import 'package:openmeter/features/reminder/model/notifications_repeat_values.dart';
 import 'package:openmeter/features/reminder/model/reminder_model.dart';
 import 'package:openmeter/features/reminder/repository/reminder_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

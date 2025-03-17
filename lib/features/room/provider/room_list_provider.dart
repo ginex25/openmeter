@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

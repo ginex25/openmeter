@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/room/model/meter_room_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/all_room_list.dart';
 import 'package:openmeter/features/room/widget/meter_card_compact.dart';
 

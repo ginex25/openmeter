@@ -3,8 +3,8 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/entry_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/service/meter_image_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

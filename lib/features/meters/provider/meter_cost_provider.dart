@@ -1,7 +1,7 @@
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/meter_cost_model.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/repository/meter_cost_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

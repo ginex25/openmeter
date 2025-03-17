@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/entry_monthly_sums.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/meters/helper/chart_helper.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/entry_monthly_sums.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';

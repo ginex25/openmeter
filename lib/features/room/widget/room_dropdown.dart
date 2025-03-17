@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 
 class RoomDropdown extends ConsumerStatefulWidget {

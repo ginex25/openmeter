@@ -1,6 +1,6 @@
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/room/model/meter_room_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/details_room_provider.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';

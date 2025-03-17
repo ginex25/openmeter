@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/widgets/meter_card.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/details_room_provider.dart';
 import 'package:openmeter/features/room/provider/details_room_selected_meter.dart';
 import 'package:openmeter/features/room/widget/room_type_dropdown.dart';

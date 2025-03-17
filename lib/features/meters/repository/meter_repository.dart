@@ -1,17 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/meter_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/core/database/model/meter_with_room.dart';
 import 'package:openmeter/core/exception/null_value.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/meter_with_room.dart';
-import 'package:openmeter/core/model/room_dto.dart';
-import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:openmeter/features/tags/repository/tag_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -4,13 +4,13 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
-import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/repository/compare_cost_repository.dart';
 import 'package:openmeter/features/contract/repository/provider_repository.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

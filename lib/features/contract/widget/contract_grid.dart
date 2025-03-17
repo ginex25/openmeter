@@ -36,8 +36,6 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
 
     final contractsProvider = ref.watch(contractListProvider);
 
-    // final themeProvider = p.Provider.of<ThemeChanger>(context);
-
     return contractsProvider.when(
       data: (data) {
         if (data == null || data.$1.isEmpty) {
@@ -58,7 +56,7 @@ class _ContractGridState extends ConsumerState<ContractGrid> {
           }
         }
 
-        final List first = data.$1;
+        final List<ContractDto> first = data.$1;
         final List second = data.$2;
 
         double height = 180;

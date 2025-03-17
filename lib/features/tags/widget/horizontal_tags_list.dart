@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/model/tag_dto.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:openmeter/features/tags/provider/meter_tags_list.dart';
 import 'package:openmeter/features/tags/widget/tag_chip.dart';
 

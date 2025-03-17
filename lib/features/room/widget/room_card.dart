@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/model/room_dto.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/meters/widgets/meter_circle_avatar.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/view/details_room.dart';

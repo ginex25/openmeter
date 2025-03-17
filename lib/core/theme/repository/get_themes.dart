@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:openmeter/core/helper/color_adjuster.dart';
+import 'package:openmeter/shared/utils/color_adjuster.dart';
 import 'package:openmeter/core/theme/model/font_size_value.dart';
 import 'package:openmeter/shared/constant/custom_colors.dart';
 

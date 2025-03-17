@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 
-import '../database/local_database.dart';
+import '../../../core/database/local_database.dart';
 import 'entry_dto.dart';
 
 class MeterDto {

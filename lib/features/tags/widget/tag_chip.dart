@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/helper/color_adjuster.dart';
 import 'package:openmeter/features/tags/provider/tag_list_provider.dart';
 import 'package:openmeter/shared/constant/custom_colors.dart';
+import 'package:openmeter/shared/utils/color_adjuster.dart';
 
-import '../../../core/enums/tag_chip_state.dart';
-import '../../../core/model/tag_dto.dart';
+import '../model/tag_chip_state.dart';
+import '../model/tag_dto.dart';
 
 class TagChip extends StatelessWidget {
   final TagDto tag;

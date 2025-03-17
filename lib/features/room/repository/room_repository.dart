@@ -5,13 +5,13 @@ import 'package:openmeter/core/database/daos/entry_dao.dart';
 import 'package:openmeter/core/database/daos/meter_dao.dart';
 import 'package:openmeter/core/database/daos/room_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/core/database/model/meter_with_room.dart';
 import 'package:openmeter/core/database/model/room_model.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/meter_with_room.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/room/model/details_room_model.dart';
 import 'package:openmeter/features/room/model/meter_room_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'room_repository.g.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:openmeter/core/enums/notifications_repeat_values.dart';
+import 'package:openmeter/features/reminder/model/notifications_repeat_values.dart';
 import 'package:openmeter/features/reminder/model/reminder_model.dart';
 import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
 

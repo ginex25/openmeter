@@ -4,7 +4,7 @@ import 'package:openmeter/features/reminder/model/reminder_model.dart';
 import 'package:openmeter/features/reminder/provider/reminder_provider.dart';
 import 'package:openmeter/features/reminder/widgets/repeat_tile.dart';
 
-import '../../../core/enums/notifications_repeat_values.dart';
+import '../model/notifications_repeat_values.dart';
 import 'month_tile.dart';
 import 'time_picker_tile.dart';
 import 'week_tile.dart';

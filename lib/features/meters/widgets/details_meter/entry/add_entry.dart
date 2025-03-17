@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../../../core/helper/torch_controller.dart';
-import '../../../../../core/model/meter_dto.dart';
+import '../../../../../core/service/torch_controller.dart';
+import '../../../model/meter_dto.dart';
 import 'add_image_popup_menu.dart';
 
 class AddEntry extends ConsumerStatefulWidget {

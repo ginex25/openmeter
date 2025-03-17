@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/meter_typ.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
+import 'package:openmeter/features/meters/model/meter_typ.dart';
 import 'package:openmeter/features/meters/model/sort_model.dart';
 import 'package:openmeter/features/meters/provider/sort_provider.dart';
 import 'package:openmeter/features/tags/provider/show_tags_provider.dart';

@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
-import '../../model/meter_with_room.dart';
 import '../local_database.dart';
+import '../model/meter_with_room.dart';
 import '../tables/entries.dart';
 import '../tables/meter.dart';
 import '../tables/room.dart';

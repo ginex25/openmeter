@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:openmeter/core/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/shared/constant/log.dart';
 
-import '../../../core/helper/usage_helper.dart';
+import 'usage_helper.dart';
 
 class CostHelper {
   final UsageHelper _usageHelper = UsageHelper();

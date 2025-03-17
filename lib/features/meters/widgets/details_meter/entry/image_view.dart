@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../../../core/model/entry_dto.dart';
 import '../../../../../shared/utils/convert_count.dart';
 import '../../../../../shared/utils/convert_meter_unit.dart';
+import '../../../model/entry_dto.dart';
 import '../../../service/meter_image_service.dart';
 
 class ImageView extends ConsumerStatefulWidget {

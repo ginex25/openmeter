@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/meter_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/repository/contract_repository.dart';
 import 'package:openmeter/features/meters/helper/cost_helper.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/meter_cost_model.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'meter_cost_repository.g.dart';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/contract_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
 import 'package:openmeter/core/database/model/contract_model.dart';
+import 'package:openmeter/features/contract/helper/provider_helper.dart';
 import 'package:openmeter/features/contract/model/compare_costs.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,6 +12,7 @@ part 'contract_repository.g.dart';
 
 class ContractRepository {
   final ContractDao _contractDao;
+  final ProviderHelper _providerHelper = ProviderHelper();
 
   ContractRepository(this._contractDao);
 
@@ -32,7 +34,21 @@ class ContractRepository {
       },
     );
 
-    return result.toList();
+    final now = DateTime.now();
+
+    return result.map(
+      (e) {
+        if (e.provider != null) {
+          e.provider = _providerHelper.showShouldCanceled(
+            provider: e.provider!,
+            end: e.provider!.validUntil,
+            current: now,
+          );
+        }
+
+        return e;
+      },
+    ).toList();
   }
 
   (List<ContractDto>, List<ContractDto>) splitContracts(
@@ -94,7 +110,20 @@ class ContractRepository {
         ? null
         : CompareCosts.fromData(data.costCompareData!);
 
-    return ContractDto.fromData(data.contractData, data.providerData, costs);
+    final contract =
+        ContractDto.fromData(data.contractData, data.providerData, costs);
+
+    if (contract.provider != null) {
+      final now = DateTime.now();
+
+      contract.provider = _providerHelper.showShouldCanceled(
+        provider: contract.provider!,
+        end: contract.provider!.validUntil,
+        current: now,
+      );
+    }
+
+    return contract;
   }
 
   Future<List<ContractDto>> getContractByType(String type) async {

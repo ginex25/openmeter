@@ -1,6 +1,6 @@
-import 'package:openmeter/core/model/entry_dto.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 
 class DetailsMeterModel {
   final MeterDto meter;

@@ -1,9 +1,9 @@
 import 'package:openmeter/core/exception/null_value.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/archived_meters_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../database_settings/provider/has_update.dart';

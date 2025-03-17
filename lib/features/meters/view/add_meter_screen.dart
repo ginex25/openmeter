@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
-import 'package:openmeter/core/model/room_dto.dart';
-import 'package:openmeter/core/model/tag_dto.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/widgets/meter_type_dropdown.dart';
+import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/widget/room_dropdown.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:openmeter/features/tags/provider/tag_list_provider.dart';
 import 'package:openmeter/features/tags/widget/add_tags.dart';
 import 'package:openmeter/features/tags/widget/tag_chip.dart';

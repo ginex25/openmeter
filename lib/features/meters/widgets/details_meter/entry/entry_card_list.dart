@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
 import 'package:openmeter/core/theme/model/font_size_value.dart';
 import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';

@@ -1,4 +1,4 @@
-import 'package:openmeter/core/enums/notifications_repeat_values.dart';
+import 'package:openmeter/features/reminder/model/notifications_repeat_values.dart';
 
 class ReminderModel {
   final bool isActive;

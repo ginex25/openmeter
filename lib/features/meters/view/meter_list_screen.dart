@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/archvied_meters_count_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';

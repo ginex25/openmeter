@@ -1,8 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:openmeter/core/database/model/room_model.dart';
-import 'package:openmeter/core/model/meter_dto.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 
-import '../../model/room_dto.dart';
+import '../../../features/room/model/room_dto.dart';
 import '../local_database.dart';
 import '../tables/meter.dart';
 import '../tables/room.dart';

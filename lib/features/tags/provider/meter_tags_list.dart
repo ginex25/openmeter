@@ -1,4 +1,4 @@
-import 'package:openmeter/core/model/tag_dto.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:openmeter/features/tags/repository/tag_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

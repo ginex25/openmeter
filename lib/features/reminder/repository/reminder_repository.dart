@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:openmeter/core/enums/notifications_repeat_values.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_keys.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
+import 'package:openmeter/features/reminder/model/notifications_repeat_values.dart';
 import 'package:openmeter/features/reminder/model/reminder_model.dart';
 import 'package:openmeter/features/reminder/service/local_notification_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

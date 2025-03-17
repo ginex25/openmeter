@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 
-import '../../../core/model/entry_dto.dart';
-import '../../../core/model/entry_monthly_sums.dart';
+import '../model/entry_dto.dart';
+import '../model/entry_monthly_sums.dart';
 
 class ChartHelper {
   ChartHelper();

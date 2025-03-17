@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:openmeter/core/helper/usage_helper.dart';
-import 'package:openmeter/core/model/entry_dto.dart';
+import 'package:openmeter/features/meters/helper/usage_helper.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/shared/utils/convert_count.dart';
 
