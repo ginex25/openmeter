@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:openmeter/core/service/torch_service.dart';
+import 'package:openmeter/core/theme/model/theme_model.dart';
+import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
@@ -29,6 +32,9 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
   final TextEditingController _meterNote = TextEditingController();
   final TextEditingController _meterValue = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  late TorchService _torchService;
+  bool isTorchOn = false;
 
   String _meterType = 'Stromzähler';
   String _roomId = "-2"; // -2: not selected, -1: no part of room
@@ -125,26 +131,32 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeModel theme = ref.watch(themeModeProviderProvider);
+
+    _torchService = ref.watch(torchServiceProvider);
+    isTorchOn = _torchService.stateTorch;
+
+    bool darkMode = theme.mode == ThemeMode.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_pageTitle),
         actions: [
-          // TODO impl torch
           IconButton(
             onPressed: () async {
-              // await _torchController.getTorch();
-              // setState(() {
-              //   isTorchOn = !isTorchOn;
-              // });
+              bool isOn = await _torchService.getTorch();
+              setState(() {
+                isTorchOn = isOn;
+              });
             },
-            icon: false
-                ? const Icon(
+            icon: _torchService.stateTorch
+                ? Icon(
                     Icons.flashlight_on,
-                    // color: darkMode ? Colors.white : Colors.black,
+                    color: darkMode ? Colors.white : Colors.black,
                   )
-                : const Icon(
+                : Icon(
                     Icons.flashlight_off,
-                    // color: darkMode ? Colors.white : Colors.black,
+                    color: darkMode ? Colors.white : Colors.black,
                   ),
           ),
         ],

@@ -15,6 +15,7 @@ import 'package:provider/provider.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/database/local_database.dart';
+import 'core/service/torch_service.dart';
 import 'core/theme/view/design_screen.dart';
 import 'features/contract/view/archive_contracts.dart';
 import 'features/database_settings/view/database_view.dart';
@@ -29,10 +30,14 @@ void main() async {
       await SharedPreferencesWithCache.create(
           cacheOptions: SharedPreferencesWithCacheOptions());
 
+  final TorchService torchService = TorchService();
+  await torchService.getTorch(isInit: true);
+
   runApp(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(pref),
+        torchServiceProvider.overrideWithValue(torchService),
       ],
       child: p.Provider<LocalDatabase>(
         create: (context) => LocalDatabase(),

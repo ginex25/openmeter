@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/core/service/torch_service.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
+import 'package:openmeter/features/torch/provider/active_torch_state_provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../../../../core/service/torch_controller.dart';
 import '../../../model/meter_dto.dart';
 import 'add_image_popup_menu.dart';
 
@@ -25,7 +26,7 @@ class _AddEntryState extends ConsumerState<AddEntry> {
 
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _counterController = TextEditingController();
-  final TorchController _torchController = TorchController();
+  late TorchService _torchService;
   final PageController _pageController = PageController();
 
   DateTime? _selectedDate = DateTime.now();
@@ -133,14 +134,6 @@ class _AddEntryState extends ConsumerState<AddEntry> {
   }
 
   _topBar(Function setState) {
-    bool isTorchOn = _torchController.stateTorch;
-
-    // if (torchProvider.stateTorch && !_torchController.stateTorch) {
-    //   _torchController.getTorch();
-    //   _stateTorch = true;
-    //   isTorchOn = true;
-    // }
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -152,18 +145,17 @@ class _AddEntryState extends ConsumerState<AddEntry> {
           children: [
             IconButton(
               onPressed: () async {
-                bool torch = await _torchController.getTorch();
+                bool torch = await _torchService.getTorch();
                 setState(() {
                   if (torch) {
-                    isTorchOn = !isTorchOn;
-                    // torchProvider.setIsTorchOn(isTorchOn);
+                    _stateTorch = torch;
                   }
                 });
               },
-              tooltip: isTorchOn
+              tooltip: _torchService.stateTorch
                   ? 'Schalte die Taschenlampe aus'
                   : 'Schalte die Taschenlampe an',
-              icon: isTorchOn
+              icon: _torchService.stateTorch
                   ? const Icon(
                       Icons.flashlight_on,
                     )
@@ -292,7 +284,13 @@ class _AddEntryState extends ConsumerState<AddEntry> {
   }
 
   _showBottomModel() {
-    // _torchController.setStateTorch(torchProvider.getStateIsTorchOn);
+    final startTorch = ref.watch(activeTorchStateProviderProvider);
+
+    _torchService.setStateTorch(!startTorch);
+
+    _torchService.getTorch();
+
+    _stateTorch = _torchService.stateTorch;
 
     final detailsMeter = ref.watch(currentDetailsMeterProvider);
 
@@ -344,8 +342,8 @@ class _AddEntryState extends ConsumerState<AddEntry> {
         );
       },
     ).then((value) {
-      if (_torchController.stateTorch && _stateTorch) {
-        _torchController.getTorch();
+      if (_torchService.stateTorch && _stateTorch) {
+        _torchService.getTorch();
       }
 
       _resetFields();
@@ -365,6 +363,8 @@ class _AddEntryState extends ConsumerState<AddEntry> {
 
   @override
   Widget build(BuildContext context) {
+    _torchService = ref.watch(torchServiceProvider);
+
     return IconButton(
       onPressed: () {
         _showBottomModel();
