@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:openmeter/shared/utils/color_adjuster.dart';
 import 'package:openmeter/core/theme/model/font_size_value.dart';
 import 'package:openmeter/shared/constant/custom_colors.dart';
+import 'package:openmeter/shared/utils/color_adjuster.dart';
 
 class GetThemes {
   static TextTheme _getTextTheme(FontSizeValue fontSize) {
@@ -101,7 +101,7 @@ class GetThemes {
       textTheme: _getTextTheme(fontSize),
       cardTheme: CardTheme(
         elevation: 0,
-        color: primaryColor.darkenColor(percent: 89),
+        color: primaryColor.darkenColor(percent: 0.94),
       ),
     );
   }

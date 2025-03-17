@@ -27,6 +27,8 @@ import 'dart:ui';
 
 extension ColorUitl on Color {
   Color darkenColor({double percent = 0.05}) {
+    percent = percent.clamp(0, 1);
+
     int red = (r * 255 * (1 - percent)).round();
     int green = (g * 255 * (1 - percent)).round();
     int blue = (b * 255 * (1 - percent)).round();
