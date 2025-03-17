@@ -1,4 +1,5 @@
 import 'package:openmeter/core/exception/null_value.dart';
+import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:openmeter/features/tags/repository/tag_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,6 +33,7 @@ class TagList extends _$TagList {
     );
 
     ref.read(hasUpdateProvider.notifier).setState(true);
+    ref.invalidate(meterListProvider);
 
     state = AsyncData(currentTags);
   }

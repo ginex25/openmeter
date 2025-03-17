@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
@@ -35,7 +36,7 @@ class RoomList extends _$RoomList {
 
     rooms.add(newRoom);
 
-    ref.read(hasUpdateProvider.notifier).setState(true);
+    _updateProviders();
 
     state = AsyncData(repo.splitContracts(rooms));
   }
@@ -111,9 +112,7 @@ class RoomList extends _$RoomList {
 
     rooms.removeWhere((element) => element.isSelected);
 
-    ref.read(selectedRoomCountProvider.notifier).setSelectedState(0);
-
-    ref.read(hasUpdateProvider.notifier).setState(true);
+    _updateProviders();
 
     state = AsyncData(repo.splitContracts(rooms));
   }
@@ -133,8 +132,14 @@ class RoomList extends _$RoomList {
 
     rooms[updateIndex] = room;
 
-    ref.read(hasUpdateProvider.notifier).setState(true);
+    _updateProviders();
 
     state = AsyncData(repo.splitContracts(rooms));
+  }
+
+  void _updateProviders() {
+    ref.read(hasUpdateProvider.notifier).setState(true);
+    ref.read(selectedRoomCountProvider.notifier).setSelectedState(0);
+    ref.invalidate(meterListProvider);
   }
 }
