@@ -25,7 +25,7 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
 
     final meterProvider = ref.watch(meterListProvider);
 
-    final int archivedMetersLength = ref.watch(archivedMetersCountProvider);
+    final archivedMetersLengthProvider = ref.watch(archivedMetersCountProvider);
 
     return Scaffold(
       appBar: selectedMetersCount > 0
@@ -82,14 +82,18 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
                         },
                       ),
                       if (selectedMetersCount == 0)
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('archive');
-                          },
-                          child: Text(
-                            'Archivierte Zähler ($archivedMetersLength)',
-                            style: Theme.of(context).textTheme.headlineSmall,
+                        archivedMetersLengthProvider.when(
+                          data: (data) => TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('archive');
+                            },
+                            child: Text(
+                              'Archivierte Zähler ($data)',
+                              style: Theme.of(context).textTheme.headlineSmall,
+                            ),
                           ),
+                          error: (error, _) => throw error,
+                          loading: () => Container(),
                         ),
                     ],
                   ),

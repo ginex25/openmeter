@@ -164,4 +164,15 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
           ..where((tbl) => tbl.meterId.equals(meterId)))
         .go();
   }
+
+  Future<int> countMeters(bool isArchived) async {
+    final query = db.meter.id.count();
+
+    final result = await (selectOnly(db.meter)
+          ..addColumns([query])
+          ..where(db.meter.isArchived.equals(isArchived)))
+        .getSingle();
+
+    return result.read(query) ?? 0;
+  }
 }

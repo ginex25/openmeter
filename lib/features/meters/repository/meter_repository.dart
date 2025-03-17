@@ -206,6 +206,10 @@ class MeterRepository {
   Future<int> getTableLength() async {
     return await _meterDao.getTableLength() ?? 0;
   }
+
+  Future<int> countMeters(bool isArchived) async {
+    return await _meterDao.countMeters(isArchived);
+  }
 }
 
 @riverpod
