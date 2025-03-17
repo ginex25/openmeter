@@ -9,6 +9,7 @@ import 'package:openmeter/features/room/provider/details_room_selected_meter.dar
 import 'package:openmeter/features/room/widget/room_type_dropdown.dart';
 import 'package:openmeter/shared/constant/custom_colors.dart';
 
+import '../../meters/view/details_meter_screen.dart';
 import 'add_meter_to_room.dart';
 
 class DetailsRoom extends ConsumerStatefulWidget {
@@ -122,7 +123,12 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
                                                 .notifier)
                                             .toggleSelectMeterState(meter);
                                       } else {
-                                        // TODO open details meter
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailsMeterScreen(
+                                                  meterId: meter.id!),
+                                        ));
                                       }
                                     },
                                   )
@@ -186,7 +192,9 @@ class _DetailsRoomState extends ConsumerState<DetailsRoom> {
                 .read(detailsRoomProvider(room.id!).notifier)
                 .toggleSelectMeterState(meter);
           } else {
-            // TODO open details meter
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => DetailsMeterScreen(meterId: meter.id!),
+            ));
           }
         },
       ),

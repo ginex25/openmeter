@@ -7,6 +7,7 @@ import 'package:openmeter/features/contract/provider/archived_contract_list_prov
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/contract/widget/provider_bottom_sheet.dart';
 import 'package:openmeter/features/tags/widget/tag_chip.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:openmeter/shared/constant/meter_typ.dart';
 
 class ProviderCard extends ConsumerStatefulWidget {
@@ -155,7 +156,7 @@ class ProviderData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateFormat dateFormat = DateFormat('dd.MM.yyyy');
+    final DateFormat dateFormat = DateFormat(DateTimeFormats.dateGermanLong);
 
     return Table(
       children: [

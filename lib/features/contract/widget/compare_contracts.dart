@@ -12,7 +12,6 @@ import 'package:openmeter/features/contract/provider/details_contract_provider.d
 import 'package:openmeter/features/contract/widget/add_costs.dart';
 import 'package:openmeter/shared/utils/convert_meter_unit.dart';
 
-// Todo checken ob es im archiv auch noch geht, Lösung finden um mit Archiv besser um zu gehen
 class CompareContracts extends StatefulWidget {
   final ContractDto contract;
 

@@ -35,7 +35,6 @@ class ContractListTile extends ConsumerWidget {
                 tooltip: 'Archivierte Verträge anzeigen',
               ),
               IconButton(
-                // TODO: check ob contract liste aktualisiert wird
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const AddContract(contract: null),

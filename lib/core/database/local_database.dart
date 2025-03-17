@@ -78,15 +78,6 @@ class LocalDatabase extends _$LocalDatabase {
         if (from < 7) {
           await m.addColumn(entries, entries.imagePath);
         }
-        // TODO remove lines
-        // if (from < 8) {
-        //   await m.createTable(meterContract);
-        // }
-
-        // if (from < 9) {
-        //   await m.deleteTable('meter_contract');
-        //   await m.addColumn(meter, meter.contractId);
-        // }
         if (from < 10) {
           await m.createTable(meterContract);
         }

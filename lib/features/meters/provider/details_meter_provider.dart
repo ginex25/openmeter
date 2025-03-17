@@ -11,6 +11,8 @@ import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
+import 'package:openmeter/features/room/provider/details_room_provider.dart';
+import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/tags/provider/meter_tags_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -150,6 +152,8 @@ class DetailsMeter extends _$DetailsMeter {
     ref.invalidate(meterTagsListProvider(meterId));
 
     ref.invalidate(meterCostProviderProvider);
+    ref.invalidate(roomListProvider);
+    ref.invalidate(detailsRoomProvider);
 
     state = AsyncData(newDetails);
   }

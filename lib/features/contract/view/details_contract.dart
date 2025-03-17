@@ -46,12 +46,6 @@ class _DetailsContractState extends ConsumerState<DetailsContractView> {
                     setState(() {
                       if (value != null) {
                         currentContract = value;
-
-                        // TODO: das hier nochmal anschauen
-                        // _currentContract.compareCosts = provider.getCompareContract;
-                        //
-                        // provider.setCurrentProvider(_currentProvider);
-                        // provider.setUnit(_currentContract.unit);
                       }
                     });
                   });

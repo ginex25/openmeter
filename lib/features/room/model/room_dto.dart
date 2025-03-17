@@ -9,7 +9,6 @@ class RoomDto {
   String name;
   String typ;
   bool isSelected = false;
-  int? sumMeter; // Todo remove sumMeter
   List<MeterDto> meters = [];
 
   RoomDto.fromData(RoomData data)
