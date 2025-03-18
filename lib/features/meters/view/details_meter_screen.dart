@@ -62,8 +62,6 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
                   ref
                       .read(detailsMeterProvider(widget.meterId).notifier)
                       .removeSelectedEntitiesState();
-                } else {
-                  ref.invalidate(entryFilterProvider);
                 }
               },
               child: Stack(
