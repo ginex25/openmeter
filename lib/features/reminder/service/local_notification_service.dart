@@ -1,9 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:openmeter/features/reminder/exception/no_permission.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -75,7 +72,6 @@ class LocalNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
-      color: Color(0x00000000),
       icon: '@drawable/ic_stat_logo',
     );
 
@@ -99,7 +95,9 @@ class LocalNotificationService {
 
     log('Set schedule date: $scheduleDate', name: LogNames.readingReminder);
 
-    return scheduleDate;
+    return scheduleDate.isBefore(timeNow)
+        ? scheduleDate.add(Duration(days: 1))
+        : scheduleDate;
   }
 
   void dailyReminder(int hour, int minute) async {
@@ -109,14 +107,14 @@ class LocalNotificationService {
       throw NoPermissionException();
     }
 
+    final scheduleTime = _convertTime(hour, minute);
+
     await _localNotification.zonedSchedule(
       0,
       _notificationTitle,
       _notificationBody,
-      _convertTime(hour, minute),
+      scheduleTime,
       _notificationDetails(),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.wallClockTime,
       matchDateTimeComponents: DateTimeComponents.time,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
@@ -148,8 +146,6 @@ class LocalNotificationService {
       _notificationBody,
       _convertTimeWeekly(hour, minute, day),
       _notificationDetails(),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.wallClockTime,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
@@ -181,8 +177,6 @@ class LocalNotificationService {
       _notificationBody,
       _convertTimeMonthly(hour, minute, day),
       _notificationDetails(),
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );

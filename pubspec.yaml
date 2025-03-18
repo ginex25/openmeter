@@ -70,7 +70,7 @@ dependencies:
   # Chart
   smooth_page_indicator: ^1.2.0+3
   # Local Push Notification
-  flutter_local_notifications: ^18.0.1
+  flutter_local_notifications: ^19.0.0
   timezone: ^0.10.0
   # App Native Settings
   flutter_launcher_icons: ^0.14.3
