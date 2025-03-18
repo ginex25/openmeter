@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../local_database.dart';
-import '../../model/meter_with_room.dart';
+import '../model/meter_with_room.dart';
 import '../tables/entries.dart';
 import '../tables/meter.dart';
 import '../tables/room.dart';
@@ -82,7 +82,7 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
         .write(MeterCompanion(isArchived: Value(isArchived)));
   }
 
-  Future<List<MeterWithRoom>> getAllMeterWithRooms() {
+  Future<List<MeterWithRoom>> getAllMeterWithRooms({bool? isArchived}) {
     final query = select(db.meter).join([
       leftOuterJoin(
         db.meterInRoom,
@@ -95,6 +95,10 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
         // useColumns: false,
       ),
     ]);
+
+    if (isArchived != null) {
+      query.where(meter.isArchived.equals(isArchived));
+    }
 
     return query
         .map(
@@ -125,5 +129,50 @@ class MeterDao extends DatabaseAccessor<LocalDatabase> with _$MeterDaoMixin {
     return await (db.selectOnly(db.meter)..addColumns([count]))
         .map((row) => row.read(count))
         .getSingleOrNull();
+  }
+
+  Future<MeterContractData?> getMeterContract(int meterId) async {
+    final query = select(db.meterContract)
+      ..where(
+        (tbl) => tbl.meterId.equals(meterId),
+      );
+
+    return query.getSingleOrNull();
+  }
+
+  Future<int> createMeterContract(int meterId, int contractId,
+      DateTime? startDate, DateTime? endDate) async {
+    return await db.into(db.meterContract).insert(
+          MeterContractCompanion(
+            endDate: Value(endDate),
+            startDate: Value(startDate),
+            contractId: Value(contractId),
+            meterId: Value(meterId),
+          ),
+        );
+  }
+
+  Future<void> updateContractForMeter(
+      int meterId, MeterContractCompanion companion) async {
+    await (update(db.meterContract)
+          ..where((tbl) => tbl.meterId.equals(meterId)))
+        .write(companion);
+  }
+
+  Future<void> removeContractFromMeter(int meterId) async {
+    await (delete(db.meterContract)
+          ..where((tbl) => tbl.meterId.equals(meterId)))
+        .go();
+  }
+
+  Future<int> countMeters(bool isArchived) async {
+    final query = db.meter.id.count();
+
+    final result = await (selectOnly(db.meter)
+          ..addColumns([query])
+          ..where(db.meter.isArchived.equals(isArchived)))
+        .getSingle();
+
+    return result.read(query) ?? 0;
   }
 }

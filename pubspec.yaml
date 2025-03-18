@@ -45,11 +45,8 @@ dependencies:
   sqlite3: ^2.7.4
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
-  provider: ^6.1.2
   rxdart: ^0.28.0
   async: ^2.11.0
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
 
   #
   intl: any
@@ -63,20 +60,23 @@ dependencies:
   dynamic_color: ^1.7.0
   collection: any
   image_picker: ^1.1.2
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
   # share and save image
   share_plus: ^10.1.4
   flutter_image_gallery_saver: ^0.0.2
-  archive: ^4.0.2
+  archive: ^4.0.4
   # Chart
   smooth_page_indicator: ^1.2.0+3
   # Local Push Notification
-  flutter_local_notifications: ^18.0.1
+  flutter_local_notifications: ^19.0.0
   timezone: ^0.10.0
   # App Native Settings
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.5
   file_picker: ^9.0.0
 
+  path: any
 dependency_overrides:
   path: ^1.9.1
   meta: ^1.16.0
@@ -92,8 +92,9 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   drift_dev: ^2.25.2
-  hive_generator: ^2.0.1
   build_runner: ^2.4.15
+  riverpod_generator: ^2.6.4
+  riverpod_lint: ^2.6.4
 
 # to run: flutter pub run flutter_launcher_icons
 flutter_icons:

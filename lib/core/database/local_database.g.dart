@@ -1288,7 +1288,7 @@ class MeterInRoomCompanion extends UpdateCompanion<MeterInRoomData> {
   }
 }
 
-class $ProviderTable extends Provider
+class $ProviderTable extends c.Provider
     with TableInfo<$ProviderTable, ProviderData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -1761,7 +1761,7 @@ class ProviderCompanion extends UpdateCompanion<ProviderData> {
   }
 }
 
-class $ContractTable extends Contract
+class $ContractTable extends c.Contract
     with TableInfo<$ContractTable, ContractData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3057,6 +3057,292 @@ class CostCompareCompanion extends UpdateCompanion<CostCompareData> {
   }
 }
 
+class $MeterContractTable extends MeterContract
+    with TableInfo<$MeterContractTable, MeterContractData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MeterContractTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _meterIdMeta =
+      const VerificationMeta('meterId');
+  @override
+  late final GeneratedColumn<int> meterId = GeneratedColumn<int>(
+      'meter_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES meter (id) ON DELETE CASCADE'));
+  static const VerificationMeta _contractIdMeta =
+      const VerificationMeta('contractId');
+  @override
+  late final GeneratedColumn<int> contractId = GeneratedColumn<int>(
+      'contract_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES contract (id) ON DELETE CASCADE'));
+  static const VerificationMeta _startDateMeta =
+      const VerificationMeta('startDate');
+  @override
+  late final GeneratedColumn<DateTime> startDate = GeneratedColumn<DateTime>(
+      'start_date', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _endDateMeta =
+      const VerificationMeta('endDate');
+  @override
+  late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
+      'end_date', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [meterId, contractId, startDate, endDate];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'meter_contract';
+  @override
+  VerificationContext validateIntegrity(Insertable<MeterContractData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('meter_id')) {
+      context.handle(_meterIdMeta,
+          meterId.isAcceptableOrUnknown(data['meter_id']!, _meterIdMeta));
+    } else if (isInserting) {
+      context.missing(_meterIdMeta);
+    }
+    if (data.containsKey('contract_id')) {
+      context.handle(
+          _contractIdMeta,
+          contractId.isAcceptableOrUnknown(
+              data['contract_id']!, _contractIdMeta));
+    } else if (isInserting) {
+      context.missing(_contractIdMeta);
+    }
+    if (data.containsKey('start_date')) {
+      context.handle(_startDateMeta,
+          startDate.isAcceptableOrUnknown(data['start_date']!, _startDateMeta));
+    }
+    if (data.containsKey('end_date')) {
+      context.handle(_endDateMeta,
+          endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {meterId, contractId};
+  @override
+  MeterContractData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MeterContractData(
+      meterId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}meter_id'])!,
+      contractId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}contract_id'])!,
+      startDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}start_date']),
+      endDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}end_date']),
+    );
+  }
+
+  @override
+  $MeterContractTable createAlias(String alias) {
+    return $MeterContractTable(attachedDatabase, alias);
+  }
+}
+
+class MeterContractData extends DataClass
+    implements Insertable<MeterContractData> {
+  final int meterId;
+  final int contractId;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  const MeterContractData(
+      {required this.meterId,
+      required this.contractId,
+      this.startDate,
+      this.endDate});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['meter_id'] = Variable<int>(meterId);
+    map['contract_id'] = Variable<int>(contractId);
+    if (!nullToAbsent || startDate != null) {
+      map['start_date'] = Variable<DateTime>(startDate);
+    }
+    if (!nullToAbsent || endDate != null) {
+      map['end_date'] = Variable<DateTime>(endDate);
+    }
+    return map;
+  }
+
+  MeterContractCompanion toCompanion(bool nullToAbsent) {
+    return MeterContractCompanion(
+      meterId: Value(meterId),
+      contractId: Value(contractId),
+      startDate: startDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startDate),
+      endDate: endDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endDate),
+    );
+  }
+
+  factory MeterContractData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MeterContractData(
+      meterId: serializer.fromJson<int>(json['meterId']),
+      contractId: serializer.fromJson<int>(json['contractId']),
+      startDate: serializer.fromJson<DateTime?>(json['startDate']),
+      endDate: serializer.fromJson<DateTime?>(json['endDate']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'meterId': serializer.toJson<int>(meterId),
+      'contractId': serializer.toJson<int>(contractId),
+      'startDate': serializer.toJson<DateTime?>(startDate),
+      'endDate': serializer.toJson<DateTime?>(endDate),
+    };
+  }
+
+  MeterContractData copyWith(
+          {int? meterId,
+          int? contractId,
+          Value<DateTime?> startDate = const Value.absent(),
+          Value<DateTime?> endDate = const Value.absent()}) =>
+      MeterContractData(
+        meterId: meterId ?? this.meterId,
+        contractId: contractId ?? this.contractId,
+        startDate: startDate.present ? startDate.value : this.startDate,
+        endDate: endDate.present ? endDate.value : this.endDate,
+      );
+  MeterContractData copyWithCompanion(MeterContractCompanion data) {
+    return MeterContractData(
+      meterId: data.meterId.present ? data.meterId.value : this.meterId,
+      contractId:
+          data.contractId.present ? data.contractId.value : this.contractId,
+      startDate: data.startDate.present ? data.startDate.value : this.startDate,
+      endDate: data.endDate.present ? data.endDate.value : this.endDate,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeterContractData(')
+          ..write('meterId: $meterId, ')
+          ..write('contractId: $contractId, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(meterId, contractId, startDate, endDate);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MeterContractData &&
+          other.meterId == this.meterId &&
+          other.contractId == this.contractId &&
+          other.startDate == this.startDate &&
+          other.endDate == this.endDate);
+}
+
+class MeterContractCompanion extends UpdateCompanion<MeterContractData> {
+  final Value<int> meterId;
+  final Value<int> contractId;
+  final Value<DateTime?> startDate;
+  final Value<DateTime?> endDate;
+  final Value<int> rowid;
+  const MeterContractCompanion({
+    this.meterId = const Value.absent(),
+    this.contractId = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MeterContractCompanion.insert({
+    required int meterId,
+    required int contractId,
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : meterId = Value(meterId),
+        contractId = Value(contractId);
+  static Insertable<MeterContractData> custom({
+    Expression<int>? meterId,
+    Expression<int>? contractId,
+    Expression<DateTime>? startDate,
+    Expression<DateTime>? endDate,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (meterId != null) 'meter_id': meterId,
+      if (contractId != null) 'contract_id': contractId,
+      if (startDate != null) 'start_date': startDate,
+      if (endDate != null) 'end_date': endDate,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MeterContractCompanion copyWith(
+      {Value<int>? meterId,
+      Value<int>? contractId,
+      Value<DateTime?>? startDate,
+      Value<DateTime?>? endDate,
+      Value<int>? rowid}) {
+    return MeterContractCompanion(
+      meterId: meterId ?? this.meterId,
+      contractId: contractId ?? this.contractId,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (meterId.present) {
+      map['meter_id'] = Variable<int>(meterId.value);
+    }
+    if (contractId.present) {
+      map['contract_id'] = Variable<int>(contractId.value);
+    }
+    if (startDate.present) {
+      map['start_date'] = Variable<DateTime>(startDate.value);
+    }
+    if (endDate.present) {
+      map['end_date'] = Variable<DateTime>(endDate.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeterContractCompanion(')
+          ..write('meterId: $meterId, ')
+          ..write('contractId: $contractId, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   $LocalDatabaseManager get managers => $LocalDatabaseManager(this);
@@ -3069,6 +3355,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $TagsTable tags = $TagsTable(this);
   late final $MeterWithTagsTable meterWithTags = $MeterWithTagsTable(this);
   late final $CostCompareTable costCompare = $CostCompareTable(this);
+  late final $MeterContractTable meterContract = $MeterContractTable(this);
   late final MeterDao meterDao = MeterDao(this as LocalDatabase);
   late final EntryDao entryDao = EntryDao(this as LocalDatabase);
   late final RoomDao roomDao = RoomDao(this as LocalDatabase);
@@ -3089,7 +3376,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         contract,
         tags,
         meterWithTags,
-        costCompare
+        costCompare,
+        meterContract
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -3127,6 +3415,20 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
                 limitUpdateKind: UpdateKind.delete),
             result: [
               TableUpdate('cost_compare', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('meter',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('meter_contract', kind: UpdateKind.delete),
+            ],
+          ),
+          WritePropagation(
+            on: TableUpdateQuery.onTableName('contract',
+                limitUpdateKind: UpdateKind.delete),
+            result: [
+              TableUpdate('meter_contract', kind: UpdateKind.delete),
             ],
           ),
         ],
@@ -3197,6 +3499,21 @@ final class $$MeterTableReferences
         .filter((f) => f.meterId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_meterWithTagsRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$MeterContractTable, List<MeterContractData>>
+      _meterContractRefsTable(_$LocalDatabase db) =>
+          MultiTypedResultKey.fromTable(db.meterContract,
+              aliasName:
+                  $_aliasNameGenerator(db.meter.id, db.meterContract.meterId));
+
+  $$MeterContractTableProcessedTableManager get meterContractRefs {
+    final manager = $$MeterContractTableTableManager($_db, $_db.meterContract)
+        .filter((f) => f.meterId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_meterContractRefsTable($_db));
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
@@ -3284,6 +3601,27 @@ class $$MeterTableFilterComposer
             $$MeterWithTagsTableFilterComposer(
               $db: $db,
               $table: $db.meterWithTags,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> meterContractRefs(
+      Expression<bool> Function($$MeterContractTableFilterComposer f) f) {
+    final $$MeterContractTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterContract,
+        getReferencedColumn: (t) => t.meterId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterContractTableFilterComposer(
+              $db: $db,
+              $table: $db.meterContract,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -3410,6 +3748,27 @@ class $$MeterTableAnnotationComposer
             ));
     return f(composer);
   }
+
+  Expression<T> meterContractRefs<T extends Object>(
+      Expression<T> Function($$MeterContractTableAnnotationComposer a) f) {
+    final $$MeterContractTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterContract,
+        getReferencedColumn: (t) => t.meterId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterContractTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meterContract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$MeterTableTableManager extends RootTableManager<
@@ -3424,7 +3783,10 @@ class $$MeterTableTableManager extends RootTableManager<
     (MeterData, $$MeterTableReferences),
     MeterData,
     PrefetchHooks Function(
-        {bool entriesRefs, bool meterInRoomRefs, bool meterWithTagsRefs})> {
+        {bool entriesRefs,
+        bool meterInRoomRefs,
+        bool meterWithTagsRefs,
+        bool meterContractRefs})> {
   $$MeterTableTableManager(_$LocalDatabase db, $MeterTable table)
       : super(TableManagerState(
           db: db,
@@ -3474,13 +3836,15 @@ class $$MeterTableTableManager extends RootTableManager<
           prefetchHooksCallback: (
               {entriesRefs = false,
               meterInRoomRefs = false,
-              meterWithTagsRefs = false}) {
+              meterWithTagsRefs = false,
+              meterContractRefs = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [
                 if (entriesRefs) db.entries,
                 if (meterInRoomRefs) db.meterInRoom,
-                if (meterWithTagsRefs) db.meterWithTags
+                if (meterWithTagsRefs) db.meterWithTags,
+                if (meterContractRefs) db.meterContract
               ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
@@ -3521,6 +3885,19 @@ class $$MeterTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.meterId == item.id),
+                        typedResults: items),
+                  if (meterContractRefs)
+                    await $_getPrefetchedData<MeterData, $MeterTable,
+                            MeterContractData>(
+                        currentTable: table,
+                        referencedTable:
+                            $$MeterTableReferences._meterContractRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$MeterTableReferences(db, table, p0)
+                                .meterContractRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.meterId == item.id),
                         typedResults: items)
                 ];
               },
@@ -3541,7 +3918,10 @@ typedef $$MeterTableProcessedTableManager = ProcessedTableManager<
     (MeterData, $$MeterTableReferences),
     MeterData,
     PrefetchHooks Function(
-        {bool entriesRefs, bool meterInRoomRefs, bool meterWithTagsRefs})>;
+        {bool entriesRefs,
+        bool meterInRoomRefs,
+        bool meterWithTagsRefs,
+        bool meterContractRefs})>;
 typedef $$EntriesTableCreateCompanionBuilder = EntriesCompanion Function({
   Value<int> id,
   required int meter,
@@ -4619,6 +4999,21 @@ final class $$ContractTableReferences
     return ProcessedTableManager(
         manager.$state.copyWith(prefetchedData: cache));
   }
+
+  static MultiTypedResultKey<$MeterContractTable, List<MeterContractData>>
+      _meterContractRefsTable(_$LocalDatabase db) =>
+          MultiTypedResultKey.fromTable(db.meterContract,
+              aliasName: $_aliasNameGenerator(
+                  db.contract.id, db.meterContract.contractId));
+
+  $$MeterContractTableProcessedTableManager get meterContractRefs {
+    final manager = $$MeterContractTableTableManager($_db, $_db.meterContract)
+        .filter((f) => f.contractId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_meterContractRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$ContractTableFilterComposer
@@ -4690,6 +5085,27 @@ class $$ContractTableFilterComposer
             $$CostCompareTableFilterComposer(
               $db: $db,
               $table: $db.costCompare,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
+
+  Expression<bool> meterContractRefs(
+      Expression<bool> Function($$MeterContractTableFilterComposer f) f) {
+    final $$MeterContractTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterContract,
+        getReferencedColumn: (t) => t.contractId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterContractTableFilterComposer(
+              $db: $db,
+              $table: $db.meterContract,
               $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
               joinBuilder: joinBuilder,
               $removeJoinBuilderFromRootComposer:
@@ -4832,6 +5248,27 @@ class $$ContractTableAnnotationComposer
             ));
     return f(composer);
   }
+
+  Expression<T> meterContractRefs<T extends Object>(
+      Expression<T> Function($$MeterContractTableAnnotationComposer a) f) {
+    final $$MeterContractTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $db.meterContract,
+        getReferencedColumn: (t) => t.contractId,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterContractTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meterContract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return f(composer);
+  }
 }
 
 class $$ContractTableTableManager extends RootTableManager<
@@ -4845,7 +5282,8 @@ class $$ContractTableTableManager extends RootTableManager<
     $$ContractTableUpdateCompanionBuilder,
     (ContractData, $$ContractTableReferences),
     ContractData,
-    PrefetchHooks Function({bool provider, bool costCompareRefs})> {
+    PrefetchHooks Function(
+        {bool provider, bool costCompareRefs, bool meterContractRefs})> {
   $$ContractTableTableManager(_$LocalDatabase db, $ContractTable table)
       : super(TableManagerState(
           db: db,
@@ -4908,10 +5346,16 @@ class $$ContractTableTableManager extends RootTableManager<
               .map((e) =>
                   (e.readTable(table), $$ContractTableReferences(db, table, e)))
               .toList(),
-          prefetchHooksCallback: ({provider = false, costCompareRefs = false}) {
+          prefetchHooksCallback: (
+              {provider = false,
+              costCompareRefs = false,
+              meterContractRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [if (costCompareRefs) db.costCompare],
+              explicitlyWatchedTables: [
+                if (costCompareRefs) db.costCompare,
+                if (meterContractRefs) db.meterContract
+              ],
               addJoins: <
                   T extends TableManagerState<
                       dynamic,
@@ -4952,6 +5396,18 @@ class $$ContractTableTableManager extends RootTableManager<
                         referencedItemsForCurrentItem: (item,
                                 referencedItems) =>
                             referencedItems.where((e) => e.parentId == item.id),
+                        typedResults: items),
+                  if (meterContractRefs)
+                    await $_getPrefetchedData<ContractData, $ContractTable, MeterContractData>(
+                        currentTable: table,
+                        referencedTable: $$ContractTableReferences
+                            ._meterContractRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ContractTableReferences(db, table, p0)
+                                .meterContractRefs,
+                        referencedItemsForCurrentItem:
+                            (item, referencedItems) => referencedItems
+                                .where((e) => e.contractId == item.id),
                         typedResults: items)
                 ];
               },
@@ -4971,7 +5427,8 @@ typedef $$ContractTableProcessedTableManager = ProcessedTableManager<
     $$ContractTableUpdateCompanionBuilder,
     (ContractData, $$ContractTableReferences),
     ContractData,
-    PrefetchHooks Function({bool provider, bool costCompareRefs})>;
+    PrefetchHooks Function(
+        {bool provider, bool costCompareRefs, bool meterContractRefs})>;
 typedef $$TagsTableCreateCompanionBuilder = TagsCompanion Function({
   Value<int> id,
   required String uuid,
@@ -5630,6 +6087,343 @@ typedef $$CostCompareTableProcessedTableManager = ProcessedTableManager<
     (CostCompareData, $$CostCompareTableReferences),
     CostCompareData,
     PrefetchHooks Function({bool parentId})>;
+typedef $$MeterContractTableCreateCompanionBuilder = MeterContractCompanion
+    Function({
+  required int meterId,
+  required int contractId,
+  Value<DateTime?> startDate,
+  Value<DateTime?> endDate,
+  Value<int> rowid,
+});
+typedef $$MeterContractTableUpdateCompanionBuilder = MeterContractCompanion
+    Function({
+  Value<int> meterId,
+  Value<int> contractId,
+  Value<DateTime?> startDate,
+  Value<DateTime?> endDate,
+  Value<int> rowid,
+});
+
+final class $$MeterContractTableReferences extends BaseReferences<
+    _$LocalDatabase, $MeterContractTable, MeterContractData> {
+  $$MeterContractTableReferences(
+      super.$_db, super.$_table, super.$_typedResult);
+
+  static $MeterTable _meterIdTable(_$LocalDatabase db) => db.meter
+      .createAlias($_aliasNameGenerator(db.meterContract.meterId, db.meter.id));
+
+  $$MeterTableProcessedTableManager get meterId {
+    final $_column = $_itemColumn<int>('meter_id')!;
+
+    final manager = $$MeterTableTableManager($_db, $_db.meter)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_meterIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $ContractTable _contractIdTable(_$LocalDatabase db) =>
+      db.contract.createAlias(
+          $_aliasNameGenerator(db.meterContract.contractId, db.contract.id));
+
+  $$ContractTableProcessedTableManager get contractId {
+    final $_column = $_itemColumn<int>('contract_id')!;
+
+    final manager = $$ContractTableTableManager($_db, $_db.contract)
+        .filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_contractIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+}
+
+class $$MeterContractTableFilterComposer
+    extends Composer<_$LocalDatabase, $MeterContractTable> {
+  $$MeterContractTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<DateTime> get startDate => $composableBuilder(
+      column: $table.startDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get endDate => $composableBuilder(
+      column: $table.endDate, builder: (column) => ColumnFilters(column));
+
+  $$MeterTableFilterComposer get meterId {
+    final $$MeterTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableFilterComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$ContractTableFilterComposer get contractId {
+    final $$ContractTableFilterComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.contractId,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableFilterComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterContractTableOrderingComposer
+    extends Composer<_$LocalDatabase, $MeterContractTable> {
+  $$MeterContractTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<DateTime> get startDate => $composableBuilder(
+      column: $table.startDate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get endDate => $composableBuilder(
+      column: $table.endDate, builder: (column) => ColumnOrderings(column));
+
+  $$MeterTableOrderingComposer get meterId {
+    final $$MeterTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableOrderingComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$ContractTableOrderingComposer get contractId {
+    final $$ContractTableOrderingComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.contractId,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableOrderingComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterContractTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $MeterContractTable> {
+  $$MeterContractTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<DateTime> get startDate =>
+      $composableBuilder(column: $table.startDate, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get endDate =>
+      $composableBuilder(column: $table.endDate, builder: (column) => column);
+
+  $$MeterTableAnnotationComposer get meterId {
+    final $$MeterTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.meterId,
+        referencedTable: $db.meter,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$MeterTableAnnotationComposer(
+              $db: $db,
+              $table: $db.meter,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+
+  $$ContractTableAnnotationComposer get contractId {
+    final $$ContractTableAnnotationComposer composer = $composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.contractId,
+        referencedTable: $db.contract,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder,
+                {$addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer}) =>
+            $$ContractTableAnnotationComposer(
+              $db: $db,
+              $table: $db.contract,
+              $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+              joinBuilder: joinBuilder,
+              $removeJoinBuilderFromRootComposer:
+                  $removeJoinBuilderFromRootComposer,
+            ));
+    return composer;
+  }
+}
+
+class $$MeterContractTableTableManager extends RootTableManager<
+    _$LocalDatabase,
+    $MeterContractTable,
+    MeterContractData,
+    $$MeterContractTableFilterComposer,
+    $$MeterContractTableOrderingComposer,
+    $$MeterContractTableAnnotationComposer,
+    $$MeterContractTableCreateCompanionBuilder,
+    $$MeterContractTableUpdateCompanionBuilder,
+    (MeterContractData, $$MeterContractTableReferences),
+    MeterContractData,
+    PrefetchHooks Function({bool meterId, bool contractId})> {
+  $$MeterContractTableTableManager(
+      _$LocalDatabase db, $MeterContractTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MeterContractTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MeterContractTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MeterContractTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> meterId = const Value.absent(),
+            Value<int> contractId = const Value.absent(),
+            Value<DateTime?> startDate = const Value.absent(),
+            Value<DateTime?> endDate = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MeterContractCompanion(
+            meterId: meterId,
+            contractId: contractId,
+            startDate: startDate,
+            endDate: endDate,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int meterId,
+            required int contractId,
+            Value<DateTime?> startDate = const Value.absent(),
+            Value<DateTime?> endDate = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MeterContractCompanion.insert(
+            meterId: meterId,
+            contractId: contractId,
+            startDate: startDate,
+            endDate: endDate,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$MeterContractTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({meterId = false, contractId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (meterId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.meterId,
+                    referencedTable:
+                        $$MeterContractTableReferences._meterIdTable(db),
+                    referencedColumn:
+                        $$MeterContractTableReferences._meterIdTable(db).id,
+                  ) as T;
+                }
+                if (contractId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.contractId,
+                    referencedTable:
+                        $$MeterContractTableReferences._contractIdTable(db),
+                    referencedColumn:
+                        $$MeterContractTableReferences._contractIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MeterContractTableProcessedTableManager = ProcessedTableManager<
+    _$LocalDatabase,
+    $MeterContractTable,
+    MeterContractData,
+    $$MeterContractTableFilterComposer,
+    $$MeterContractTableOrderingComposer,
+    $$MeterContractTableAnnotationComposer,
+    $$MeterContractTableCreateCompanionBuilder,
+    $$MeterContractTableUpdateCompanionBuilder,
+    (MeterContractData, $$MeterContractTableReferences),
+    MeterContractData,
+    PrefetchHooks Function({bool meterId, bool contractId})>;
 
 class $LocalDatabaseManager {
   final _$LocalDatabase _db;
@@ -5650,4 +6444,29 @@ class $LocalDatabaseManager {
       $$MeterWithTagsTableTableManager(_db, _db.meterWithTags);
   $$CostCompareTableTableManager get costCompare =>
       $$CostCompareTableTableManager(_db, _db.costCompare);
+  $$MeterContractTableTableManager get meterContract =>
+      $$MeterContractTableTableManager(_db, _db.meterContract);
 }
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$localDbHash() => r'4c6dda4d48370072c7a4885a0b7dd4a9d55797ad';
+
+/// See also [localDb].
+@ProviderFor(localDb)
+final localDbProvider = Provider<LocalDatabase>.internal(
+  localDb,
+  name: r'localDbProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$localDbHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef LocalDbRef = ProviderRef<LocalDatabase>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

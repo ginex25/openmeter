@@ -1,4 +1,0 @@
-enum CurrentScreen{
-  homescreen,
-  detailsRoom,
-}
