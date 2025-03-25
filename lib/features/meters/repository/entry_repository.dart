@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/entry_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/core/exception/null_value.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/service/meter_image_service.dart';
@@ -61,54 +62,9 @@ class EntryRepository {
     return nextEntry;
   }
 
-  Future<List<EntryDto>> addNewEntry(
-      List<EntryDto> currentEntries, EntryDto newEntry) async {
-    EntryDto? lastEntry = currentEntries.firstOrNull;
-
-    String lastCount = lastEntry != null ? lastEntry.count.toString() : 'none';
-    DateTime? oldDate = lastEntry?.date;
-
-    if (lastEntry != null && newEntry.date.isBefore(lastEntry.date)) {
-      final EntryDto? prevEntry = currentEntries.firstWhereOrNull(
-        (element) => element.date.isBefore(newEntry.date),
-      );
-
-      String usageCount = 'none';
-      DateTime date = newEntry.date;
-
-      if (prevEntry != null) {
-        usageCount = prevEntry.count.toString();
-        date = prevEntry.date;
-      }
-
-      newEntry.usage = newEntry.isReset
-          ? -1
-          : _entryHelper.calcUsage(usageCount, newEntry.count);
-
-      newEntry.days =
-          newEntry.isReset ? -1 : _entryHelper.calcDays(newEntry.date, date);
-
-      newEntry.id = await _entryDao.createEntry(newEntry.toCompanion());
-
-      int index = currentEntries.indexWhere(
-        (element) => element.date.isBefore(newEntry.date),
-      );
-
-      currentEntries.insert(index, newEntry);
-
-      EntryDto? nextEntry = currentEntries.elementAtOrNull(index - 1);
-
-      if (nextEntry != null) {
-        nextEntry =
-            await updateNextEntry(nextEntry: nextEntry, prevEntry: newEntry);
-
-        currentEntries[currentEntries.indexWhere(
-          (element) => element.id == nextEntry!.id,
-        )] = nextEntry;
-      }
-
-      return currentEntries;
-    }
+  void _calculateUsageAndDays(EntryDto newEntry, EntryDto? referenceEntry) {
+    String lastCount = referenceEntry?.count.toString() ?? 'none';
+    DateTime? oldDate = referenceEntry?.date;
 
     newEntry.usage = newEntry.isReset
         ? -1
@@ -117,8 +73,47 @@ class EntryRepository {
     newEntry.days = newEntry.isReset || oldDate == null
         ? -1
         : _entryHelper.calcDays(newEntry.date, oldDate);
+  }
 
-    await _entryDao.createEntry(newEntry.toCompanion());
+  Future<List<EntryDto>> _insertBefore(
+      List<EntryDto> currentEntries, EntryDto newEntry) async {
+    final EntryDto? prevEntry = currentEntries.firstWhereOrNull(
+      (element) => element.date.isBefore(newEntry.date),
+    );
+
+    _calculateUsageAndDays(newEntry, prevEntry);
+
+    newEntry.id = await _entryDao.createEntry(newEntry.toCompanion());
+
+    int index = currentEntries.indexWhere(
+      (element) => element.date.isBefore(newEntry.date),
+    );
+
+    currentEntries.insert(index, newEntry);
+
+    EntryDto? nextEntry = currentEntries.elementAtOrNull(index - 1);
+
+    if (nextEntry != null) {
+      nextEntry =
+          await updateNextEntry(nextEntry: nextEntry, prevEntry: newEntry);
+
+      currentEntries[index - 1] = nextEntry;
+    }
+
+    return currentEntries;
+  }
+
+  Future<List<EntryDto>> addNewEntry(
+      List<EntryDto> currentEntries, EntryDto newEntry) async {
+    EntryDto? lastEntry = currentEntries.firstOrNull;
+
+    if (lastEntry != null && newEntry.date.isBefore(lastEntry.date)) {
+      return await _insertBefore(currentEntries, newEntry);
+    }
+
+    _calculateUsageAndDays(newEntry, lastEntry);
+
+    newEntry.id = await _entryDao.createEntry(newEntry.toCompanion());
 
     currentEntries.insert(0, newEntry);
 
@@ -126,6 +121,10 @@ class EntryRepository {
   }
 
   Future<void> deleteEntry(EntryDto entry) async {
+    if (entry.id == null) {
+      throw NullValueException();
+    }
+
     if (entry.imagePath != null) {
       await _imageService.deleteImage(entry.imagePath!);
     }
