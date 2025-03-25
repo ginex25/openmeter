@@ -192,8 +192,9 @@ class _ImageViewState extends ConsumerState<ImageView>
                     ref.read(inAppActionProvider.notifier).setState(true);
                     await Share.shareXFiles([XFile(widget.entry.imagePath!)])
                         .then(
-                      (value) =>
-                          ref.read(inAppActionProvider.notifier).setState(true),
+                      (value) => ref
+                          .read(inAppActionProvider.notifier)
+                          .setState(false),
                     );
                   },
                   child: _createButtons(

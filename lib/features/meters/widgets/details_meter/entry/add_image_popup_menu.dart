@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
 import 'package:openmeter/features/meters/service/meter_image_service.dart';
 import 'package:openmeter/shared/constant/custom_icons.dart';
 
@@ -32,11 +33,8 @@ class _ImagePopupMenuState extends ConsumerState<AddImagePopupMenu> {
   String? imagePath;
 
   _showAddImagePopupMenu(BuildContext context, Offset offset) {
-    // final databaseSettingsProvider =
-    //     Provider.of<DatabaseSettingsProvider>(context, listen: false);
-
     double left = offset.dx;
-    double top = offset.dy; // MediaQuery.sizeOf(context).height * 0.44;
+    double top = offset.dy;
 
     return showMenu(
       context: context,
@@ -62,14 +60,14 @@ class _ImagePopupMenuState extends ConsumerState<AddImagePopupMenu> {
             ],
           ),
           onTap: () async {
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(true);
 
             String? imagePath =
                 await _imageHelper.selectAndSaveImage(ImageSource.camera);
 
             widget.afterCameraSelect(imagePath);
 
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(false);
           },
         ),
         PopupMenuItem(
@@ -89,12 +87,12 @@ class _ImagePopupMenuState extends ConsumerState<AddImagePopupMenu> {
             ],
           ),
           onTap: () async {
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(true);
 
             String? imagePath =
                 await _imageHelper.selectAndSaveImage(ImageSource.gallery);
 
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(false);
 
             widget.afterGallerySelect(imagePath);
           },

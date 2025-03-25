@@ -1,4 +1,5 @@
 import 'package:openmeter/core/exception/null_value.dart';
+import 'package:openmeter/features/database_settings/provider/has_update.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
@@ -50,6 +51,8 @@ class DetailsMeter extends _$DetailsMeter {
         state.value!.copyWith(entries: newEntriesList, meter: meter);
 
     ref.invalidate(meterCostProviderProvider);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(newDetails);
   }
@@ -128,6 +131,7 @@ class DetailsMeter extends _$DetailsMeter {
         state.value!.copyWith(entries: currentEntries, meter: meter);
 
     ref.invalidate(meterCostProviderProvider);
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(newDetails);
   }
@@ -154,6 +158,8 @@ class DetailsMeter extends _$DetailsMeter {
     ref.invalidate(meterCostProviderProvider);
     ref.invalidate(roomListProvider);
     ref.invalidate(detailsRoomProvider);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(newDetails);
   }
@@ -192,6 +198,8 @@ class DetailsMeter extends _$DetailsMeter {
     currentEntries[index] = entry;
 
     final newDetails = state.value!.copyWith(entries: currentEntries);
+
+    ref.read(hasUpdateProvider.notifier).setState(true);
 
     state = AsyncData(newDetails);
   }

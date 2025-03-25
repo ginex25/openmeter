@@ -191,6 +191,9 @@ class ExportRepository {
     final cacheDir = await getApplicationCacheDirectory();
     await _imageService.createDirectory();
 
+    log('export as autobackup: $isAutoBackup',
+        name: LogNames.databaseExportImport);
+
     return await _exportAsJson(
         path: path,
         cacheDir: cacheDir.path,

@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
+import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/entry_contract.dart';
 import 'package:openmeter/features/meters/service/meter_image_service.dart';
@@ -284,9 +285,6 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
   }
 
   _showAddImagePopup() {
-    // final databaseSettingsProvider =
-    // Provider.of<DatabaseSettingsProvider>(context, listen: false);
-
     return PopupMenuButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -300,12 +298,12 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
         PopupMenuItem(
           value: 0,
           onTap: () async {
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(true);
 
             String? imagePath =
                 await _meterImageHelper.selectAndSaveImage(ImageSource.camera);
 
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(false);
 
             setState(() {
               entry.imagePath = imagePath;
@@ -338,12 +336,12 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
         PopupMenuItem(
           value: 1,
           onTap: () async {
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(true);
 
             String? imagePath =
                 await _meterImageHelper.selectAndSaveImage(ImageSource.gallery);
 
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(false);
 
             setState(() {
               entry.imagePath = imagePath;
@@ -378,9 +376,6 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
   }
 
   _imagePopUpMenu() {
-    // final databaseSettingsProvider =
-    // Provider.of<DatabaseSettingsProvider>(context, listen: false);
-
     return PopupMenuButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -437,11 +432,11 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
         PopupMenuItem(
           value: 1,
           onTap: () async {
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(true);
 
             await Share.shareXFiles([XFile(entry.imagePath!)]);
 
-            // databaseSettingsProvider.toggleInAppActionState();
+            ref.read(inAppActionProvider.notifier).setState(false);
           },
           child: Row(
             children: [

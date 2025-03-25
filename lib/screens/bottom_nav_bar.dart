@@ -31,6 +31,8 @@ class BottomNavBar extends ConsumerStatefulWidget {
 class _BottomNavBarState extends ConsumerState<BottomNavBar>
     with WidgetsBindingObserver {
   int _currentIndex = 0;
+  bool hasUpdate = false;
+  bool isInAppAction = false;
 
   final List _screen = const [
     HomeScreen(),
@@ -55,26 +57,26 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar>
     super.didChangeAppLifecycleState(state);
 
     final AutoBackupModel autoBackup = ref.watch(autoBackupProvider);
-    final bool isInAppAction = ref.watch(inAppActionProvider);
-    final bool hasUpdate = ref.watch(hasUpdateProvider);
-
     log(state.toString(), name: LogNames.appLifecycle);
 
     if (autoBackup.backupIsPossible &&
         hasUpdate &&
         !isInAppAction &&
         state == AppLifecycleState.paused) {
-      ref.read(hasUpdateProvider.notifier).setState(false);
-
       await ref.read(exportRepositoryProvider).runIsolateExportAsJson(
           path: autoBackup.path,
           isAutoBackup: true,
           clearBackupFiles: autoBackup.deleteOldBackups);
+
+      ref.read(hasUpdateProvider.notifier).setState(false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    hasUpdate = ref.watch(hasUpdateProvider);
+    isInAppAction = ref.watch(inAppActionProvider);
+
     final ThemeModel themeMode = ref.watch(themeModeProviderProvider);
 
     final int selectedMeters = ref.watch(selectedMetersCountProvider);
