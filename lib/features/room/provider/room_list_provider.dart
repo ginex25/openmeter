@@ -18,7 +18,7 @@ class RoomList extends _$RoomList {
 
     final result = await repo.fetchRooms();
 
-    return repo.splitContracts(result);
+    return repo.splitRooms(result);
   }
 
   Future addRoom(String roomType, String roomName, String uuid) async {
@@ -38,7 +38,7 @@ class RoomList extends _$RoomList {
 
     _updateProviders();
 
-    state = AsyncData(repo.splitContracts(rooms));
+    state = AsyncData(repo.splitRooms(rooms));
   }
 
   Future toggleState(RoomDto room) async {
@@ -69,7 +69,7 @@ class RoomList extends _$RoomList {
 
       final repo = ref.watch(roomRepositoryProvider);
 
-      return repo.splitContracts(rooms);
+      return repo.splitRooms(rooms);
     });
   }
 
@@ -90,7 +90,7 @@ class RoomList extends _$RoomList {
 
         final repo = ref.watch(roomRepositoryProvider);
 
-        return repo.splitContracts(allContracts);
+        return repo.splitRooms(allContracts);
       },
     );
   }
@@ -114,7 +114,7 @@ class RoomList extends _$RoomList {
 
     _updateProviders();
 
-    state = AsyncData(repo.splitContracts(rooms));
+    state = AsyncData(repo.splitRooms(rooms));
   }
 
   Future updateRoom(RoomDto room) async {
@@ -134,7 +134,7 @@ class RoomList extends _$RoomList {
 
     _updateProviders();
 
-    state = AsyncData(repo.splitContracts(rooms));
+    state = AsyncData(repo.splitRooms(rooms));
   }
 
   void _updateProviders() {

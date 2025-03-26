@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:openmeter/shared/constant/room_typ.dart';
 
-class RoomTypeDropdown extends StatelessWidget {
+class RoomTypeDropdown extends StatefulWidget {
   final String selectedType;
   final ValueChanged<String?> onChanged;
 
@@ -12,11 +12,19 @@ class RoomTypeDropdown extends StatelessWidget {
   });
 
   @override
+  State<RoomTypeDropdown> createState() => _RoomTypeDropdownState();
+}
+
+class _RoomTypeDropdownState extends State<RoomTypeDropdown> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 4),
       child: DropdownButtonFormField<String>(
-        value: selectedType,
+        value: widget.selectedType,
+        focusNode: _focusNode,
         isExpanded: true,
         decoration: const InputDecoration(
           label: Text(
@@ -34,7 +42,10 @@ class RoomTypeDropdown extends StatelessWidget {
             ),
           );
         }).toList(),
-        onChanged: onChanged,
+        onChanged: (value) {
+          _focusNode.unfocus();
+          widget.onChanged(value);
+        },
       ),
     );
   }

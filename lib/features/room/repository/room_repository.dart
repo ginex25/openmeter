@@ -62,7 +62,7 @@ class RoomRepository {
     return room;
   }
 
-  (List<RoomDto>, List<RoomDto>) splitContracts(Iterable<RoomDto> rooms) {
+  (List<RoomDto>, List<RoomDto>) splitRooms(Iterable<RoomDto> rooms) {
     rooms = rooms.sortedBy(
       (element) {
         return element.typ;

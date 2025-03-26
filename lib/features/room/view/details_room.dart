@@ -299,9 +299,12 @@ class _RoomDetailsState extends State<RoomDetails> {
     return Column(
       spacing: 15,
       children: [
-        RoomTypeDropdown(
-          selectedType: widget.room.typ,
-          onChanged: widget.onSelectedRoomType,
+        IgnorePointer(
+          ignoring: !widget.update,
+          child: RoomTypeDropdown(
+            selectedType: widget.room.typ,
+            onChanged: widget.onSelectedRoomType,
+          ),
         ),
         TextFormField(
           readOnly: !widget.update,
