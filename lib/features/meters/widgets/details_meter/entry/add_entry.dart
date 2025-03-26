@@ -307,38 +307,40 @@ class _AddEntryState extends ConsumerState<AddEntry> {
       isScrollControlled: true,
       context: context,
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: MediaQuery.of(context).viewInsets,
-              child: Container(
-                height: 500,
-                padding: const EdgeInsets.only(left: 25, right: 25),
-                child: Center(
-                  child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        spacing: 15,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          _topBar(setState),
-                          _mainView(setState),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: FloatingActionButton.extended(
-                              onPressed: () => _saveEntry(),
-                              label: const Text('Speichern'),
+        return SafeArea(
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Padding(
+                padding: MediaQuery.of(context).viewInsets,
+                child: Container(
+                  height: 500,
+                  padding: const EdgeInsets.only(left: 25, right: 25),
+                  child: Center(
+                    child: Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          spacing: 15,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            _topBar(setState),
+                            _mainView(setState),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: FloatingActionButton.extended(
+                                onPressed: () => _saveEntry(),
+                                label: const Text('Speichern'),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     ).then((value) {

@@ -93,194 +93,197 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
       usage = -1;
     }
 
-    return Column(
-      children: [
-        Center(
-          child: Container(
-            height: 5,
-            width: 30,
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Theme.of(context).highlightColor,
+    return SafeArea(
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              height: 5,
+              width: 30,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Theme.of(context).highlightColor,
+              ),
             ),
           ),
-        ),
-        ListView(
-          padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
-          shrinkWrap: true,
-          children: [
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      DateFormat(DateTimeFormats.dateGermanLong)
-                          .format(entry.date),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    convertMeterUnit.getUnitWidget(
-                      count: ConvertCount.convertCount(entry.count),
-                      unit: widget.meter.unit,
-                      textStyle: Theme.of(context).textTheme.bodyLarge!,
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    if (_selectedView == 1) _imagePopUpMenu(),
-                    if (entry.imagePath == null) _showAddImagePopup(),
-                    if (!_update && _selectedView == 0)
-                      IconButton(
-                        tooltip: 'Eintrag bearbeiten',
-                        icon: Icon(
-                          Icons.edit_note,
-                          size: 35,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _update = !_update;
-                          });
-                        },
-                      ),
-                  ],
-                ),
-              ],
-            ),
-            const Divider(),
-            SizedBox(
-              height: 300,
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (value) {
-                  if (_noteFocus.hasFocus) {
-                    _noteFocus.unfocus();
-                  }
-
-                  setState(
-                    () => _selectedView = value,
-                  );
-                },
+          ListView(
+            padding: const EdgeInsets.only(top: 8, left: 16, right: 16),
+            shrinkWrap: true,
+            children: [
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (usage == -1 && !entry.isReset)
-                        _extraInformation('Erstablesung'),
-                      if (entry.isReset)
-                        _extraInformation('Dieser Zähler wurde Zurückgesetzt.'),
-                      if (usage == -1 || entry.isReset) const Divider(),
-                      if (usage != -1)
-                        Column(
-                          children: [
-                            EntityCost(
-                              entry: entry,
-                              meter: widget.meter,
-                            ),
-                            const Divider(),
-                          ],
-                        ),
-                      SwitchListTile(
-                        value: _isTransmitted,
-                        onChanged: (value) {
-                          if (_update) {
-                            setState(
-                              () => _isTransmitted = value,
-                            );
-                          }
-                        },
-                        title: const Text('An Anbieter gemeldet'),
+                      Text(
+                        DateFormat(DateTimeFormats.dateGermanLong)
+                            .format(entry.date),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
-                      SwitchListTile(
-                        value: _isReset,
-                        onChanged: (value) {
-                          if (_update) {
-                            setState(
-                              () => _isReset = value,
-                            );
-                          }
-                        },
-                        title: const Text('Zähler zurücksetzen'),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 14),
-                        child: TextFormField(
-                          controller: _noteController,
-                          focusNode: _noteFocus,
-                          readOnly: !_update,
-                          maxLines: 1,
-                          decoration: const InputDecoration(
-                            icon: Icon(Icons.notes),
-                            hintText: 'Füge eine Notiz hinzu',
-                            border: InputBorder.none,
-                          ),
-                        ),
+                      convertMeterUnit.getUnitWidget(
+                        count: ConvertCount.convertCount(entry.count),
+                        unit: widget.meter.unit,
+                        textStyle: Theme.of(context).textTheme.bodyLarge!,
                       ),
                     ],
                   ),
-                  if (entry.imagePath != null && !_update)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(
-                          builder: (context) => ImageView(
-                            entry: entry,
-                            meter: widget.meter,
+                  Row(
+                    children: [
+                      if (_selectedView == 1) _imagePopUpMenu(),
+                      if (entry.imagePath == null) _showAddImagePopup(),
+                      if (!_update && _selectedView == 0)
+                        IconButton(
+                          tooltip: 'Eintrag bearbeiten',
+                          icon: Icon(
+                            Icons.edit_note,
+                            size: 35,
                           ),
-                        ))
-                            .then((value) async {
-                          bool deleteImage = value ?? false;
-
-                          if (deleteImage) {
-                            await _deleteImage();
-                          }
-                        });
-                      },
-                      child: Image.file(
-                        scale: 0.5,
-                        File(entry.imagePath!),
-                      ),
-                    ),
+                          onPressed: () {
+                            setState(() {
+                              _update = !_update;
+                            });
+                          },
+                        ),
+                    ],
+                  ),
                 ],
               ),
-            ),
-            if (entry.imagePath != null)
-              Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.only(top: 8.0),
-                child: AnimatedSmoothIndicator(
-                  activeIndex: _selectedView,
-                  count: 2,
-                  effect: WormEffect(
-                    activeDotColor: Theme.of(context).primaryColor,
-                    dotHeight: 10,
-                    dotWidth: 10,
-                  ),
+              const Divider(),
+              SizedBox(
+                height: 300,
+                child: PageView(
+                  controller: _pageController,
+                  onPageChanged: (value) {
+                    if (_noteFocus.hasFocus) {
+                      _noteFocus.unfocus();
+                    }
+
+                    setState(
+                      () => _selectedView = value,
+                    );
+                  },
+                  children: [
+                    Column(
+                      children: [
+                        if (usage == -1 && !entry.isReset)
+                          _extraInformation('Erstablesung'),
+                        if (entry.isReset)
+                          _extraInformation(
+                              'Dieser Zähler wurde Zurückgesetzt.'),
+                        if (usage == -1 || entry.isReset) const Divider(),
+                        if (usage != -1)
+                          Column(
+                            children: [
+                              EntityCost(
+                                entry: entry,
+                                meter: widget.meter,
+                              ),
+                              const Divider(),
+                            ],
+                          ),
+                        SwitchListTile(
+                          value: _isTransmitted,
+                          onChanged: (value) {
+                            if (_update) {
+                              setState(
+                                () => _isTransmitted = value,
+                              );
+                            }
+                          },
+                          title: const Text('An Anbieter gemeldet'),
+                        ),
+                        SwitchListTile(
+                          value: _isReset,
+                          onChanged: (value) {
+                            if (_update) {
+                              setState(
+                                () => _isReset = value,
+                              );
+                            }
+                          },
+                          title: const Text('Zähler zurücksetzen'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 14),
+                          child: TextFormField(
+                            controller: _noteController,
+                            focusNode: _noteFocus,
+                            readOnly: !_update,
+                            maxLines: 1,
+                            decoration: const InputDecoration(
+                              icon: Icon(Icons.notes),
+                              hintText: 'Füge eine Notiz hinzu',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (entry.imagePath != null && !_update)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                            builder: (context) => ImageView(
+                              entry: entry,
+                              meter: widget.meter,
+                            ),
+                          ))
+                              .then((value) async {
+                            bool deleteImage = value ?? false;
+
+                            if (deleteImage) {
+                              await _deleteImage();
+                            }
+                          });
+                        },
+                        child: Image.file(
+                          scale: 0.5,
+                          File(entry.imagePath!),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            if (_update)
-              Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Center(
-                    child: SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.5,
-                      child: FilledButton(
-                        onPressed: () async {
-                          await _updateEntry();
-                        },
-                        child: const Text('Speichern'),
-                      ),
+              if (entry.imagePath != null)
+                Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: AnimatedSmoothIndicator(
+                    activeIndex: _selectedView,
+                    count: 2,
+                    effect: WormEffect(
+                      activeDotColor: Theme.of(context).primaryColor,
+                      dotHeight: 10,
+                      dotWidth: 10,
                     ),
                   ),
-                ],
-              ),
-          ],
-        ),
-      ],
+                ),
+              if (_update)
+                Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Center(
+                      child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.5,
+                        child: FilledButton(
+                          onPressed: () async {
+                            await _updateEntry();
+                          },
+                          child: const Text('Speichern'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

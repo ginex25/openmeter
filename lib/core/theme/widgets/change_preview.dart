@@ -13,48 +13,50 @@ class ChangePreview extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ThemeModel theme = ref.watch(themeModeProviderProvider);
 
-    return SizedBox(
-      width: double.infinity,
-      height: 250,
-      child: Card(
-        child: Center(
-          child: Container(
-            width: MediaQuery.sizeOf(context).width * 0.65,
-            height: 200,
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              border: const Border(
-                right: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
+    return SafeArea(
+      child: SizedBox(
+        width: double.infinity,
+        height: 250,
+        child: Card(
+          child: Center(
+            child: Container(
+              width: MediaQuery.sizeOf(context).width * 0.65,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                border: const Border(
+                  right: BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                    style: BorderStyle.solid,
+                  ),
+                  bottom: BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                    style: BorderStyle.solid,
+                  ),
+                  left: BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                    style: BorderStyle.solid,
+                  ),
+                  top: BorderSide(
+                    width: 1,
+                    color: Colors.grey,
+                    style: BorderStyle.solid,
+                  ),
                 ),
-                bottom: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
-                ),
-                left: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
-                ),
-                top: BorderSide(
-                  width: 1,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(10),
                 ),
               ),
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(10),
+              child: Column(
+                children: [
+                  _meterCard(theme),
+                  const Spacer(),
+                  _navBar(theme.compactNavigation),
+                ],
               ),
-            ),
-            child: Column(
-              children: [
-                _meterCard(theme),
-                const Spacer(),
-                _navBar(theme.compactNavigation),
-              ],
             ),
           ),
         ),

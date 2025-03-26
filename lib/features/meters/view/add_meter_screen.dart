@@ -138,123 +138,125 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
 
     bool darkMode = theme.mode == ThemeMode.dark;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_pageTitle),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              bool isOn = await _torchService.getTorch();
-              setState(() {
-                isTorchOn = isOn;
-              });
-            },
-            icon: _torchService.stateTorch
-                ? Icon(
-                    Icons.flashlight_on,
-                    color: darkMode ? Colors.white : Colors.black,
-                  )
-                : Icon(
-                    Icons.flashlight_off,
-                    color: darkMode ? Colors.white : Colors.black,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_pageTitle),
+          actions: [
+            IconButton(
+              onPressed: () async {
+                bool isOn = await _torchService.getTorch();
+                setState(() {
+                  isTorchOn = isOn;
+                });
+              },
+              icon: _torchService.stateTorch
+                  ? Icon(
+                      Icons.flashlight_on,
+                      color: darkMode ? Colors.white : Colors.black,
+                    )
+                  : Icon(
+                      Icons.flashlight_off,
+                      color: darkMode ? Colors.white : Colors.black,
+                    ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () => handleOnSave(),
+          label: const Text('Speichern'),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(25),
+            child: Form(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              key: _formKey,
+              child: Column(
+                spacing: 15,
+                children: [
+                  MeterTypeDropdown(
+                    defaultValue: _meterType,
+                    onChanged: (value) {
+                      String typ = value ?? 'Stromzähler';
+
+                      final meterTyp = meterTyps
+                          .firstWhere((element) => element.meterTyp == value);
+
+                      setState(() {
+                        _meterUnit = meterTyp.unit;
+                        _meterType = typ;
+                      });
+                    },
                   ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => handleOnSave(),
-        label: const Text('Speichern'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(25),
-          child: Form(
-            autovalidateMode: AutovalidateMode.onUserInteraction,
-            key: _formKey,
-            child: Column(
-              spacing: 15,
-              children: [
-                MeterTypeDropdown(
-                  defaultValue: _meterType,
-                  onChanged: (value) {
-                    String typ = value ?? 'Stromzähler';
-
-                    final meterTyp = meterTyps
-                        .firstWhere((element) => element.meterTyp == value);
-
-                    setState(() {
-                      _meterUnit = meterTyp.unit;
-                      _meterType = typ;
-                    });
-                  },
-                ),
-                UnitInput(
-                  unit: _meterUnit,
-                  onChange: (unit) {
-                    setState(() {
-                      _meterUnit = unit;
-                    });
-                  },
-                ),
-                TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bitte gebe eine Zählernummer ein!';
-                    }
-                    return null;
-                  },
-                  textInputAction: TextInputAction.next,
-                  controller: _meterNumber,
-                  decoration: const InputDecoration(
-                      label: Text('Zählernummer'),
-                      icon: Icon(Icons.onetwothree_outlined)),
-                ),
-                TextFormField(
-                  textInputAction: TextInputAction.next,
-                  controller: _meterNote,
-                  decoration: const InputDecoration(
-                      label: Text('Notiz'),
-                      icon: Icon(Icons.drive_file_rename_outline)),
-                ),
-                if (!_updateMeterState)
+                  UnitInput(
+                    unit: _meterUnit,
+                    onChange: (unit) {
+                      setState(() {
+                        _meterUnit = unit;
+                      });
+                    },
+                  ),
                   TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Bitte gebe den aktuellen Zählerstand ein!';
+                        return 'Bitte gebe eine Zählernummer ein!';
                       }
                       return null;
                     },
                     textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    controller: _meterValue,
+                    controller: _meterNumber,
                     decoration: const InputDecoration(
-                      label: Text('Aktueller Zählerstand'),
-                      // icon: Icon(Icons.assessment_outlined),
-                      icon: FaIcon(
-                        FontAwesomeIcons.chartSimple,
-                        size: 16,
+                        label: Text('Zählernummer'),
+                        icon: Icon(Icons.onetwothree_outlined)),
+                  ),
+                  TextFormField(
+                    textInputAction: TextInputAction.next,
+                    controller: _meterNote,
+                    decoration: const InputDecoration(
+                        label: Text('Notiz'),
+                        icon: Icon(Icons.drive_file_rename_outline)),
+                  ),
+                  if (!_updateMeterState)
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Bitte gebe den aktuellen Zählerstand ein!';
+                        }
+                        return null;
+                      },
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      controller: _meterValue,
+                      decoration: const InputDecoration(
+                        label: Text('Aktueller Zählerstand'),
+                        // icon: Icon(Icons.assessment_outlined),
+                        icon: FaIcon(
+                          FontAwesomeIcons.chartSimple,
+                          size: 16,
+                        ),
                       ),
                     ),
+                  RoomDropdown(
+                    roomId: _roomId,
+                    onRoomSelected: (room) {
+                      _room = room;
+                    },
                   ),
-                RoomDropdown(
-                  roomId: _roomId,
-                  onRoomSelected: (room) {
-                    _room = room;
-                  },
-                ),
-                MeterAddTags(
-                  selectedTags: _tagsId,
-                  onTagSelect: (tag) {
-                    if (_tagsId.contains(tag.uuid)) {
-                      _tagsId.remove(tag.uuid);
-                    } else {
-                      _tagsId.add(tag.uuid!);
-                    }
+                  MeterAddTags(
+                    selectedTags: _tagsId,
+                    onTagSelect: (tag) {
+                      if (_tagsId.contains(tag.uuid)) {
+                        _tagsId.remove(tag.uuid);
+                      } else {
+                        _tagsId.add(tag.uuid!);
+                      }
 
-                    setState(() {});
-                  },
-                ),
-              ],
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

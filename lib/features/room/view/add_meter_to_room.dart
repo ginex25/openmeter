@@ -58,47 +58,49 @@ class _AddMeterToRoomState extends ConsumerState<AddMeterToRoom> {
   Widget build(BuildContext context) {
     final metersProvider = ref.watch(allRoomListProvider(room.id!));
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Zähler zuordnen'),
-      ),
-      floatingActionButton: SizedBox(
-        width: 100,
-        child: FloatingActionButton(
-          onPressed: () async {
-            await ref
-                .read(allRoomListProvider(room.id!).notifier)
-                .saveSelectedMeters(
-                    selectedItemsWithExists: _selectedItemsWithExists,
-                    selectedItemsWithoutExists: _selectedItemsWithoutExists,
-                    room: room)
-                .then(
-              (value) {
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-              },
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Zähler zuordnen'),
+        ),
+        floatingActionButton: SizedBox(
+          width: 100,
+          child: FloatingActionButton(
+            onPressed: () async {
+              await ref
+                  .read(allRoomListProvider(room.id!).notifier)
+                  .saveSelectedMeters(
+                      selectedItemsWithExists: _selectedItemsWithExists,
+                      selectedItemsWithoutExists: _selectedItemsWithoutExists,
+                      room: room)
+                  .then(
+                (value) {
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              );
+            },
+            child: const Text('Fertig'),
+          ),
+        ),
+        body: metersProvider.when(
+          data: (List<MeterRoomDto> meters) {
+            return SingleChildScrollView(
+              child: Column(
+                spacing: 10,
+                children: [
+                  _searchWidget(meters),
+                  _meterList(_searchText.isNotEmpty ? _searchItems : meters),
+                ],
+              ),
             );
           },
-          child: const Text('Fertig'),
-        ),
-      ),
-      body: metersProvider.when(
-        data: (List<MeterRoomDto> meters) {
-          return SingleChildScrollView(
-            child: Column(
-              spacing: 10,
-              children: [
-                _searchWidget(meters),
-                _meterList(_searchText.isNotEmpty ? _searchItems : meters),
-              ],
-            ),
-          );
-        },
-        error: (error, stackTrace) => throw error,
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
+          error: (error, stackTrace) => throw error,
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
         ),
       ),
     );
@@ -142,7 +144,7 @@ class _AddMeterToRoomState extends ConsumerState<AddMeterToRoom> {
               ),
               if (index == meters.length - 1)
                 const SizedBox(
-                  height: 120,
+                  height: 140,
                 ),
             ],
           );

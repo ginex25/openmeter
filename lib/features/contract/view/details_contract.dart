@@ -27,57 +27,59 @@ class _DetailsContractState extends ConsumerState<DetailsContractView> {
         final meterTyp = meterTyps.firstWhere(
             (element) => element.meterTyp == currentContract.meterTyp);
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(meterTyp.providerTitle),
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(
-                    MaterialPageRoute(
-                      builder: (context) => AddContract(
-                        contract: currentContract,
-                        fromDetails: true,
+        return SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(meterTyp.providerTitle),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(
+                      MaterialPageRoute(
+                        builder: (context) => AddContract(
+                          contract: currentContract,
+                          fromDetails: true,
+                        ),
                       ),
-                    ),
-                  )
-                      .then((value) {
-                    setState(() {
-                      if (value != null) {
-                        currentContract = value;
-                      }
+                    )
+                        .then((value) {
+                      setState(() {
+                        if (value != null) {
+                          currentContract = value;
+                        }
+                      });
                     });
-                  });
-                },
-                icon: const Icon(Icons.edit),
-              ),
-            ],
-          ),
-          body: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      CostCard(
-                        contract: currentContract,
-                      ),
-                      if (currentContract.compareCosts != null)
-                        CompareContracts(contract: currentContract),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ProviderCard(
-                        provider: currentContract.provider,
-                        contract: currentContract,
-                      ),
-                    ],
+                  },
+                  icon: const Icon(Icons.edit),
+                ),
+              ],
+            ),
+            body: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        CostCard(
+                          contract: currentContract,
+                        ),
+                        if (currentContract.compareCosts != null)
+                          CompareContracts(contract: currentContract),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ProviderCard(
+                          provider: currentContract.provider,
+                          contract: currentContract,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

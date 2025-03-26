@@ -189,70 +189,72 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daten und Speicher'),
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DatabaseStatsCard(),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.cloud_upload),
-                  title: Text(
-                    'Daten exportieren',
-                    style: Theme.of(context).textTheme.bodyLarge,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Daten und Speicher'),
+        ),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DatabaseStatsCard(),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.cloud_upload),
+                    title: Text(
+                      'Daten exportieren',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    subtitle: const Text(
+                      'Erstelle und speichere ein Backup deiner Daten.',
+                    ),
+                    onTap: () {
+                      _handleExport();
+                    },
                   ),
-                  subtitle: const Text(
-                    'Erstelle und speichere ein Backup deiner Daten.',
+                  const SizedBox(
+                    height: 10,
                   ),
-                  onTap: () {
-                    _handleExport();
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.cloud_download),
-                  title: Text(
-                    'Daten importieren',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  ListTile(
+                    leading: const Icon(Icons.cloud_download),
+                    title: Text(
+                      'Daten importieren',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    subtitle: const Text(
+                      'Importiere deine gespeicherten Daten.',
+                    ),
+                    onTap: () async {
+                      await _handleImport();
+                    },
                   ),
-                  subtitle: const Text(
-                    'Importiere deine gespeicherten Daten.',
+                  const SizedBox(
+                    height: 10,
                   ),
-                  onTap: () async {
-                    await _handleImport();
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.replay),
-                  title: Text(
-                    'Daten zurücksetzen',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  ListTile(
+                    leading: const Icon(Icons.replay),
+                    title: Text(
+                      'Daten zurücksetzen',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    subtitle: const Text(
+                      'Lösche alle gespeicherten Daten.',
+                    ),
+                    onTap: () {
+                      _deleteTableAlert();
+                    },
                   ),
-                  subtitle: const Text(
-                    'Lösche alle gespeicherten Daten.',
-                  ),
-                  onTap: () {
-                    _deleteTableAlert();
-                  },
-                ),
-                const Divider(),
-                const AutoBackup(),
-              ],
+                  const Divider(),
+                  const AutoBackup(),
+                ],
+              ),
             ),
-          ),
-          if (_isLoading == true) const CustomLoadingIndicator(),
-        ],
+            if (_isLoading == true) const CustomLoadingIndicator(),
+          ],
+        ),
       ),
     );
   }

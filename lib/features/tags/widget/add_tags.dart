@@ -21,7 +21,7 @@ class AddTagButton extends StatelessWidget {
           isScrollControlled: true,
           context: context,
           builder: (context) {
-            return AddTagContent();
+            return SafeArea(child: AddTagContent());
           },
         );
       },

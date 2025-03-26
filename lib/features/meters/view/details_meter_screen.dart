@@ -44,114 +44,117 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
           overrides: [
             currentDetailsMeterProvider.overrideWithValue(detailsMeter),
           ],
-          child: Scaffold(
-            appBar: selectedEntriesCount > 0
-                ? _selectedAppBar(ref, selectedEntriesCount)
-                : _unselectedAppBar(
-                    context,
-                    ref,
-                    detailsMeter,
-                  ),
-            body: PopScope(
-              canPop: selectedEntriesCount == 0,
-              onPopInvokedWithResult: (bool didPop, _) async {
-                if (selectedEntriesCount > 0) {
-                  ref
-                      .read(detailsMeterProvider(widget.meterId).notifier)
-                      .removeSelectedEntitiesState();
-                }
-              },
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _meterInformationWidget(context, detailsMeter.meter),
-                        const Divider(),
-                        HorizontalTagsList(
-                          meterId: widget.meterId,
-                          tags: [],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const EntryCardList(),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        if (detailsMeter.meter.lastEntry != null)
-                          Column(
-                            children: [
-                              SizedBox(
-                                height: 410,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: PageView(
-                                    physics: chartHasFocus
-                                        ? const NeverScrollableScrollPhysics()
-                                        : null,
-                                    onPageChanged: (value) {
-                                      setState(() {
-                                        _activeChartWidget = value;
-                                      });
-                                    },
-                                    children: [
-                                      if (!showLineChart)
-                                        const UsageBarChartCard(),
-                                      if (showLineChart) const UsageLineChart(),
-                                      const CountLineChart(),
-                                    ],
+          child: SafeArea(
+            child: Scaffold(
+              appBar: selectedEntriesCount > 0
+                  ? _selectedAppBar(ref, selectedEntriesCount)
+                  : _unselectedAppBar(
+                      context,
+                      ref,
+                      detailsMeter,
+                    ),
+              body: PopScope(
+                canPop: selectedEntriesCount == 0,
+                onPopInvokedWithResult: (bool didPop, _) async {
+                  if (selectedEntriesCount > 0) {
+                    ref
+                        .read(detailsMeterProvider(widget.meterId).notifier)
+                        .removeSelectedEntitiesState();
+                  }
+                },
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _meterInformationWidget(context, detailsMeter.meter),
+                          const Divider(),
+                          HorizontalTagsList(
+                            meterId: widget.meterId,
+                            tags: [],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          const EntryCardList(),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          if (detailsMeter.meter.lastEntry != null)
+                            Column(
+                              children: [
+                                SizedBox(
+                                  height: 410,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: PageView(
+                                      physics: chartHasFocus
+                                          ? const NeverScrollableScrollPhysics()
+                                          : null,
+                                      onPageChanged: (value) {
+                                        setState(() {
+                                          _activeChartWidget = value;
+                                        });
+                                      },
+                                      children: [
+                                        if (!showLineChart)
+                                          const UsageBarChartCard(),
+                                        if (showLineChart)
+                                          const UsageLineChart(),
+                                        const CountLineChart(),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              AnimatedSmoothIndicator(
-                                activeIndex: _activeChartWidget,
-                                count: 2,
-                                effect: WormEffect(
-                                  activeDotColor:
-                                      Theme.of(context).primaryColor,
-                                  dotHeight: 10,
-                                  dotWidth: 10,
+                                AnimatedSmoothIndicator(
+                                  activeIndex: _activeChartWidget,
+                                  count: 2,
+                                  effect: WormEffect(
+                                    activeDotColor:
+                                        Theme.of(context).primaryColor,
+                                    dotHeight: 10,
+                                    dotWidth: 10,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          const SizedBox(
+                            height: 15,
                           ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        const CostView(),
-                      ],
+                          const CostView(),
+                        ],
+                      ),
                     ),
-                  ),
-                  if (selectedEntriesCount > 0)
-                    SelectedItemsBar(
-                      buttons: [
-                        TextButton(
-                          onPressed: () {
-                            ref
-                                .read(detailsMeterProvider(widget.meterId)
-                                    .notifier)
-                                .deleteSelectedEntries();
-                          },
-                          style: ButtonStyle(
-                            foregroundColor: WidgetStateProperty.all(
-                              Theme.of(context).textTheme.bodyLarge!.color,
+                    if (selectedEntriesCount > 0)
+                      SelectedItemsBar(
+                        buttons: [
+                          TextButton(
+                            onPressed: () {
+                              ref
+                                  .read(detailsMeterProvider(widget.meterId)
+                                      .notifier)
+                                  .deleteSelectedEntries();
+                            },
+                            style: ButtonStyle(
+                              foregroundColor: WidgetStateProperty.all(
+                                Theme.of(context).textTheme.bodyLarge!.color,
+                              ),
+                            ),
+                            child: const Column(
+                              mainAxisSize: MainAxisSize.min,
+                              spacing: 5,
+                              children: [
+                                Icon(Icons.delete_outline, size: 28),
+                                Text('Löschen'),
+                              ],
                             ),
                           ),
-                          child: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            spacing: 5,
-                            children: [
-                              Icon(Icons.delete_outline, size: 28),
-                              Text('Löschen'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
+                        ],
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

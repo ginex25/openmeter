@@ -14,33 +14,35 @@ class TagsScreen extends ConsumerStatefulWidget {
 class _TagsScreenState extends ConsumerState<TagsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('Tags'),
-        actions: [
-          AddTagButton(),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 30,
-            children: [
-              Center(
-                child: Image.asset(
-                  'assets/icons/tag.png',
-                  width: 200,
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Tags'),
+          actions: [
+            AddTagButton(),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 30,
+              children: [
+                Center(
+                  child: Image.asset(
+                    'assets/icons/tag.png',
+                    width: 200,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const ShowTagsTile(),
-              const CurrentTagsList(),
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                const ShowTagsTile(),
+                const CurrentTagsList(),
+              ],
+            ),
           ),
         ),
       ),

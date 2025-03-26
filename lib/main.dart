@@ -1,5 +1,6 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
@@ -65,6 +66,16 @@ class MyApp extends ConsumerWidget {
     _cacheImages(context);
 
     final ThemeModel theme = ref.watch(themeModeProviderProvider);
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Theme.of(context).brightness,
+        systemNavigationBarContrastEnforced: true,
+      ),
+    );
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
