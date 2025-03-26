@@ -31,7 +31,7 @@ class _ProviderBottomSheetState extends ConsumerState<ProviderBottomSheet> {
   Widget _makeDismissible({required Widget child}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => Navigator.of(context).pop(-1),
+      onTap: () => Navigator.of(context).pop(null),
       child: GestureDetector(
         child: child,
       ),
@@ -111,72 +111,73 @@ class _ProviderBottomSheetState extends ConsumerState<ProviderBottomSheet> {
         minChildSize: 0.2,
         maxChildSize: 0.85,
         builder: (BuildContext context, ScrollController scrollController) {
-          return Container(
-            padding: const EdgeInsets.all(8),
-            color: Theme.of(context).cardColor,
-            child: SingleChildScrollView(
-              controller: scrollController,
-              child: Column(
-                spacing: 15,
-                children: [
-                  Container(
-                    height: 5,
-                    width: 30,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Theme.of(context).highlightColor,
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
+                  spacing: 15,
+                  children: [
+                    Container(
+                      height: 5,
+                      width: 30,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Theme.of(context).highlightColor,
+                      ),
                     ),
-                  ),
-                  SheetButtons(
-                    removeCanceledDateCallback: () async {
-                      if ((currentProvider?.canceled ?? false) == false) {
-                        return;
-                      }
+                    SheetButtons(
+                      removeCanceledDateCallback: () async {
+                        if ((currentProvider?.canceled ?? false) == false) {
+                          return;
+                        }
 
-                      ProviderDto? newProvider;
+                        ProviderDto? newProvider;
 
-                      if (widget.contract.isArchived) {
-                        newProvider = await ref
-                            .read(archivedContractListProvider.notifier)
-                            .removeCanceledState(
-                                widget.contract, currentProvider!);
-                      } else {
-                        newProvider = await ref
-                            .read(contractListProvider.notifier)
-                            .providerRemoveCanceledState(
-                                widget.contract, currentProvider!);
-                      }
+                        if (widget.contract.isArchived) {
+                          newProvider = await ref
+                              .read(archivedContractListProvider.notifier)
+                              .removeCanceledState(
+                                  widget.contract, currentProvider!);
+                        } else {
+                          newProvider = await ref
+                              .read(contractListProvider.notifier)
+                              .providerRemoveCanceledState(
+                                  widget.contract, currentProvider!);
+                        }
 
-                      if (context.mounted) {
-                        Navigator.of(context).pop(newProvider);
-                      }
-                    },
-                    removeDetailsCallback: () async {
-                      if (currentProvider == null) {
-                        return;
-                      }
+                        if (context.mounted) {
+                          Navigator.of(context).pop(newProvider);
+                        }
+                      },
+                      removeDetailsCallback: () async {
+                        if (currentProvider == null) {
+                          return;
+                        }
 
-                      ProviderDto? newProvider;
+                        if (widget.contract.isArchived) {
+                          await ref
+                              .read(archivedContractListProvider.notifier)
+                              .deleteProvider(
+                                  widget.contract, currentProvider!);
+                        } else {
+                          await ref
+                              .read(contractListProvider.notifier)
+                              .deleteProvider(
+                                  widget.contract, currentProvider!);
+                        }
 
-                      if (widget.contract.isArchived) {
-                        newProvider = await ref
-                            .read(archivedContractListProvider.notifier)
-                            .deleteProvider(widget.contract, currentProvider!);
-                      } else {
-                        newProvider = await ref
-                            .read(contractListProvider.notifier)
-                            .deleteProvider(widget.contract, currentProvider!);
-                      }
-
-                      if (context.mounted) {
-                        Navigator.of(context).pop(newProvider);
-                      }
-                    },
-                  ),
-                  const Divider(),
-                  _addProvider(),
-                ],
+                        if (context.mounted) {
+                          Navigator.of(context).pop(-2);
+                        }
+                      },
+                    ),
+                    const Divider(),
+                    _addProvider(),
+                  ],
+                ),
               ),
             ),
           );

@@ -45,8 +45,8 @@ class _ProviderCardState extends ConsumerState<ProviderCard> {
     ).then(
       (value) {
         setState(() {
-          if (value != -1) {
-            currentProvider = value;
+          if (value != null) {
+            currentProvider = value == -2 ? null : value;
           }
         });
       },
