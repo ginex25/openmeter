@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/features/meters/provider/archived_meters_list_provider.dart';
-import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
 import 'package:openmeter/shared/widgets/empty_archiv.dart';
@@ -73,16 +72,10 @@ class _ArchivedMetersScreenState extends ConsumerState<ArchivedMetersScreen> {
                           .read(archivedMetersListProvider.notifier)
                           .toggleMeterSelectedState(meter);
                     } else {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
                             DetailsMeterScreen(meterId: meter.id!),
-                      ))
-                          .then(
-                        (value) {
-                          ref.invalidate(entryFilterProvider);
-                        },
-                      );
+                      ));
                     }
                   },
                 ),

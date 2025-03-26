@@ -3,7 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'entry_filter_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class EntryFilter extends _$EntryFilter {
   @override
   EntryFilterModel build() {

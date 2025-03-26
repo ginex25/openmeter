@@ -5,7 +5,6 @@ import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
 import 'package:openmeter/features/meters/provider/current_details_meter.dart';
 import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
-import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
 import 'package:openmeter/features/meters/view/add_meter_screen.dart';
@@ -36,13 +35,11 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
     final detailsProvider = ref.watch(detailsMeterProvider(widget.meterId));
 
     final int selectedEntriesCount = ref.watch(selectedEntriesCountProvider);
+    final bool showLineChart = ref.watch(showLineChartProvider);
+    final bool chartHasFocus = ref.watch(chartHasFocusProvider);
 
     return detailsProvider.when(
       data: (detailsMeter) {
-        final bool showLineChart = ref.watch(showLineChartProvider);
-
-        final bool chartHasFocus = ref.watch(chartHasFocusProvider);
-
         return ProviderScope(
           overrides: [
             currentDetailsMeterProvider.overrideWithValue(detailsMeter),
@@ -71,7 +68,6 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Zählernummer
                         _meterInformationWidget(context, detailsMeter.meter),
                         const Divider(),
                         HorizontalTagsList(
@@ -196,7 +192,6 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
       title: SelectableText(detailsMeter.meter.number),
       leading: BackButton(
         onPressed: () {
-          ref.invalidate(entryFilterProvider);
           Navigator.of(context).pop();
         },
       ),
