@@ -4,6 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/core/database/local_database.steps.dart';
+import 'package:openmeter/core/database/migrations/migrations.dart';
 import 'package:openmeter/core/database/tables/meter_contract.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:path/path.dart' as p;
@@ -52,7 +54,7 @@ class LocalDatabase extends _$LocalDatabase {
       : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration =>
@@ -81,6 +83,14 @@ class LocalDatabase extends _$LocalDatabase {
         if (from < 10) {
           await m.createTable(meterContract);
         }
+
+        await m.runMigrationSteps(
+          from: from,
+          to: to,
+          steps: migrationSteps(
+            from10To11: (m, schema) async => await migration10to11(m),
+          ),
+        );
       });
 
   Future<void> exportInto(String path, bool isBackup) async {

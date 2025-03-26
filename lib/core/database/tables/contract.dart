@@ -1,5 +1,9 @@
 import 'package:drift/drift.dart';
 
+@TableIndex(name: 'idx_contract_archived', columns: {#isArchived})
+@TableIndex(name: 'idx_contract_id', columns: {#id})
+@TableIndex(
+    name: 'idx_contract_archived_typ', columns: {#isArchived, #meterTyp})
 class Contract extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -24,6 +28,7 @@ class Contract extends Table {
   BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
 }
 
+@TableIndex(name: 'idx_provider_id', columns: {#id})
 class Provider extends Table {
   IntColumn get id => integer().autoIncrement()();
 

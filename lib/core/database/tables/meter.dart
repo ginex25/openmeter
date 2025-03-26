@@ -1,5 +1,8 @@
 import 'package:drift/drift.dart';
 
+@TableIndex(name: 'idx_meter_id', columns: {#id})
+@TableIndex(name: 'idx_meter_type', columns: {#typ})
+@TableIndex(name: 'idx_meter_archived', columns: {#isArchived})
 class Meter extends Table {
   IntColumn get id => integer().autoIncrement()(); // default primary key
   TextColumn get typ => text()();

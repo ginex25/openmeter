@@ -3356,6 +3356,44 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $MeterWithTagsTable meterWithTags = $MeterWithTagsTable(this);
   late final $CostCompareTable costCompare = $CostCompareTable(this);
   late final $MeterContractTable meterContract = $MeterContractTable(this);
+  late final Index idxMeterId =
+      Index('idx_meter_id', 'CREATE INDEX idx_meter_id ON meter (id)');
+  late final Index idxMeterType =
+      Index('idx_meter_type', 'CREATE INDEX idx_meter_type ON meter (typ)');
+  late final Index idxMeterArchived = Index('idx_meter_archived',
+      'CREATE INDEX idx_meter_archived ON meter (is_archived)');
+  late final Index idxEntryMeterId = Index('idx_entry_meter_id',
+      'CREATE INDEX idx_entry_meter_id ON entries (meter)');
+  late final Index idxEntryId =
+      Index('idx_entry_id', 'CREATE INDEX idx_entry_id ON entries (id)');
+  late final Index idxRoomId =
+      Index('idx_room_id', 'CREATE INDEX idx_room_id ON room (id)');
+  late final Index idxRoomUuid =
+      Index('idx_room_uuid', 'CREATE INDEX idx_room_uuid ON room (uuid)');
+  late final Index idxMeterroomRoomId = Index('idx_meterroom_room_id',
+      'CREATE INDEX idx_meterroom_room_id ON meter_in_room (room_id)');
+  late final Index idxMeterroomMeterId = Index('idx_meterroom_meter_id',
+      'CREATE INDEX idx_meterroom_meter_id ON meter_in_room (meter_id)');
+  late final Index idxContractArchived = Index('idx_contract_archived',
+      'CREATE INDEX idx_contract_archived ON contract (is_archived)');
+  late final Index idxContractId =
+      Index('idx_contract_id', 'CREATE INDEX idx_contract_id ON contract (id)');
+  late final Index idxContractArchivedTyp = Index('idx_contract_archived_typ',
+      'CREATE INDEX idx_contract_archived_typ ON contract (is_archived, meter_typ)');
+  late final Index idxProviderId =
+      Index('idx_provider_id', 'CREATE INDEX idx_provider_id ON provider (id)');
+  late final Index idxTagId =
+      Index('idx_tag_id', 'CREATE INDEX idx_tag_id ON tags (id)');
+  late final Index idxTagUuid =
+      Index('idx_tag_uuid', 'CREATE INDEX idx_tag_uuid ON tags (uuid)');
+  late final Index idxMetertagMeterId = Index('idx_metertag_meter_id',
+      'CREATE INDEX idx_metertag_meter_id ON meter_with_tags (meter_id)');
+  late final Index idxMetertagTagId = Index('idx_metertag_tag_id',
+      'CREATE INDEX idx_metertag_tag_id ON meter_with_tags (tag_id)');
+  late final Index idxCostCompareId = Index('idx_cost_compare_id',
+      'CREATE INDEX idx_cost_compare_id ON cost_compare (id)');
+  late final Index idxCostCompareParentId = Index('idx_cost_compare_parent_id',
+      'CREATE INDEX idx_cost_compare_parent_id ON cost_compare (parent_id)');
   late final MeterDao meterDao = MeterDao(this as LocalDatabase);
   late final EntryDao entryDao = EntryDao(this as LocalDatabase);
   late final RoomDao roomDao = RoomDao(this as LocalDatabase);
@@ -3377,7 +3415,26 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         tags,
         meterWithTags,
         costCompare,
-        meterContract
+        meterContract,
+        idxMeterId,
+        idxMeterType,
+        idxMeterArchived,
+        idxEntryMeterId,
+        idxEntryId,
+        idxRoomId,
+        idxRoomUuid,
+        idxMeterroomRoomId,
+        idxMeterroomMeterId,
+        idxContractArchived,
+        idxContractId,
+        idxContractArchivedTyp,
+        idxProviderId,
+        idxTagId,
+        idxTagUuid,
+        idxMetertagMeterId,
+        idxMetertagTagId,
+        idxCostCompareId,
+        idxCostCompareParentId
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
