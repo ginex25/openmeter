@@ -7,7 +7,11 @@ import 'package:openmeter/core/shared_preferences/shared_preferences_provider.da
 import 'package:openmeter/core/theme/model/theme_model.dart';
 import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/core/theme/repository/get_themes.dart';
+import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
+import 'package:openmeter/features/database_settings/provider/stats_provider.dart';
+import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/view/archived_meters_screen.dart';
+import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/tags/view/tags_screen.dart';
 import 'package:openmeter/screens/bottom_nav_bar.dart';
 import 'package:openmeter/screens/settings_screen.dart';
@@ -77,46 +81,63 @@ class MyApp extends ConsumerWidget {
     );
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    return DynamicColorBuilder(
-      builder: (lightDynamic, darkDynamic) {
-        final bool useDynamic = theme.dynamicColor;
+    return _EagerInitialization(
+      child: DynamicColorBuilder(
+        builder: (lightDynamic, darkDynamic) {
+          final bool useDynamic = theme.dynamicColor;
 
-        final ColorScheme? darkScheme = useDynamic ? darkDynamic : null;
+          final ColorScheme? darkScheme = useDynamic ? darkDynamic : null;
 
-        return MaterialApp(
-          localizationsDelegates: const [
-            GlobalWidgetsLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('de', ''),
-            Locale('en', ''),
-          ],
-          title: 'OpenMeter',
-          debugShowCheckedModeBanner: false,
-          theme: GetThemes.getLightTheme(
-              useDynamic ? lightDynamic : null, theme.fontSize),
-          darkTheme: theme.amoled
-              ? GetThemes.getNightTheme(darkScheme, theme.fontSize)
-              : GetThemes.getDarkTheme(darkScheme, theme.fontSize),
-          themeMode: theme.mode,
-          initialRoute: '/',
-          routes: {
-            '/': (_) => const BottomNavBar(),
-            // 'add_meter': (_) => AddScreen(),
-            // 'add_contract': (_) => const AddContract(),
-            'settings': (_) => const SettingsScreen(),
-            // 'details_single_meter': (_) => DetailsSingleMeter(),
-            'reminder': (_) => const ReminderScreen(),
-            'database_export_import': (_) => const DatabaseView(),
-            'tags_screen': (_) => const TagsScreen(),
-            'archive': (_) => const ArchivedMetersScreen(),
-            'archive_contract': (_) => const ArchiveContract(),
-            'design_settings': (_) => const DesignScreen(),
-          },
-        );
-      },
+          return MaterialApp(
+            localizationsDelegates: const [
+              GlobalWidgetsLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('de', ''),
+              Locale('en', ''),
+            ],
+            title: 'OpenMeter',
+            debugShowCheckedModeBanner: false,
+            theme: GetThemes.getLightTheme(
+                useDynamic ? lightDynamic : null, theme.fontSize),
+            darkTheme: theme.amoled
+                ? GetThemes.getNightTheme(darkScheme, theme.fontSize)
+                : GetThemes.getDarkTheme(darkScheme, theme.fontSize),
+            themeMode: theme.mode,
+            initialRoute: '/',
+            routes: {
+              '/': (_) => const BottomNavBar(),
+              // 'add_meter': (_) => AddScreen(),
+              // 'add_contract': (_) => const AddContract(),
+              'settings': (_) => const SettingsScreen(),
+              // 'details_single_meter': (_) => DetailsSingleMeter(),
+              'reminder': (_) => const ReminderScreen(),
+              'database_export_import': (_) => const DatabaseView(),
+              'tags_screen': (_) => const TagsScreen(),
+              'archive': (_) => const ArchivedMetersScreen(),
+              'archive_contract': (_) => const ArchiveContract(),
+              'design_settings': (_) => const DesignScreen(),
+            },
+          );
+        },
+      ),
     );
+  }
+}
+
+class _EagerInitialization extends ConsumerWidget {
+  const _EagerInitialization({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(meterListProvider);
+    ref.watch(roomListProvider);
+    ref.watch(contractListProvider);
+    ref.watch(databaseStatsProvider);
+
+    return child;
   }
 }
