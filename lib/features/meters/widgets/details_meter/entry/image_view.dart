@@ -58,64 +58,66 @@ class _ImageViewState extends ConsumerState<ImageView>
   Widget build(BuildContext context) {
     String meterNumber = widget.meter.number;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  meterNumber,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                ConvertMeterUnit().getUnitWidget(
-                  count: ConvertCount.convertCount(widget.entry.count),
-                  unit: widget.meter.unit,
-                  textStyle: Theme.of(context).textTheme.bodyMedium!,
-                ),
-              ],
-            ),
-            Text(
-              DateFormat(DateTimeFormats.dateGermanLong)
-                  .format(widget.entry.date),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    meterNumber,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  ConvertMeterUnit().getUnitWidget(
+                    count: ConvertCount.convertCount(widget.entry.count),
+                    unit: widget.meter.unit,
+                    textStyle: Theme.of(context).textTheme.bodyMedium!,
+                  ),
+                ],
+              ),
+              Text(
+                DateFormat(DateTimeFormats.dateGermanLong)
+                    .format(widget.entry.date),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
         ),
-      ),
-      body: GestureDetector(
-        onDoubleTapDown: (details) => _doubleTapDetails = details,
-        onDoubleTap: () {
-          final positions = _doubleTapDetails!.localPosition;
+        body: GestureDetector(
+          onDoubleTapDown: (details) => _doubleTapDetails = details,
+          onDoubleTap: () {
+            final positions = _doubleTapDetails!.localPosition;
 
-          final x = -positions.dx * (_scale - 1);
-          final y = -positions.dy * (_scale - 1.5);
+            final x = -positions.dx * (_scale - 1);
+            final y = -positions.dy * (_scale - 1.5);
 
-          final zoomed = Matrix4.identity()
-            ..translate(x, y)
-            ..scale(_scale);
+            final zoomed = Matrix4.identity()
+              ..translate(x, y)
+              ..scale(_scale);
 
-          final value = _transformationController.value.isIdentity()
-              ? zoomed
-              : Matrix4.identity();
+            final value = _transformationController.value.isIdentity()
+                ? zoomed
+                : Matrix4.identity();
 
-          _animation =
-              Matrix4Tween(begin: _transformationController.value, end: value)
-                  .animate(CurveTween(curve: Curves.easeOut)
-                      .animate(_animationController));
+            _animation =
+                Matrix4Tween(begin: _transformationController.value, end: value)
+                    .animate(CurveTween(curve: Curves.easeOut)
+                        .animate(_animationController));
 
-          _animationController.forward(from: 0);
-        },
-        child: InteractiveViewer(
-          transformationController: _transformationController,
-          minScale: 0.2,
-          maxScale: _scale,
-          child: Center(child: Image.file(File(widget.entry.imagePath!))),
+            _animationController.forward(from: 0);
+          },
+          child: InteractiveViewer(
+            transformationController: _transformationController,
+            minScale: 0.2,
+            maxScale: _scale,
+            child: Center(child: Image.file(File(widget.entry.imagePath!))),
+          ),
         ),
+        bottomNavigationBar: _bottomBar(),
       ),
-      bottomNavigationBar: _bottomBar(),
     );
   }
 

@@ -116,7 +116,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                           builder: (context) => Padding(
                             padding: MediaQuery.of(context).viewInsets,
                             child: SizedBox(
-                              height: MediaQuery.sizeOf(context).height * 0.6,
+                              height: MediaQuery.sizeOf(context).height * 0.65,
                               child: EntryDetails(
                                   entry: item, meter: detailsMeter.meter),
                             ),
