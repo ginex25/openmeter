@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
-import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/entry_filter_provider.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 
 class DateFilter extends ConsumerStatefulWidget {

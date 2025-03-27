@@ -4,14 +4,14 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/chart_has_focus.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 
-import '../../../../model/entry_monthly_sums.dart';
-import '../../../../model/meter_dto.dart';
 import '../../../../../../shared/utils/convert_count.dart';
 import '../../../../../../shared/utils/convert_meter_unit.dart';
 import '../../../../helper/chart_helper.dart';
+import '../../../../model/entry_monthly_sums.dart';
+import '../../../../model/meter_dto.dart';
 
 class SimpleUsageBarChart extends ConsumerWidget {
   final ChartHelper _helper = ChartHelper();

@@ -6,10 +6,11 @@ import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_filter_model.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
-import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
-import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
-import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
+import 'package:openmeter/features/meters/provider/details_meter/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/details_meter/details_meter_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/entry_filter_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/filtered_entries.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/selected_entries_count.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_details.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_filter_sheet.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
@@ -30,7 +31,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
   Widget build(BuildContext context) {
     final EntryFilterModel entryFilter = ref.watch(entryFilterProvider);
 
-    final bool hasFilter = entryFilter.hasActiveFilter();
+    final bool hasFilter = entryFilter.hasActiveFilter;
 
     final themeModel = ref.watch(themeModeProviderProvider);
 
@@ -39,6 +40,12 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
     final int selectedEntriesCount = ref.watch(selectedEntriesCountProvider);
 
     final detailsMeter = ref.watch(currentDetailsMeterProvider);
+
+    List<EntryDto> entries = detailsMeter.entries;
+
+    if (hasFilter) {
+      entries = ref.watch(filteredEntriesProvider);
+    }
 
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8),
@@ -59,7 +66,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
             height: 5,
           ),
           if (hasFilter) _showHintHasFilter(context),
-          if (hasFilter && detailsMeter.entries.isEmpty)
+          if (hasFilter && entries.isEmpty)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -67,7 +74,7 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
             ),
-          if (detailsMeter.entries.isEmpty && !hasFilter)
+          if (entries.isEmpty && !hasFilter)
             Container(
               padding: const EdgeInsets.all(8),
               alignment: Alignment.center,
@@ -80,15 +87,15 @@ class _EntryCardListState extends ConsumerState<EntryCardList> {
                 textAlign: TextAlign.center,
               ),
             ),
-          if (detailsMeter.entries.isNotEmpty)
+          if (entries.isNotEmpty)
             SizedBox(
               height: isLargeText ? 150 : 130,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 shrinkWrap: true,
-                itemCount: detailsMeter.entries.length,
+                itemCount: entries.length,
                 itemBuilder: (context, index) {
-                  final EntryDto item = detailsMeter.entries.elementAt(index);
+                  final EntryDto item = entries.elementAt(index);
 
                   bool hasNote = false;
 

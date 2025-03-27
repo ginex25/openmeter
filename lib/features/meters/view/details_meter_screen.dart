@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
+import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
-import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
-import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
-import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/chart_has_focus.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/show_line_chart_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/details_meter/details_meter_provider.dart';
 import 'package:openmeter/features/meters/view/add_meter_screen.dart';
 import 'package:openmeter/features/meters/view/cost_view.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/count_line_chart.dart';
@@ -17,6 +18,10 @@ import 'package:openmeter/features/meters/widgets/details_meter/entry/entry_card
 import 'package:openmeter/features/tags/widget/horizontal_tags_list.dart';
 import 'package:openmeter/shared/widgets/selected_items_bar.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../provider/details_meter/entry/entry_filter_provider.dart';
+import '../provider/details_meter/entry/filtered_entries.dart';
+import '../provider/details_meter/entry/selected_entries_count.dart';
 
 class DetailsMeterScreen extends ConsumerStatefulWidget {
   final int meterId;
@@ -30,6 +35,8 @@ class DetailsMeterScreen extends ConsumerStatefulWidget {
 class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
   int _activeChartWidget = 0;
 
+  final EntryHelper _entryHelper = EntryHelper();
+
   @override
   Widget build(BuildContext context) {
     final detailsProvider = ref.watch(detailsMeterProvider(widget.meterId));
@@ -38,11 +45,21 @@ class _DetailsMeterScreenState extends ConsumerState<DetailsMeterScreen> {
     final bool showLineChart = ref.watch(showLineChartProvider);
     final bool chartHasFocus = ref.watch(chartHasFocusProvider);
 
+    final entryFiler = ref.watch(entryFilterProvider);
+
     return detailsProvider.when(
       data: (detailsMeter) {
+        List<EntryDto> filteredEntries = [];
+
+        if (entryFiler.hasActiveFilter) {
+          filteredEntries = _entryHelper.filterEntries(
+              filter: entryFiler, entries: List.of(detailsMeter.entries));
+        }
+
         return ProviderScope(
           overrides: [
             currentDetailsMeterProvider.overrideWithValue(detailsMeter),
+            filteredEntriesProvider.overrideWithValue(filteredEntries),
           ],
           child: SafeArea(
             child: Scaffold(

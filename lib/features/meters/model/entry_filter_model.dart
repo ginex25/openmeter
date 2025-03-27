@@ -18,7 +18,7 @@ class EntryFilterModel {
 
   factory EntryFilterModel.initialFilter() => EntryFilterModel(null, null, {});
 
-  bool hasActiveFilter() => filters.isNotEmpty;
+  bool get hasActiveFilter => filters.isNotEmpty;
 }
 
 enum EntryFilters {

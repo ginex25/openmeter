@@ -2,12 +2,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/features/meters/helper/chart_helper.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
+import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/model/entry_monthly_sums.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/helper/chart_helper.dart';
-import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/chart_has_focus.dart';
+import 'package:openmeter/features/meters/provider/details_meter/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/entry_filter_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/filtered_entries.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:openmeter/shared/utils/convert_count.dart';
@@ -40,20 +43,28 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
   Widget build(BuildContext context) {
     final detailsMeter = ref.watch(currentDetailsMeterProvider);
 
-    if (detailsMeter.entries.isEmpty) {
+    final EntryFilterModel entryFilter = ref.watch(entryFilterProvider);
+
+    List<EntryDto> entries = detailsMeter.entries;
+
+    if (entryFilter.hasActiveFilter) {
+      entries = ref.watch(filteredEntriesProvider);
+    }
+
+    if (entries.isEmpty) {
       return const NoEntry(
           text: 'Es sind keine oder zu wenige Einträge vorhanden');
     }
 
-    _getTimeValues(detailsMeter.entries);
+    _getTimeValues(entries);
 
     if (_twelveMonths) {
-      finalEntries = _helper.getLastMonths(detailsMeter.entries);
+      finalEntries = _helper.getLastMonths(entries);
     } else {
-      finalEntries = _helper.convertEntryList(detailsMeter.entries);
+      finalEntries = _helper.convertEntryList(entries);
     }
 
-    _hasResetEntries = detailsMeter.entries.any((element) => element.isReset);
+    _hasResetEntries = entries.any((element) => element.isReset);
 
     if (_hasResetEntries) {
       finalEntries =
@@ -99,7 +110,7 @@ class _CountLineChartState extends ConsumerState<CountLineChart> {
                 showCheckmark: false,
                 labelStyle: Theme.of(context).textTheme.bodySmall!,
                 onSelected: (value) {
-                  if (detailsMeter.entries.length > 12) {
+                  if (entries.length > 12) {
                     setState(() {
                       _twelveMonths = value;
                     });

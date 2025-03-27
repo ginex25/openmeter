@@ -6,7 +6,7 @@ import 'package:openmeter/core/theme/model/theme_model.dart';
 import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/details_meter_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/widgets/meter_type_dropdown.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';

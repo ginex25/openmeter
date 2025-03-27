@@ -3,12 +3,10 @@ import 'package:openmeter/features/database_settings/provider/has_update.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
-import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
-import 'package:openmeter/features/meters/provider/meter_cost_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/cost/meter_cost_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/selected_entries_count.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
-import 'package:openmeter/features/meters/provider/selected_entries_count.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
@@ -25,9 +23,7 @@ class DetailsMeter extends _$DetailsMeter {
   FutureOr<DetailsMeterModel> build(int meterId) async {
     final MeterRepository repo = ref.watch(meterRepositoryProvider);
 
-    final EntryFilterModel filter = ref.watch(entryFilterProvider);
-
-    return await repo.fetchDetailsMeter(meterId, filter, true);
+    return await repo.fetchDetailsMeter(meterId, true);
   }
 
   Future<void> addEntry(EntryDto newEntry) async {

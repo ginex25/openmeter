@@ -24,11 +24,11 @@ class MeterCostProvider extends _$MeterCostProvider {
     state = await AsyncValue.guard(
       () async {
         return await repo.createMeterCost(
-            meter: meter,
-            contract: contract,
-            entries: entries,
-            startDate: startDate,
-            endDate: endDate);
+          meter: meter,
+          contract: contract,
+          entries: entries,
+          startDate: startDate,
+        );
       },
     );
   }

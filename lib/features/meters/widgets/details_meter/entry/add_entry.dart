@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:openmeter/core/service/torch_service.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
-import 'package:openmeter/features/meters/provider/details_meter_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/details_meter/details_meter_provider.dart';
 import 'package:openmeter/features/torch/provider/active_torch_state_provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 

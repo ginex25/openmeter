@@ -6,14 +6,18 @@ import 'package:openmeter/features/meters/helper/chart_helper.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_monthly_sums.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/provider/chart_has_focus.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
-import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/chart_has_focus.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/show_line_chart_provider.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
 import 'package:openmeter/shared/constant/custom_icons.dart';
 import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:openmeter/shared/utils/convert_count.dart';
 import 'package:openmeter/shared/utils/convert_meter_unit.dart';
+
+import '../../../model/entry_filter_model.dart';
+import '../../../provider/details_meter/current_details_meter.dart';
+import '../../../provider/details_meter/entry/entry_filter_provider.dart';
+import '../../../provider/details_meter/entry/filtered_entries.dart';
 
 class UsageLineChart extends ConsumerStatefulWidget {
   const UsageLineChart({super.key});
@@ -44,15 +48,22 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
   Widget build(BuildContext context) {
     final detailsMeter = ref.watch(currentDetailsMeterProvider);
 
-    if (detailsMeter.entries.isEmpty) {
+    final EntryFilterModel entryFilter = ref.watch(entryFilterProvider);
+
+    List<EntryDto> entries = detailsMeter.entries;
+
+    if (entryFilter.hasActiveFilter) {
+      entries = ref.watch(filteredEntriesProvider);
+    }
+
+    if (entries.isEmpty) {
       return const NoEntry(
           text: 'Es sind keine oder zu wenige Einträge vorhanden');
     }
 
-    _getTimeValues(detailsMeter.entries);
+    _getTimeValues(entries);
 
-    final List<EntryDto> reservedEntries =
-        detailsMeter.entries.reversed.toList();
+    final List<EntryDto> reservedEntries = entries.reversed.toList();
 
     if (_twelveMonths) {
       finalEntries = _helper.getLastMonths(reservedEntries);
@@ -62,10 +73,10 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
 
     _averageUsage = _helper.calcAverageCountUsage(
       entries: finalEntries as List<EntryMonthlySums>,
-      length: !_twelveMonths ? detailsMeter.entries.length : 12,
+      length: !_twelveMonths ? entries.length : 12,
     );
 
-    _hasResetEntries = detailsMeter.entries.any((element) => element.isReset);
+    _hasResetEntries = entries.any((element) => element.isReset);
 
     if (_hasResetEntries) {
       finalEntries =
@@ -107,7 +118,7 @@ class _UsageLineChartState extends ConsumerState<UsageLineChart> {
               ),
             ),
             const Spacer(),
-            _filterActions(textTheme, detailsMeter.entries),
+            _filterActions(textTheme, entries),
           ],
         ),
       ),

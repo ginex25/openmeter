@@ -4,14 +4,17 @@ import 'package:openmeter/features/meters/helper/chart_helper.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
 import 'package:openmeter/features/meters/model/entry_monthly_sums.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
-import 'package:openmeter/features/meters/provider/entry_filter_provider.dart';
-import 'package:openmeter/features/meters/provider/show_line_chart_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/chart/show_line_chart_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/current_details_meter.dart';
+import 'package:openmeter/features/meters/provider/details_meter/entry/entry_filter_provider.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/no_entry.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/usage_bar_charts/simple_bar.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/charts/usage_bar_charts/year_bar.dart';
 import 'package:openmeter/shared/constant/custom_icons.dart';
 import 'package:openmeter/shared/utils/convert_meter_unit.dart';
+
+import '../../../../model/entry_filter_model.dart';
+import '../../../../provider/details_meter/entry/filtered_entries.dart';
 
 class UsageBarChartCard extends ConsumerStatefulWidget {
   const UsageBarChartCard({super.key});
@@ -33,7 +36,15 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
   Widget build(BuildContext context) {
     final detailsMeter = ref.watch(currentDetailsMeterProvider);
 
-    if (detailsMeter.entries.isEmpty) {
+    final EntryFilterModel entryFilter = ref.watch(entryFilterProvider);
+
+    List<EntryDto> entries = detailsMeter.entries;
+
+    if (entryFilter.hasActiveFilter) {
+      entries = ref.watch(filteredEntriesProvider);
+    }
+
+    if (entries.isEmpty) {
       return const NoEntry(
           text: 'Es sind keine oder zu wenige Einträge vorhanden');
     }
@@ -42,8 +53,7 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
 
     List<EntryMonthlySums> sumMonths = [];
 
-    final List<EntryDto> reservedEntries =
-        detailsMeter.entries.reversed.toList();
+    final List<EntryDto> reservedEntries = entries.reversed.toList();
 
     final totalSumMonths = _helper.getSumInMonths(reservedEntries);
 
@@ -56,13 +66,11 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
     final totalMonths = _compareYears ? totalSumMonths : sumMonths;
 
     final totalEntries = _compareYears
-        ? detailsMeter.entries.length
-        : (!_showOnlyLastTwelveMonths ? detailsMeter.entries.length : 12);
+        ? entries.length
+        : (!_showOnlyLastTwelveMonths ? entries.length : 12);
 
     _averageUsage = _helper.calcAverageCountUsage(
         entries: totalMonths, length: totalEntries);
-
-    final entryFilter = ref.watch(entryFilterProvider);
 
     return SizedBox(
       height: 200,
@@ -87,8 +95,8 @@ class _UsageBarChartCardState extends ConsumerState<UsageBarChartCard> {
             const Spacer(),
             _filterActions(
                 textTheme: textTheme,
-                entriesLength: detailsMeter.entries.length,
-                hasFilters: entryFilter.hasActiveFilter()),
+                entriesLength: entries.length,
+                hasFilters: entryFilter.hasActiveFilter),
           ],
         ),
       ),

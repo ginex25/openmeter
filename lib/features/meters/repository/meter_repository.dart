@@ -6,7 +6,6 @@ import 'package:openmeter/core/exception/null_value.dart';
 import 'package:openmeter/features/meters/helper/entry_helper.dart';
 import 'package:openmeter/features/meters/model/details_meter_model.dart';
 import 'package:openmeter/features/meters/model/entry_dto.dart';
-import 'package:openmeter/features/meters/model/entry_filter_model.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/repository/entry_repository.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
@@ -120,7 +119,7 @@ class MeterRepository {
   }
 
   Future<DetailsMeterModel> fetchDetailsMeter(
-      int meterId, EntryFilterModel entryFilter, bool predictCount) async {
+      int meterId, bool predictCount) async {
     final MeterData meterData = await _meterDao.getSingleMeter(meterId);
     final MeterDto meter = MeterDto.fromData(meterData, false);
 
@@ -129,11 +128,6 @@ class MeterRepository {
 
     meter.hasEntry = entries.isNotEmpty;
     meter.lastEntry = entries.firstOrNull;
-
-    if (entryFilter.hasActiveFilter()) {
-      entries =
-          _entryHelper.filterEntries(filter: entryFilter, entries: entries);
-    }
 
     final RoomDto? room = await _roomRepository.findByMeterId(meterId);
 

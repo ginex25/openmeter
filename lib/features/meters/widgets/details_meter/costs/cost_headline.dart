@@ -5,9 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/meters/model/meter_cost_model.dart';
 import 'package:openmeter/features/meters/provider/contract_list.dart';
-import 'package:openmeter/features/meters/provider/current_details_meter.dart';
-import 'package:openmeter/features/meters/provider/meter_cost_provider.dart';
+import 'package:openmeter/features/meters/provider/details_meter/current_details_meter.dart';
 import 'package:openmeter/features/meters/widgets/details_meter/costs/select_contract_dialog.dart';
+
+import '../../../provider/details_meter/cost/meter_cost_provider.dart';
 
 enum CostOverviewOperator { changeContract, selectTimeSpan, removeTimeSpan }
 
