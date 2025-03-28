@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/local_database.dart';
 import 'package:openmeter/core/provider/rootIsolateToken.dart';
 import 'package:openmeter/core/service/permission_service.dart';
+import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
 import 'package:openmeter/features/database_settings/provider/stats_provider.dart';
@@ -70,10 +71,16 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
       _isLoading = true;
     });
 
-    bool success = await ref
-        .read(exportRepositoryProvider)
-        .runIsolateExportAsJson(
-            path: path, isAutoBackup: false, clearBackupFiles: false);
+    // bool success = await ref
+    //     .read(exportRepositoryProvider)
+    //     .runIsolateExportAsJson(
+    //         path: path, isAutoBackup: false, clearBackupFiles: false);
+
+    bool success = await runExportAsIsolate(
+        path: path,
+        db: ref.watch(localDbProvider),
+        rootToken: ref.watch(rootIsolateTokenProvider),
+        prefs: ref.watch(sharedPreferencesProvider));
 
     ref.read(inAppActionProvider.notifier).setState(false);
 

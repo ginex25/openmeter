@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
+import 'package:drift/isolate.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:openmeter/core/database/local_database.dart';
 import 'package:openmeter/core/exception/null_value.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/repository/contract_repository.dart';
@@ -22,11 +24,9 @@ import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:openmeter/shared/constant/log.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../tags/repository/tag_repository.dart';
-
-part 'export_repository.g.dart';
 
 class ExportRepository {
   final MeterRepository _meterRepository;
@@ -42,8 +42,6 @@ class ExportRepository {
   List<ContractDto> _contracts = [];
   final Map<int, List<EntryDto>> _entries = {};
   List<TagDto> _tags = [];
-
-  // List<MeterWithTag> _meterWithTags = [];
 
   ExportRepository(this._meterRepository, this._entryRepository,
       this._contractRepository, this._roomRepository, this._tagRepository);
@@ -183,7 +181,7 @@ class ExportRepository {
     }
   }
 
-  Future<bool> runIsolateExportAsJson({
+  Future<bool> runExport({
     required String path,
     bool clearBackupFiles = false,
     bool isAutoBackup = false,
@@ -199,23 +197,47 @@ class ExportRepository {
         cacheDir: cacheDir.path,
         isAutoBackup: isAutoBackup,
         clearBackupFiles: clearBackupFiles);
-
-    // return await Isolate.run(() async {
-    //   return await _exportAsJson(
-    //       path: path,
-    //       cacheDir: cacheDir.path,
-    //       isAutoBackup: isAutoBackup,
-    //       clearBackupFiles: clearBackupFiles);
-    // }, debugName: 'Export Database as JSON');
   }
 }
 
-@riverpod
-ExportRepository exportRepository(Ref ref) {
-  return ExportRepository(
-      ref.watch(meterRepositoryProvider),
-      ref.watch(entryRepositoryProvider),
-      ref.watch(contractRepositoryProvider),
-      ref.watch(roomRepositoryProvider),
-      ref.watch(tagRepositoryProvider));
+Future<bool> runExportAsIsolate({
+  required String path,
+  bool clearBackupFiles = false,
+  bool isAutoBackup = false,
+  required LocalDatabase db,
+  required RootIsolateToken rootToken,
+  required SharedPreferencesWithCache prefs,
+}) async {
+  final connection = await db.serializableConnection();
+
+  return await Isolate.run(
+    () async {
+      BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
+
+      final db = LocalDatabase(await connection.connect());
+
+      final TagRepository tagRepository = TagRepository(db.tagsDao, prefs);
+      final RoomRepository roomRepository =
+          RoomRepository(db.roomDao, db.entryDao, db.meterDao);
+      final EntryRepository entryRepository = EntryRepository(db.entryDao);
+      final ContractRepository contractRepository =
+          ContractRepository(db.contractDao);
+      final MeterRepository meterRepository = MeterRepository(
+          db.meterDao, entryRepository, roomRepository, tagRepository);
+
+      final repo = ExportRepository(
+        meterRepository,
+        entryRepository,
+        contractRepository,
+        roomRepository,
+        tagRepository,
+      );
+
+      return await repo.runExport(
+          path: path,
+          clearBackupFiles: clearBackupFiles,
+          isAutoBackup: isAutoBackup);
+    },
+    debugName: 'Export Database as JSON',
+  );
 }

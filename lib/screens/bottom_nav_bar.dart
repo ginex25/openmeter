@@ -18,6 +18,9 @@ import 'package:openmeter/features/room/provider/selected_room_count_provider.da
 
 import '../../shared/constant/custom_icons.dart';
 import '../../shared/constant/log.dart';
+import '../core/database/local_database.dart';
+import '../core/provider/rootIsolateToken.dart';
+import '../core/shared_preferences/shared_preferences_provider.dart';
 import 'homescreen.dart';
 import 'objects.dart';
 
@@ -63,10 +66,14 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar>
         hasUpdate &&
         !isInAppAction &&
         state == AppLifecycleState.paused) {
-      await ref.read(exportRepositoryProvider).runIsolateExportAsJson(
-          path: autoBackup.path,
-          isAutoBackup: true,
-          clearBackupFiles: autoBackup.deleteOldBackups);
+      await runExportAsIsolate(
+        path: autoBackup.path,
+        db: ref.watch(localDbProvider),
+        rootToken: ref.watch(rootIsolateTokenProvider),
+        prefs: ref.watch(sharedPreferencesProvider),
+        isAutoBackup: true,
+        clearBackupFiles: autoBackup.deleteOldBackups,
+      );
 
       ref.read(hasUpdateProvider.notifier).setState(false);
     }
