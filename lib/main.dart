@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/provider/rootIsolateToken.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
 import 'package:openmeter/core/theme/model/theme_model.dart';
 import 'package:openmeter/core/theme/provider/theme_mode_provider.dart';
@@ -26,6 +27,8 @@ import 'features/reminder/view/reminder_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  RootIsolateToken rootIsolateToken = RootIsolateToken.instance!;
+
   final SharedPreferencesWithCache pref =
       await SharedPreferencesWithCache.create(
           cacheOptions: SharedPreferencesWithCacheOptions());
@@ -38,6 +41,7 @@ void main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(pref),
         torchServiceProvider.overrideWithValue(torchService),
+        rootIsolateTokenProvider.overrideWithValue(rootIsolateToken),
       ],
       child: const MyApp(),
     ),

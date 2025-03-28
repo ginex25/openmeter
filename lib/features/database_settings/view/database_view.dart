@@ -1,6 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/core/provider/rootIsolateToken.dart';
 import 'package:openmeter/core/service/permission_service.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
 import 'package:openmeter/features/database_settings/provider/in_app_action.dart';
@@ -127,9 +129,11 @@ class _DatabaseViewState extends ConsumerState<DatabaseView> {
       _isLoading = true;
     });
 
-    await ref
-        .read(importRepositoryProvider)
-        .importFromJson(path: path.files.single.path!);
+    final db = ref.watch(localDbProvider);
+    await runImportAsIsolate(
+        path: path.files.single.path!,
+        db: db,
+        rootToken: ref.watch(rootIsolateTokenProvider));
 
     ref.read(inAppActionProvider.notifier).setState(false);
 
