@@ -12,6 +12,7 @@ import 'package:openmeter/features/contract/provider/contract_list_provider.dart
 import 'package:openmeter/features/database_settings/provider/stats_provider.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/view/archived_meters_screen.dart';
+import 'package:openmeter/features/reminder/service/local_notification_service.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/tags/view/tags_screen.dart';
 import 'package:openmeter/screens/bottom_nav_bar.dart';
@@ -36,12 +37,19 @@ void main() async {
   final TorchService torchService = TorchService();
   await torchService.getTorch(isInit: true);
 
+  final LocalNotificationService localNotificationService =
+      LocalNotificationService();
+
+  await localNotificationService.initialize();
+
   runApp(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(pref),
         torchServiceProvider.overrideWithValue(torchService),
         rootIsolateTokenProvider.overrideWithValue(rootIsolateToken),
+        localNotificationServiceProvider
+            .overrideWithValue(localNotificationService),
       ],
       child: const MyApp(),
     ),
@@ -133,6 +141,7 @@ class MyApp extends ConsumerWidget {
 
 class _EagerInitialization extends ConsumerWidget {
   const _EagerInitialization({required this.child});
+
   final Widget child;
 
   @override

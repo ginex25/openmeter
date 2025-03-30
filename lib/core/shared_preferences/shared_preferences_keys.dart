@@ -11,6 +11,7 @@ class SharedPreferencesKeys {
   static const String reminderMinute = 'time_minute';
   static const String reminderDay = 'month_day';
   static const String reminderFirstOn = 'first_reminder_on';
+  static const String reminderRemindLater = 'remind_later';
 
   static const String theme = 'theme';
   static const String themeNight = 'night';

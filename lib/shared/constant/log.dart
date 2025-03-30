@@ -6,7 +6,7 @@ class LogLevels {
 
 class LogNames {
   static const String appLifecycle = 'AppLifecycleState';
-  static const String readingReminder = 'MeterReadingReminder';
+  static const String readingReminder = 'LocalNotificationService';
   static const String roomProvider = 'Room Provider';
   static const String addMeterToRoom = 'Add meter to room';
   static const String contractProvider = 'Contract Provider';

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_keys.dart';
 import 'package:openmeter/core/shared_preferences/shared_preferences_provider.dart';
 import 'package:openmeter/features/reminder/model/notifications_repeat_values.dart';
+import 'package:openmeter/features/reminder/model/remind_later.dart';
 import 'package:openmeter/features/reminder/model/reminder_model.dart';
 import 'package:openmeter/features/reminder/service/local_notification_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,10 +14,9 @@ part 'reminder_repository.g.dart';
 
 class ReminderRepository {
   final SharedPreferencesWithCache _prefs;
-  final LocalNotificationService _localNotificationService =
-      LocalNotificationService();
+  final LocalNotificationService _localNotificationService;
 
-  ReminderRepository(this._prefs);
+  ReminderRepository(this._prefs, this._localNotificationService);
 
   bool getReminderState() {
     return _prefs.getBool(SharedPreferencesKeys.reminderState) ?? false;
@@ -98,6 +100,8 @@ class ReminderRepository {
   }
 
   void displayNotification(ReminderModel reminder) async {
+    _localNotificationService.setRemindLater(getRemindLater());
+
     switch (reminder.repeatValues) {
       case RepeatValues.daily:
         _localNotificationService.dailyReminder(reminder.hour, reminder.minute);
@@ -115,9 +119,30 @@ class ReminderRepository {
   void testNotification() async {
     _localNotificationService.testNotification();
   }
+
+  void setRemindLater(RemindLater remindLater) {
+    _prefs.setString(SharedPreferencesKeys.reminderRemindLater,
+        jsonEncode(remindLater.toJson));
+
+    displayNotification(getReminderData());
+  }
+
+  RemindLater getRemindLater() {
+    String? remindLaterString =
+        _prefs.getString(SharedPreferencesKeys.reminderRemindLater);
+
+    if (remindLaterString == null) {
+      return RemindLater.initialize();
+    }
+
+    return RemindLater.fromJson(jsonDecode(remindLaterString));
+  }
 }
 
 @riverpod
 ReminderRepository reminderRepository(Ref ref) {
-  return ReminderRepository(ref.watch(sharedPreferencesProvider));
+  return ReminderRepository(
+    ref.watch(sharedPreferencesProvider),
+    ref.watch(localNotificationServiceProvider),
+  );
 }
