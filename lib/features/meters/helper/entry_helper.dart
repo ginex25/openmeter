@@ -47,7 +47,7 @@ class EntryHelper {
     int diffDays = now.difference(lastEntry.date).inDays;
     double predictedCount = currentCount + (predictedUsage * diffDays);
 
-    String predicted = predictedCount.ceil().toString();
+    String predicted = predictedCount.ceil().abs().toString();
 
     int stringLength = predicted.length;
 
