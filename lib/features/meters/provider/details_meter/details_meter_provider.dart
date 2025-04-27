@@ -35,20 +35,18 @@ class DetailsMeter extends _$DetailsMeter {
 
     List<EntryDto> currentEntries = state.value!.entries;
 
-    final newEntriesList =
-        await entryRepo.addNewEntry(currentEntries, newEntry);
+    final newEntriesList = await entryRepo.addNewEntry(currentEntries, newEntry);
 
     MeterDto meter = state.value!.meter;
     meter.lastEntry = newEntriesList.first;
 
     ref.read(meterListProvider.notifier).updateMeterInfo(meter);
 
-    final newDetails =
-        state.value!.copyWith(entries: newEntriesList, meter: meter);
+    final newDetails = state.value!.copyWith(entries: newEntriesList, meter: meter);
 
     ref.invalidate(meterCostProviderProvider);
-
     ref.read(hasUpdateProvider.notifier).setState(true);
+    _updateDetailsRoom(meter.room, null);
 
     state = AsyncData(newDetails);
   }
@@ -123,28 +121,26 @@ class DetailsMeter extends _$DetailsMeter {
 
     ref.read(meterListProvider.notifier).updateMeterInfo(meter);
 
-    final newDetails =
-        state.value!.copyWith(entries: currentEntries, meter: meter);
+    final newDetails = state.value!.copyWith(entries: currentEntries, meter: meter);
+
 
     ref.invalidate(meterCostProviderProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
+    _updateDetailsRoom(meter.room, null);
 
     state = AsyncData(newDetails);
   }
 
-  Future<void> updateMeter(
-      MeterDto meter, RoomDto? newRoom, List<String> tags) async {
+  Future<void> updateMeter(MeterDto meter, RoomDto? newRoom, List<String> tags) async {
     if (state.value == null) {
       throw NullValueException();
     }
 
     final MeterRepository repo = ref.watch(meterRepositoryProvider);
 
-    final newMeter = await repo.updateMeter(
-        oldMeter: state.value!.meter,
-        tags: tags,
-        newMeter: meter,
-        newRoom: newRoom);
+    final newMeter = await repo.updateMeter(oldMeter: state.value!.meter, tags: tags, newMeter: meter, newRoom: newRoom);
+
+    _updateDetailsRoom(meter.room, newRoom);
 
     final newDetails = state.value!.copyWith(meter: newMeter, room: newRoom);
 
@@ -153,7 +149,6 @@ class DetailsMeter extends _$DetailsMeter {
 
     ref.invalidate(meterCostProviderProvider);
     ref.invalidate(roomListProvider);
-    ref.invalidate(detailsRoomProvider);
 
     ref.read(hasUpdateProvider.notifier).setState(true);
 
@@ -174,9 +169,7 @@ class DetailsMeter extends _$DetailsMeter {
     if (entry.isReset) {
       entry.usage = -1;
       entry.days = -1;
-    } else if (entry.usage == -1 &&
-        entry.days == -1 &&
-        currentEntries.length > 1) {
+    } else if (entry.usage == -1 && entry.days == -1 && currentEntries.length > 1) {
       final helper = EntryHelper();
 
       final prevEntry = currentEntries.elementAtOrNull(index + 1);
@@ -196,7 +189,13 @@ class DetailsMeter extends _$DetailsMeter {
     final newDetails = state.value!.copyWith(entries: currentEntries);
 
     ref.read(hasUpdateProvider.notifier).setState(true);
+    _updateDetailsRoom(newDetails.meter.room, null);
 
     state = AsyncData(newDetails);
+  }
+
+  void _updateDetailsRoom(RoomDto? oldRoom, RoomDto? newRoom){
+    if (oldRoom != null) ref.invalidate(detailsRoomProvider(oldRoom.id!));
+    if(newRoom != null) ref.invalidate(detailsRoomProvider(newRoom.id!));
   }
 }
