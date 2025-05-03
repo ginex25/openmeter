@@ -4,3 +4,7 @@ targets:
       drift_dev:
         options:
           store_date_time_values_as_text: true
+          test_dir: test/core/database/
+          schema_dir: lib/core/database/schemas/
+          databases:
+            local_database: lib/core/database/local_database.dart

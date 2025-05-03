@@ -1,7 +1,8 @@
 import 'package:drift/drift.dart';
+import 'package:openmeter/core/database/model/room_model.dart';
+import 'package:openmeter/features/meters/model/meter_dto.dart';
 
-import '../../model/meter_dto.dart';
-import '../../model/room_dto.dart';
+import '../../../features/room/model/room_dto.dart';
 import '../local_database.dart';
 import '../tables/meter.dart';
 import '../tables/room.dart';
@@ -31,16 +32,21 @@ class RoomDao extends DatabaseAccessor<LocalDatabase> with _$RoomDaoMixin {
         .go();
   }
 
-  Future updateRoom(RoomData room) async {
+  Future<bool> updateRoom(RoomData room) async {
     return update(db.room).replace(room);
   }
 
   Stream<List<RoomData>> watchAllRooms() {
-    return select(db.room).watch();
+    return (select(db.room)
+          ..orderBy([(tbl) => OrderingTerm(expression: tbl.name)]))
+        .watch();
   }
 
   Future<List<RoomDto>> getAllRooms() async {
-    return await select(db.room).map((r) => RoomDto.fromData(r)).get();
+    return await (select(db.room)
+          ..orderBy([(tbl) => OrderingTerm(expression: tbl.name)]))
+        .map((r) => RoomDto.fromData(r))
+        .get();
   }
 
   Future<int> createMeterInRoom(MeterInRoomCompanion entity) async {
@@ -94,5 +100,44 @@ class RoomDao extends DatabaseAccessor<LocalDatabase> with _$RoomDaoMixin {
     return await (db.selectOnly(db.room)..addColumns([count]))
         .map((row) => row.read(count))
         .getSingleOrNull();
+  }
+
+  Future<List<RoomModel>> getAllRoomsModel() async {
+    final query = select(db.room).join(
+      [
+        leftOuterJoin(
+            db.meterInRoom, db.meterInRoom.roomId.equalsExp(room.uuid)),
+        leftOuterJoin(db.meter, db.meter.id.equalsExp(meterInRoom.meterId))
+      ],
+    )..orderBy([OrderingTerm(expression: room.name)]);
+
+    return await query
+        .map(
+          (row) => RoomModel(
+            row.readTable(room),
+            row.readTableOrNull(meter),
+          ),
+        )
+        .get();
+  }
+
+  Future<RoomData> findById(int id) async {
+    final query = select(db.room)
+      ..where(
+        (tbl) => tbl.id.equals(id),
+      );
+
+    return await query.getSingle();
+  }
+
+  Future<RoomData?> findByMeterId(int meterId) async {
+    final query = select(db.room).join(
+      [
+        leftOuterJoin(
+            db.meterInRoom, db.meterInRoom.roomId.equalsExp(room.uuid)),
+      ],
+    )..where(meterInRoom.meterId.equals(meterId));
+
+    return await query.map((p) => p.readTable(room)).getSingleOrNull();
   }
 }

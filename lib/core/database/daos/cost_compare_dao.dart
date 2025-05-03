@@ -18,7 +18,7 @@ class CostCompareDao extends DatabaseAccessor<LocalDatabase>
         .getSingleOrNull();
   }
 
-  Future createCompareCost(CostCompareCompanion costs) async {
+  Future<int> createCompareCost(CostCompareCompanion costs) async {
     return await into(db.costCompare).insert(costs);
   }
 
@@ -27,7 +27,7 @@ class CostCompareDao extends DatabaseAccessor<LocalDatabase>
         .go();
   }
 
-  Future updateCompareCost(CostCompareData cost) async {
+  Future<bool> updateCompareCost(CostCompareData cost) async {
     return await update(db.costCompare).replace(cost);
   }
 }

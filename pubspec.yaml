@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 0.1.0
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
+  sdk: '>=3.2.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -37,45 +37,49 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
 
   # Localdatabase
-  drift: ^2.13.2
-  sqlite3_flutter_libs: ^0.5.18
-  sqlite3: ^2.0.0
-  path_provider: ^2.0.0
-  path: ^1.8.2
-  shared_preferences: ^2.0.15
-  provider: ^6.1.1
-  rxdart: ^0.27.7
+  drift: ^2.26.0
+  sqlite3_flutter_libs: ^0.5.31
+  sqlite3: ^2.7.5
+  path_provider: ^2.1.5
+  shared_preferences: ^2.5.2
+  rxdart: ^0.28.0
   async: ^2.11.0
+
   #
   intl: any
-  grouped_list: ^5.1.2
-  sticky_grouped_list: ^3.1.0
-  fl_chart: ^0.65.0
-  permission_handler: ^11.1.0
-  font_awesome_flutter: ^10.3.0
-  wakelock_plus: ^1.1.4
-  flutter_slidable: ^3.0.1
-  uuid: ^4.2.1
-  dynamic_color: ^1.6.8
+  grouped_list: ^6.0.0
+  fl_chart: ^0.70.2
+  permission_handler: ^11.4.0
+  font_awesome_flutter: ^10.8.0
+  wakelock_plus: ^1.2.10
+  flutter_slidable: ^4.0.0
+  uuid: ^4.5.1
+  dynamic_color: ^1.7.0
   collection: any
-  image_picker: ^1.0.4
+  image_picker: ^1.1.2
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
   # share and save image
-  share_plus: ^7.2.1
-  image_gallery_saver: ^2.0.3
-  archive: ^3.4.9
+  share_plus: ^10.1.4
+  flutter_image_gallery_saver: ^0.0.2
+  archive: ^4.0.4
   # Chart
-  smooth_page_indicator: ^1.0.1
+  smooth_page_indicator: ^1.2.1
   # Local Push Notification
-  flutter_local_notifications: ^16.2.0
-  timezone: ^0.9.1
+  flutter_local_notifications: ^19.0.0
+  timezone: ^0.10.0
   # App Native Settings
-  flutter_launcher_icons: ^0.13.1
-  rename: ^3.0.1
-  flutter_native_splash: ^2.3.6
-  file_picker: ^6.1.1
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.5
+  file_picker: ^9.2.0
+
+  path: any
+dependency_overrides:
+  path: ^1.9.1
+  meta: ^1.16.0
 
 dev_dependencies:
   flutter_test:
@@ -86,9 +90,11 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
-  drift_dev: ^2.13.2
-  build_runner: ^2.4.7
+  flutter_lints: ^5.0.0
+  drift_dev: ^2.26.0
+  build_runner: ^2.4.15
+  riverpod_generator: ^2.6.5
+  riverpod_lint: ^2.6.5
 
 # to run: flutter pub run flutter_launcher_icons
 flutter_icons:

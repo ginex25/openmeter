@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 
 import 'meter.dart';
 
+@TableIndex(name: 'idx_tag_id', columns: {#id})
+@TableIndex(name: 'idx_tag_uuid', columns: {#uuid})
 class Tags extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -12,6 +14,8 @@ class Tags extends Table {
   IntColumn get color => integer()();
 }
 
+@TableIndex(name: 'idx_metertag_meter_id', columns: {#meterId})
+@TableIndex(name: 'idx_metertag_tag_id', columns: {#tagId})
 class MeterWithTags extends Table {
   IntColumn get meterId =>
       integer().references(Meter, #id, onDelete: KeyAction.cascade)();

@@ -2,9 +2,15 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:openmeter/core/database/local_database.steps.dart';
+import 'package:openmeter/core/database/migrations/migrations.dart';
+import 'package:openmeter/core/database/tables/meter_contract.dart';
+import 'package:openmeter/shared/constant/datetime_formats.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import 'daos/contract_dao.dart';
@@ -13,7 +19,7 @@ import 'daos/entry_dao.dart';
 import 'daos/meter_dao.dart';
 import 'daos/room_dao.dart';
 import 'daos/tags_dao.dart';
-import 'tables/contract.dart';
+import 'tables/contract.dart' as c;
 import 'tables/cost_compare.dart';
 import 'tables/entries.dart';
 import 'tables/meter.dart';
@@ -29,11 +35,12 @@ part 'local_database.g.dart';
   Entries,
   Room,
   MeterInRoom,
-  Contract,
-  Provider,
+  c.Contract,
+  c.Provider,
   Tags,
   MeterWithTags,
-  CostCompare
+  CostCompare,
+  MeterContract,
 ], daos: [
   MeterDao,
   EntryDao,
@@ -43,44 +50,55 @@ part 'local_database.g.dart';
   CostCompareDao
 ])
 class LocalDatabase extends _$LocalDatabase {
-  LocalDatabase() : super(_openConnection());
+  LocalDatabase([QueryExecutor? executor])
+      : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 11;
 
   @override
-  MigrationStrategy get migration => MigrationStrategy(
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-        onUpgrade: (m, from, to) async {
-          if (from < 2) {
-            await m.addColumn(meter, meter.isArchived);
-          }
-          if (from < 3) {
-            await m.addColumn(provider, provider.canceled);
-            await m.addColumn(provider, provider.renewal);
-          }
-          if (from < 4) {
-            await m.addColumn(provider, provider.canceledDate);
-          }
-          if (from < 5) {
-            await m.addColumn(entries, entries.isReset);
-          }
-          if (from < 6) {
-            await m.addColumn(entries, entries.transmittedToProvider);
-          }
-          if (from < 7) {
-            await m.addColumn(entries, entries.imagePath);
-          }
-        },
-      );
+  MigrationStrategy get migration =>
+      MigrationStrategy(beforeOpen: (details) async {
+        await customStatement('PRAGMA foreign_keys = ON');
+      }, onUpgrade: (m, from, to) async {
+        if (from < 2) {
+          await m.addColumn(meter, meter.isArchived);
+        }
+        if (from < 3) {
+          await m.addColumn(provider, provider.canceled);
+          await m.addColumn(provider, provider.renewal);
+        }
+        if (from < 4) {
+          await m.addColumn(provider, provider.canceledDate);
+        }
+        if (from < 5) {
+          await m.addColumn(entries, entries.isReset);
+        }
+        if (from < 6) {
+          await m.addColumn(entries, entries.transmittedToProvider);
+        }
+        if (from < 7) {
+          await m.addColumn(entries, entries.imagePath);
+        }
+        if (from < 10) {
+          await m.createTable(meterContract);
+        }
+
+        await m.runMigrationSteps(
+          from: from,
+          to: to,
+          steps: migrationSteps(
+            from10To11: (m, schema) async => await migration10to11(m),
+          ),
+        );
+      });
 
   Future<void> exportInto(String path, bool isBackup) async {
     String newPath = '';
     DateTime date = DateTime.now();
 
-    String formattedDate = DateFormat('yyyy_mm_dd_hh_mm_ss').format(date);
+    String formattedDate =
+        DateFormat(DateTimeFormats.timestamp12H).format(date);
 
     if (isBackup) {
       newPath = p.join(path, 'meter_$formattedDate.db');
@@ -141,4 +159,15 @@ LazyDatabase _openConnection() {
 
     return NativeDatabase.createInBackground(file);
   });
+}
+
+@Riverpod(keepAlive: true)
+LocalDatabase localDb(Ref ref) {
+  final db = LocalDatabase();
+
+  ref.onDispose(() {
+    db.close();
+  });
+
+  return db;
 }

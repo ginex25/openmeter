@@ -45,3 +45,7 @@ app.*.map.json
 
 plan
 bugs.txt
+*.g.dart
+
+# FVM Version Cache
+.fvm/
