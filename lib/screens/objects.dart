@@ -4,6 +4,7 @@ import 'package:openmeter/features/contract/provider/contract_list_provider.dart
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/view/contract_view.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
+import 'package:openmeter/features/room/provider/search_room_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/view/room_view.dart';
 import 'package:openmeter/shared/provider/is_searching.dart';
@@ -63,7 +64,13 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
                 ),
               ],
               onSearch: (searchText) {
-                print(searchText);
+                if (searchText.isEmpty) {
+                  ref.read(searchRoomProvider.notifier).resetSearchState();
+                }
+
+                if (searchText.length > 2) {
+                  ref.read(searchRoomProvider.notifier).searchRoom(searchText);
+                }
               },
             ),
       body: PopScope(

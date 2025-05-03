@@ -32,6 +32,7 @@ class _SearchAppBarState extends ConsumerState<SearchAppBar> with SingleTickerPr
 
   void _stopSearch() {
     _textController.clear();
+    widget.onSearch?.call('');
     ref.read(isSearchingProvider.notifier).setState(false);
   }
 
@@ -71,6 +72,7 @@ class _SearchAppBarState extends ConsumerState<SearchAppBar> with SingleTickerPr
                           icon: const Icon(Icons.close),
                           onPressed: () {
                             _textController.clear();
+                            widget.onSearch?.call('');
                             setState(() {});
                           },
                         ),

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:openmeter/core/database/local_database.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
+import 'package:openmeter/features/room/helper/room_helper.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/repository/room_repository.dart';
@@ -18,7 +19,9 @@ class RoomList extends _$RoomList {
 
     final result = await repo.fetchRooms();
 
-    return repo.splitRooms(result);
+    final helper = RoomHelper();
+
+    return helper.splitRooms(result);
   }
 
   Future addRoom(String roomType, String roomName, String uuid) async {
@@ -38,7 +41,9 @@ class RoomList extends _$RoomList {
 
     _updateProviders();
 
-    state = AsyncData(repo.splitRooms(rooms));
+    final helper = RoomHelper();
+
+    state = AsyncData(helper.splitRooms(rooms));
   }
 
   Future toggleState(RoomDto room) async {
@@ -63,13 +68,11 @@ class RoomList extends _$RoomList {
         }
       }
 
-      ref
-          .read(selectedRoomCountProvider.notifier)
-          .setSelectedState(selectedCount);
+      ref.read(selectedRoomCountProvider.notifier).setSelectedState(selectedCount);
 
-      final repo = ref.watch(roomRepositoryProvider);
+      final helper = RoomHelper();
 
-      return repo.splitRooms(rooms);
+      return helper.splitRooms(rooms);
     });
   }
 
@@ -88,9 +91,9 @@ class RoomList extends _$RoomList {
           }
         }
 
-        final repo = ref.watch(roomRepositoryProvider);
+        final helper = RoomHelper();
 
-        return repo.splitRooms(allContracts);
+        return helper.splitRooms(allContracts);
       },
     );
   }
@@ -114,15 +117,15 @@ class RoomList extends _$RoomList {
 
     _updateProviders();
 
-    state = AsyncData(repo.splitRooms(rooms));
+    final helper = RoomHelper();
+
+    state = AsyncData(helper.splitRooms(rooms));
   }
 
   Future updateRoom(RoomDto room) async {
     if (state.value == null) {
       return null;
     }
-
-    final repo = ref.watch(roomRepositoryProvider);
 
     List<RoomDto> rooms = state.value!.$1 + state.value!.$2;
 
@@ -134,7 +137,9 @@ class RoomList extends _$RoomList {
 
     _updateProviders();
 
-    state = AsyncData(repo.splitRooms(rooms));
+    final helper = RoomHelper();
+
+    state = AsyncData(helper.splitRooms(rooms));
   }
 
   void _updateProviders() {
