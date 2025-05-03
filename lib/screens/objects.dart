@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/features/contract/provider/contract_list_provider.dart';
+import 'package:openmeter/features/contract/provider/search_contract_provider.dart';
 import 'package:openmeter/features/contract/provider/selected_contract_count.dart';
 import 'package:openmeter/features/contract/view/contract_view.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
@@ -66,10 +67,12 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
               onSearch: (searchText) {
                 if (searchText.isEmpty) {
                   ref.read(searchRoomProvider.notifier).resetSearchState();
+                  ref.read(searchContractProvider.notifier).resetSearchState();
                 }
 
                 if (searchText.length > 2) {
                   ref.read(searchRoomProvider.notifier).searchRoom(searchText);
+                  ref.read(searchContractProvider.notifier).searchContract(searchText);
                 }
               },
             ),
