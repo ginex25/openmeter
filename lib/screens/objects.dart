@@ -6,6 +6,9 @@ import 'package:openmeter/features/contract/view/contract_view.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
 import 'package:openmeter/features/room/view/room_view.dart';
+import 'package:openmeter/shared/provider/is_searching.dart';
+import 'package:openmeter/shared/widgets/search_bar.dart';
+import 'package:openmeter/shared/widgets/selected_count_app_bar.dart';
 
 import '../../features/contract/view/add_contract.dart';
 import '../../shared/widgets/selected_items_bar.dart';
@@ -32,15 +35,39 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
   Widget build(BuildContext context) {
     final int contractSelectedCount = ref.watch(selectedContractCountProvider);
     final int roomSelectedCount = ref.watch(selectedRoomCountProvider);
+    final bool isSearching = ref.watch(isSearchingProvider);
 
     return Scaffold(
       appBar: roomSelectedCount > 0 || contractSelectedCount > 0
-          ? _hasSelectedItems(
-              roomSelectedCount: roomSelectedCount,
-              contractSelectedCount: contractSelectedCount)
-          : _noSelectedItems(),
+          ? SelectedCountAppBar(
+              count: roomSelectedCount + contractSelectedCount,
+              onCancelButton: () {
+                if (roomSelectedCount > 0) {
+                  _removeSelectedRooms();
+                }
+
+                if (contractSelectedCount > 0) {
+                  _removeSelectedContracts();
+                }
+              },
+            )
+          : SearchAppBar(
+              title: 'Object',
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('settings');
+                  },
+                  icon: const Icon(Icons.settings),
+                  tooltip: 'Einstellungen',
+                ),
+              ],
+              onSearch: (searchText) {
+                print(searchText);
+              },
+            ),
       body: PopScope(
-        canPop: roomSelectedCount == 0 && contractSelectedCount == 0,
+        canPop: roomSelectedCount == 0 && contractSelectedCount == 0 && !isSearching,
         onPopInvokedWithResult: (bool didPop, _) async {
           if (roomSelectedCount > 0) {
             _removeSelectedRooms();
@@ -48,6 +75,10 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
 
           if (contractSelectedCount > 0) {
             _removeSelectedContracts();
+          }
+
+          if (isSearching) {
+            ref.read(isSearchingProvider.notifier).setState(false);
           }
         },
         child: Stack(
@@ -68,26 +99,10 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
               ),
             ),
             if (roomSelectedCount > 0) _selectedRooms(),
-            if (contractSelectedCount > 0)
-              _selectedContract(contractSelectedCount),
+            if (contractSelectedCount > 0) _selectedContract(contractSelectedCount),
           ],
         ),
       ),
-    );
-  }
-
-  AppBar _noSelectedItems() {
-    return AppBar(
-      title: const Text('Objekte'),
-      actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed('settings');
-          },
-          icon: const Icon(Icons.settings),
-          tooltip: 'Einstellungen',
-        ),
-      ],
     );
   }
 
@@ -101,9 +116,7 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
     final buttons = [
       TextButton(
         onPressed: () async {
-          await ref
-              .read(roomListProvider.notifier)
-              .deleteAllSelectedContracts();
+          await ref.read(roomListProvider.notifier).deleteAllSelectedContracts();
         },
         style: buttonStyle,
         child: const Column(
@@ -136,9 +149,7 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
       if (contractSelectedCount == 1)
         TextButton(
           onPressed: () {
-            final contract = ref
-                .read(contractListProvider.notifier)
-                .getSingleSelectedContract();
+            final contract = ref.read(contractListProvider.notifier).getSingleSelectedContract();
 
             Navigator.of(context)
                 .push(MaterialPageRoute(
@@ -208,26 +219,5 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
     ];
 
     return SelectedItemsBar(buttons: buttons);
-  }
-
-  AppBar _hasSelectedItems(
-      {required int roomSelectedCount, required int contractSelectedCount}) {
-    int count = roomSelectedCount + contractSelectedCount;
-
-    return AppBar(
-      title: Text('$count ausgewählt'),
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () {
-          if (roomSelectedCount > 0) {
-            _removeSelectedRooms();
-          }
-
-          if (contractSelectedCount > 0) {
-            _removeSelectedContracts();
-          }
-        },
-      ),
-    );
   }
 }
