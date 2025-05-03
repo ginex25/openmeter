@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/entry_dao.dart';
@@ -60,27 +59,6 @@ class RoomRepository {
     room.id = id;
 
     return room;
-  }
-
-  (List<RoomDto>, List<RoomDto>) splitRooms(Iterable<RoomDto> rooms) {
-    rooms = rooms.sortedBy(
-      (element) {
-        return element.typ;
-      },
-    );
-
-    List<RoomDto> firstRow = [];
-    List<RoomDto> secondRow = [];
-
-    for (int i = 0; i < rooms.length; i++) {
-      if (i % 2 == 0) {
-        firstRow.add(rooms.elementAt(i));
-      } else {
-        secondRow.add(rooms.elementAt(i));
-      }
-    }
-
-    return (firstRow, secondRow);
   }
 
   Future deleteRoom(RoomDto room) async {
@@ -153,21 +131,17 @@ class RoomRepository {
     return result;
   }
 
-  Future<void> saveAllMetersWithRoom(
-      {required String roomId, required List<MeterDto> meters}) async {
+  Future<void> saveAllMetersWithRoom({required String roomId, required List<MeterDto> meters}) async {
     for (MeterDto meter in meters) {
-      final data = MeterInRoomCompanion(
-          roomId: Value(roomId), meterId: Value(meter.id!));
+      final data = MeterInRoomCompanion(roomId: Value(roomId), meterId: Value(meter.id!));
 
       await _roomDao.createMeterInRoom(data);
     }
   }
 
-  Future<void> updateAllMetersWithRoom(
-      {required String roomId, required List<MeterDto> meters}) async {
+  Future<void> updateAllMetersWithRoom({required String roomId, required List<MeterDto> meters}) async {
     for (MeterDto meter in meters) {
-      final data = MeterInRoomCompanion(
-          roomId: Value(roomId), meterId: Value(meter.id!));
+      final data = MeterInRoomCompanion(roomId: Value(roomId), meterId: Value(meter.id!));
 
       await _roomDao.updateMeterInRoom(data);
     }
@@ -182,8 +156,7 @@ class RoomRepository {
   Future updateAssoziation(RoomDto room, MeterDto meter) async {
     final inRoom = await _roomDao.findByMeterId(meter.id!);
 
-    final MeterInRoomCompanion companion = MeterInRoomCompanion(
-        meterId: Value(meter.id!), roomId: Value(room.uuid));
+    final MeterInRoomCompanion companion = MeterInRoomCompanion(meterId: Value(meter.id!), roomId: Value(room.uuid));
 
     if (inRoom == null) {
       await _roomDao.createMeterInRoom(companion);

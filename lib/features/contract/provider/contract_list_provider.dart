@@ -1,4 +1,5 @@
 import 'package:openmeter/core/database/local_database.dart';
+import 'package:openmeter/features/contract/helper/contract_helper.dart';
 import 'package:openmeter/features/contract/model/contract_dto.dart';
 import 'package:openmeter/features/contract/model/provider_dto.dart';
 import 'package:openmeter/features/contract/provider/archived_contract_list_provider.dart';
@@ -20,7 +21,9 @@ class ContractList extends _$ContractList {
 
     final result = await repo.fetchContracts(isArchived: false);
 
-    return repo.splitContracts(result);
+    final helper = ContractHelper();
+
+    return helper.splitContracts(result);
   }
 
   Future toggleState(ContractDto contract) async {
@@ -45,13 +48,11 @@ class ContractList extends _$ContractList {
         }
       }
 
-      ref
-          .read(selectedContractCountProvider.notifier)
-          .setSelectedState(selectedCount);
+      ref.read(selectedContractCountProvider.notifier).setSelectedState(selectedCount);
 
-      final repo = ref.watch(contractRepositoryProvider);
+      final helper = ContractHelper();
 
-      return repo.splitContracts(allContracts);
+      return helper.splitContracts(allContracts);
     });
   }
 
@@ -70,9 +71,9 @@ class ContractList extends _$ContractList {
           }
         }
 
-        final repo = ref.watch(contractRepositoryProvider);
+        final helper = ContractHelper();
 
-        return repo.splitContracts(allContracts);
+        return helper.splitContracts(allContracts);
       },
     );
   }
@@ -110,7 +111,9 @@ class ContractList extends _$ContractList {
     ref.invalidate(archivedContractListProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
 
-    state = AsyncData(repo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
   Future deleteAllSelectedContracts() async {
@@ -135,11 +138,12 @@ class ContractList extends _$ContractList {
     ref.invalidate(contractsMeterTypeProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
 
-    state = AsyncData(repo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
-  Future<void> createContract(
-      ContractCompanion companion, ProviderDto? provider) async {
+  Future<void> createContract(ContractCompanion companion, ProviderDto? provider) async {
     final contractRepo = ref.watch(contractRepositoryProvider);
 
     final contractDto = await contractRepo.createContract(companion);
@@ -167,11 +171,12 @@ class ContractList extends _$ContractList {
     ref.read(hasUpdateProvider.notifier).setState(true);
     ref.invalidate(contractsMeterTypeProvider);
 
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
-  Future<ContractDto> updateContract(
-      ContractData contract, ProviderDto? provider) async {
+  Future<ContractDto> updateContract(ContractData contract, ProviderDto? provider) async {
     final contractRepo = ref.watch(contractRepositoryProvider);
     final providerRepo = ref.watch(providerRepositoryProvider);
 
@@ -203,12 +208,13 @@ class ContractList extends _$ContractList {
 
     final currentDto = allContracts[index];
 
-    final contractDto = ContractDto.fromData(
-        contract, provider?.toData(), currentDto.compareCosts);
+    final contractDto = ContractDto.fromData(contract, provider?.toData(), currentDto.compareCosts);
 
     allContracts[index] = contractDto;
 
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
 
     ref.invalidate(contractsMeterTypeProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
@@ -218,7 +224,6 @@ class ContractList extends _$ContractList {
 
   Future updateProvider(ContractDto contract, ProviderDto provider) async {
     final providerRepo = ref.watch(providerRepositoryProvider);
-    final contractRepo = ref.watch(contractRepositoryProvider);
 
     await providerRepo.updateProvider(provider);
 
@@ -235,13 +240,13 @@ class ContractList extends _$ContractList {
     ref.invalidate(contractsMeterTypeProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
 
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
-  Future<ProviderDto> providerRemoveCanceledState(
-      ContractDto contract, ProviderDto provider) async {
+  Future<ProviderDto> providerRemoveCanceledState(ContractDto contract, ProviderDto provider) async {
     final providerRepo = ref.watch(providerRepositoryProvider);
-    final contractRepo = ref.watch(contractRepositoryProvider);
 
     provider.canceled = false;
 
@@ -257,14 +262,15 @@ class ContractList extends _$ContractList {
 
     allContracts[index] = contract;
 
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
 
     return provider;
   }
 
   Future deleteProvider(ContractDto contract, ProviderDto provider) async {
     final providerRepo = ref.watch(providerRepositoryProvider);
-    final contractRepo = ref.watch(contractRepositoryProvider);
 
     await providerRepo.deleteProvider(provider);
 
@@ -281,12 +287,13 @@ class ContractList extends _$ContractList {
     ref.invalidate(contractsMeterTypeProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
 
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
   Future addProvider(ContractDto contract, ProviderDto provider) async {
     final providerRepo = ref.watch(providerRepositoryProvider);
-    final contractRepo = ref.watch(contractRepositoryProvider);
 
     await providerRepo.createProvider(provider, contract.id);
 
@@ -301,15 +308,16 @@ class ContractList extends _$ContractList {
     allContracts[index] = contract;
     ref.read(hasUpdateProvider.notifier).setState(true);
 
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
   addContract(ContractDto newContract) {
     List<ContractDto> allContracts = state.value!.$1 + state.value!.$2;
     allContracts.add(newContract);
 
-    final contractRepo = ref.watch(contractRepositoryProvider);
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 
   removeContract(ContractDto contract) {
@@ -319,7 +327,7 @@ class ContractList extends _$ContractList {
       (element) => element.id == contract.id,
     );
 
-    final contractRepo = ref.watch(contractRepositoryProvider);
-    state = AsyncData(contractRepo.splitContracts(allContracts));
+    final helper = ContractHelper();
+    state = AsyncData(helper.splitContracts(allContracts));
   }
 }

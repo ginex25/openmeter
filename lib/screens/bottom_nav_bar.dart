@@ -15,6 +15,7 @@ import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
 import 'package:openmeter/features/room/provider/selected_room_count_provider.dart';
+import 'package:openmeter/shared/provider/is_searching.dart';
 
 import '../../shared/constant/custom_icons.dart';
 import '../../shared/constant/log.dart';
@@ -31,8 +32,7 @@ class BottomNavBar extends ConsumerStatefulWidget {
   ConsumerState<BottomNavBar> createState() => _BottomNavBarState();
 }
 
-class _BottomNavBarState extends ConsumerState<BottomNavBar>
-    with WidgetsBindingObserver {
+class _BottomNavBarState extends ConsumerState<BottomNavBar> with WidgetsBindingObserver {
   int _currentIndex = 0;
   bool hasUpdate = false;
   bool isInAppAction = false;
@@ -62,10 +62,7 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar>
     final AutoBackupModel autoBackup = ref.watch(autoBackupProvider);
     log(state.toString(), name: LogNames.appLifecycle);
 
-    if (autoBackup.backupIsPossible &&
-        hasUpdate &&
-        !isInAppAction &&
-        state == AppLifecycleState.paused) {
+    if (autoBackup.backupIsPossible && hasUpdate && !isInAppAction && state == AppLifecycleState.paused) {
       await runExportAsIsolate(
         path: autoBackup.path,
         db: ref.watch(localDbProvider),
@@ -89,6 +86,7 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar>
     final int selectedMeters = ref.watch(selectedMetersCountProvider);
     final int selectedRooms = ref.watch(selectedRoomCountProvider);
     final int selectedContracts = ref.watch(selectedContractCountProvider);
+    final bool isSearching = ref.watch(isSearchingProvider);
 
     bool compactNavBar = themeMode.compactNavigation;
 
@@ -104,23 +102,21 @@ class _BottomNavBarState extends ConsumerState<BottomNavBar>
           ? null
           : NavigationBar(
               height: MediaQuery.of(context).size.height * 0.09,
-              labelBehavior: compactNavBar
-                  ? NavigationDestinationLabelBehavior.alwaysHide
-                  : NavigationDestinationLabelBehavior.alwaysShow,
+              labelBehavior: compactNavBar ? NavigationDestinationLabelBehavior.alwaysHide : NavigationDestinationLabelBehavior.alwaysShow,
               selectedIndex: _currentIndex,
               onDestinationSelected: (value) {
+                if (isSearching) {
+                  ref.read(isSearchingProvider.notifier).setState(false);
+                }
+
                 if (selectedRooms > 0) {
                   ref.read(roomListProvider.notifier).removeAllSelectedState();
                 }
                 if (selectedContracts > 0) {
-                  ref
-                      .read(contractListProvider.notifier)
-                      .removeAllSelectedState();
+                  ref.read(contractListProvider.notifier).removeAllSelectedState();
                 }
                 if (selectedMeters > 0) {
-                  ref
-                      .read(meterListProvider.notifier)
-                      .removeAllSelectedMetersState();
+                  ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
                 }
 
                 setState(() {

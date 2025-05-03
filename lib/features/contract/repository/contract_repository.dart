@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:openmeter/core/database/daos/contract_dao.dart';
 import 'package:openmeter/core/database/local_database.dart';
@@ -17,8 +16,7 @@ class ContractRepository {
   ContractRepository(this._contractDao);
 
   Future<List<ContractDto>> fetchContracts({bool? isArchived}) async {
-    final List<ContractModel> data =
-        await _contractDao.getAllContracts(isArchived: isArchived);
+    final List<ContractModel> data = await _contractDao.getAllContracts(isArchived: isArchived);
 
     if (data.isEmpty) {
       return [];
@@ -26,9 +24,7 @@ class ContractRepository {
 
     final result = data.map(
       (e) {
-        final CompareCosts? costs = e.costCompareData == null
-            ? null
-            : CompareCosts.fromData(e.costCompareData!);
+        final CompareCosts? costs = e.costCompareData == null ? null : CompareCosts.fromData(e.costCompareData!);
 
         return ContractDto.fromData(e.contractData, e.providerData, costs);
       },
@@ -51,31 +47,8 @@ class ContractRepository {
     ).toList();
   }
 
-  (List<ContractDto>, List<ContractDto>) splitContracts(
-      Iterable<ContractDto> contracts) {
-    contracts = contracts.sortedBy(
-      (element) {
-        return element.meterTyp;
-      },
-    );
-
-    List<ContractDto> firstRow = [];
-    List<ContractDto> secondRow = [];
-
-    for (int i = 0; i < contracts.length; i++) {
-      if (i % 2 == 0) {
-        firstRow.add(contracts.elementAt(i));
-      } else {
-        secondRow.add(contracts.elementAt(i));
-      }
-    }
-
-    return (firstRow, secondRow);
-  }
-
   Future toggleArchiveState(int contractId, bool isArchived) async {
-    return await _contractDao.updateIsArchived(
-        contractId: contractId, isArchived: isArchived);
+    return await _contractDao.updateIsArchived(contractId: contractId, isArchived: isArchived);
   }
 
   Future deleteContract(ContractDto contract) async {
@@ -89,8 +62,7 @@ class ContractRepository {
   Future<ContractDto> createContract(ContractCompanion contract) async {
     final int contractId = await _contractDao.createContract(contract);
 
-    ContractDto contractDto =
-        ContractDto.fromCompanion(data: contract, contractId: contractId);
+    ContractDto contractDto = ContractDto.fromCompanion(data: contract, contractId: contractId);
 
     return contractDto;
   }
@@ -106,12 +78,9 @@ class ContractRepository {
       throw 'Contract with id $id not found!';
     }
 
-    final CompareCosts? costs = data.costCompareData == null
-        ? null
-        : CompareCosts.fromData(data.costCompareData!);
+    final CompareCosts? costs = data.costCompareData == null ? null : CompareCosts.fromData(data.costCompareData!);
 
-    final contract =
-        ContractDto.fromData(data.contractData, data.providerData, costs);
+    final contract = ContractDto.fromData(data.contractData, data.providerData, costs);
 
     if (contract.provider != null) {
       final now = DateTime.now();

@@ -9,6 +9,7 @@ import 'package:openmeter/features/meters/view/details_meter_screen.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
 import 'package:openmeter/features/meters/widgets/sort_icon_button.dart';
 import 'package:openmeter/shared/widgets/empty_data.dart';
+import 'package:openmeter/shared/widgets/selected_count_app_bar.dart';
 import 'package:openmeter/shared/widgets/selected_items_bar.dart';
 
 class MeterListScreen extends ConsumerStatefulWidget {
@@ -29,7 +30,12 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
 
     return Scaffold(
       appBar: selectedMetersCount > 0
-          ? _selectedAppBar(selectedMetersCount)
+          ? SelectedCountAppBar(
+              count: selectedMetersCount,
+              onCancelButton: () {
+                ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
+              },
+            )
           : _unselectedAppBar(),
       body: meterProvider.when(
         data: (List<MeterDto> data) {
@@ -40,9 +46,7 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
           return PopScope(
             onPopInvokedWithResult: (bool didPop, _) async {
               if (selectedMetersCount > 0) {
-                ref
-                    .read(meterListProvider.notifier)
-                    .removeAllSelectedMetersState();
+                ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
               }
             },
             canPop: selectedMetersCount == 0,
@@ -54,29 +58,20 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
                       MeterCardList(
                         meters: data,
                         onLongPress: (MeterDto selectedMeter) {
-                          ref
-                              .read(meterListProvider.notifier)
-                              .toggleMeterSelectedState(selectedMeter);
+                          ref.read(meterListProvider.notifier).toggleMeterSelectedState(selectedMeter);
                         },
                         onDelete: (MeterDto meter) {
-                          ref
-                              .read(meterListProvider.notifier)
-                              .deleteMeter(meter);
+                          ref.read(meterListProvider.notifier).deleteMeter(meter);
                         },
                         onSidePanelAction: (meter) {
-                          ref
-                              .read(meterListProvider.notifier)
-                              .archiveMeter(meter);
+                          ref.read(meterListProvider.notifier).archiveMeter(meter);
                         },
                         onCardTap: (meter) {
                           if (selectedMetersCount > 0) {
-                            ref
-                                .read(meterListProvider.notifier)
-                                .toggleMeterSelectedState(meter);
+                            ref.read(meterListProvider.notifier).toggleMeterSelectedState(meter);
                           } else {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  DetailsMeterScreen(meterId: meter.id!),
+                              builder: (context) => DetailsMeterScreen(meterId: meter.id!),
                             ));
                           }
                         },
@@ -107,18 +102,6 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
-      ),
-    );
-  }
-
-  AppBar _selectedAppBar(int count) {
-    return AppBar(
-      title: Text('$count ausgewählt'),
-      leading: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () {
-          ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
-        },
       ),
     );
   }
