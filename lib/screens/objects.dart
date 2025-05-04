@@ -65,7 +65,7 @@ class _ObjectsScreenState extends ConsumerState<ObjectsScreen> {
                 ),
               ],
               onSearch: (searchText) {
-                if (searchText.isEmpty) {
+                if (searchText.isEmpty || searchText.length <= 2) {
                   ref.read(searchRoomProvider.notifier).resetSearchState();
                   ref.read(searchContractProvider.notifier).resetSearchState();
                 }

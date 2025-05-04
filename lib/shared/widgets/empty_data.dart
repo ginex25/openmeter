@@ -5,7 +5,7 @@ class EmptyData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Align(
+    return Align(
       alignment: Alignment.center,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -32,6 +32,7 @@ class EmptyData extends StatelessWidget {
             style: TextStyle(
               color: Colors.grey,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
