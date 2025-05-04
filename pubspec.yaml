@@ -46,13 +46,13 @@ dependencies:
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
   rxdart: ^0.28.0
-  async: ^2.11.0
+  async: ^2.12.0
 
   #
   intl: any
   grouped_list: ^6.0.0
-  fl_chart: ^0.70.2
-  permission_handler: ^11.4.0
+  fl_chart: ^0.71.0
+  permission_handler: ^12.0.0+1
   font_awesome_flutter: ^10.8.0
   wakelock_plus: ^1.2.10
   flutter_slidable: ^4.0.0
@@ -63,7 +63,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   # share and save image
-  share_plus: ^10.1.4
+  share_plus: ^11.0.0
   flutter_image_gallery_saver: ^0.0.2
   archive: ^4.0.4
   # Chart
@@ -74,7 +74,7 @@ dependencies:
   # App Native Settings
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.5
-  file_picker: ^9.2.0
+  file_picker: ^10.1.2
 
   path: any
 dependency_overrides:

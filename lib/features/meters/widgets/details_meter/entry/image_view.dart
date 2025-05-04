@@ -23,8 +23,7 @@ class ImageView extends ConsumerStatefulWidget {
   ConsumerState<ImageView> createState() => _ImageViewState();
 }
 
-class _ImageViewState extends ConsumerState<ImageView>
-    with SingleTickerProviderStateMixin {
+class _ImageViewState extends ConsumerState<ImageView> with SingleTickerProviderStateMixin {
   final MeterImageService _meterImageHelper = MeterImageService();
 
   final _transformationController = TransformationController();
@@ -79,8 +78,7 @@ class _ImageViewState extends ConsumerState<ImageView>
                 ],
               ),
               Text(
-                DateFormat(DateTimeFormats.dateGermanLong)
-                    .format(widget.entry.date),
+                DateFormat(DateTimeFormats.dateGermanLong).format(widget.entry.date),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -98,14 +96,9 @@ class _ImageViewState extends ConsumerState<ImageView>
               ..translate(x, y)
               ..scale(_scale);
 
-            final value = _transformationController.value.isIdentity()
-                ? zoomed
-                : Matrix4.identity();
+            final value = _transformationController.value.isIdentity() ? zoomed : Matrix4.identity();
 
-            _animation =
-                Matrix4Tween(begin: _transformationController.value, end: value)
-                    .animate(CurveTween(curve: Curves.easeOut)
-                        .animate(_animationController));
+            _animation = Matrix4Tween(begin: _transformationController.value, end: value).animate(CurveTween(curve: Curves.easeOut).animate(_animationController));
 
             _animationController.forward(from: 0);
           },
@@ -158,8 +151,7 @@ class _ImageViewState extends ConsumerState<ImageView>
               children: [
                 TextButton(
                   onPressed: () async {
-                    bool success = await _meterImageHelper
-                        .saveImageToGallery(File(widget.entry.imagePath!));
+                    bool success = await _meterImageHelper.saveImageToGallery(File(widget.entry.imagePath!));
 
                     if (mounted) {
                       if (success) {
@@ -192,12 +184,9 @@ class _ImageViewState extends ConsumerState<ImageView>
                 TextButton(
                   onPressed: () async {
                     ref.read(inAppActionProvider.notifier).setState(true);
-                    await Share.shareXFiles([XFile(widget.entry.imagePath!)])
-                        .then(
-                      (value) => ref
-                          .read(inAppActionProvider.notifier)
-                          .setState(false),
-                    );
+                    await SharePlus.instance.share(ShareParams(files: [XFile(widget.entry.imagePath!)])).then(
+                          (value) => ref.read(inAppActionProvider.notifier).setState(false),
+                        );
                   },
                   child: _createButtons(
                     Icons.share,
@@ -207,9 +196,7 @@ class _ImageViewState extends ConsumerState<ImageView>
                 ),
                 TextButton(
                   onPressed: () async {
-                    await _meterImageHelper
-                        .deleteImage(widget.entry.imagePath!)
-                        .then((value) {
+                    await _meterImageHelper.deleteImage(widget.entry.imagePath!).then((value) {
                       if (mounted) {
                         Navigator.of(context).pop(true);
                       }

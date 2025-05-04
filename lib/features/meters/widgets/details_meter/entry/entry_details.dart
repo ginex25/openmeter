@@ -71,10 +71,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
     entry.isReset = _isReset;
     entry.note = _noteController.text;
 
-    await ref
-        .read(detailsMeterProvider(widget.meter.id!).notifier)
-        .updateEntry(entry)
-        .then(
+    await ref.read(detailsMeterProvider(widget.meter.id!).notifier).updateEntry(entry).then(
       (value) {
         if (mounted) {
           Navigator.of(context).pop();
@@ -123,8 +120,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              DateFormat(DateTimeFormats.dateGermanLong)
-                                  .format(entry.date),
+                              DateFormat(DateTimeFormats.dateGermanLong).format(entry.date),
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             convertMeterUnit.getUnitWidget(
@@ -172,11 +168,8 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
                         children: [
                           Column(
                             children: [
-                              if (usage == -1 && !entry.isReset)
-                                _extraInformation('Erstablesung'),
-                              if (entry.isReset)
-                                _extraInformation(
-                                    'Dieser Zähler wurde Zurückgesetzt.'),
+                              if (usage == -1 && !entry.isReset) _extraInformation('Erstablesung'),
+                              if (entry.isReset) _extraInformation('Dieser Zähler wurde Zurückgesetzt.'),
                               if (usage == -1 || entry.isReset) const Divider(),
                               if (usage != -1)
                                 Column(
@@ -309,22 +302,18 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
           onTap: () async {
             ref.read(inAppActionProvider.notifier).setState(true);
 
-            String? imagePath =
-                await _meterImageHelper.selectAndSaveImage(ImageSource.camera);
+            String? imagePath = await _meterImageHelper.selectAndSaveImage(ImageSource.camera);
 
             ref.read(inAppActionProvider.notifier).setState(false);
 
             setState(() {
               entry.imagePath = imagePath;
 
-              ref
-                  .read(detailsMeterProvider(widget.meter.id!).notifier)
-                  .updateEntry(entry);
+              ref.read(detailsMeterProvider(widget.meter.id!).notifier).updateEntry(entry);
 
               if (entry.imagePath != null) {
                 _selectedView = 1;
-                _pageController.nextPage(
-                    duration: Durations.short1, curve: Curves.linear);
+                _pageController.nextPage(duration: Durations.short1, curve: Curves.linear);
               }
             });
           },
@@ -347,22 +336,18 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
           onTap: () async {
             ref.read(inAppActionProvider.notifier).setState(true);
 
-            String? imagePath =
-                await _meterImageHelper.selectAndSaveImage(ImageSource.gallery);
+            String? imagePath = await _meterImageHelper.selectAndSaveImage(ImageSource.gallery);
 
             ref.read(inAppActionProvider.notifier).setState(false);
 
             setState(() {
               entry.imagePath = imagePath;
 
-              ref
-                  .read(detailsMeterProvider(widget.meter.id!).notifier)
-                  .updateEntry(entry);
+              ref.read(detailsMeterProvider(widget.meter.id!).notifier).updateEntry(entry);
 
               if (entry.imagePath != null) {
                 _selectedView = 1;
-                _pageController.nextPage(
-                    duration: Durations.short1, curve: Curves.linear);
+                _pageController.nextPage(duration: Durations.short1, curve: Curves.linear);
               }
             });
           },
@@ -397,8 +382,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
         PopupMenuItem(
           value: 0,
           onTap: () async {
-            bool success = await _meterImageHelper
-                .saveImageToGallery(File(entry.imagePath!));
+            bool success = await _meterImageHelper.saveImageToGallery(File(entry.imagePath!));
 
             if (context.mounted) {
               if (success) {
@@ -443,7 +427,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
           onTap: () async {
             ref.read(inAppActionProvider.notifier).setState(true);
 
-            await Share.shareXFiles([XFile(entry.imagePath!)]);
+            await SharePlus.instance.share(ShareParams(files: [XFile(entry.imagePath!)]));
 
             ref.read(inAppActionProvider.notifier).setState(false);
           },
@@ -502,9 +486,7 @@ class _EntryDetailsState extends ConsumerState<EntryDetails> {
       _selectedView = 0;
     });
 
-    await ref
-        .read(detailsMeterProvider(widget.meter.id!).notifier)
-        .updateEntry(entry);
+    await ref.read(detailsMeterProvider(widget.meter.id!).notifier).updateEntry(entry);
   }
 }
 
@@ -539,11 +521,9 @@ class EntityCost extends ConsumerWidget {
                       convertMeterUnit.getUnitWidget(
                         count: '+${ConvertCount.convertCount(entry.usage)}',
                         unit: meter.unit,
-                        textStyle:
-                            Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: entryHelper.getColors(
-                                      entry.count, entry.usage),
-                                ),
+                        textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: entryHelper.getColors(entry.count, entry.usage),
+                            ),
                       ),
                       Text(
                         'innerhalb ${entry.days} Tagen',
@@ -555,14 +535,11 @@ class EntityCost extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       convertMeterUnit.getUnitWidget(
-                        count:
-                            entryHelper.getDailyUsage(entry.usage, entry.days),
+                        count: entryHelper.getDailyUsage(entry.usage, entry.days),
                         unit: meter.unit,
-                        textStyle:
-                            Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: entryHelper.getColors(
-                                      entry.count, entry.usage),
-                                ),
+                        textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: entryHelper.getColors(entry.count, entry.usage),
+                            ),
                       ),
                       Text(
                         'pro Tag',
@@ -575,18 +552,14 @@ class EntityCost extends ConsumerWidget {
               const SizedBox(height: 15),
               Text(
                 'Für mehr Information füge einen Vertrag hinzu.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: Colors.grey),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
             ],
           );
         }
 
-        double usageCost = entryHelper.calcUsageForContract(
-            entry.usage, data.costs.energyPrice);
+        double usageCost = entryHelper.calcUsageForContract(entry.usage, data.costs.energyPrice);
         double dailyCost = usageCost / entry.days;
 
         final String local = Platform.localeName;
@@ -605,13 +578,12 @@ class EntityCost extends ConsumerWidget {
                     convertMeterUnit.getUnitWidget(
                       count: '+${ConvertCount.convertCount(entry.usage)}',
                       unit: meter.unit,
-                      textStyle:
-                          Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                color: entryHelper.getColors(
-                                  entry.count,
-                                  entry.usage,
-                                ),
-                              ),
+                      textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: entryHelper.getColors(
+                              entry.count,
+                              entry.usage,
+                            ),
+                          ),
                     ),
                     Text(
                       costFormat.format(usageCost),
@@ -639,13 +611,12 @@ class EntityCost extends ConsumerWidget {
                     convertMeterUnit.getUnitWidget(
                       count: entryHelper.getDailyUsage(entry.usage, entry.days),
                       unit: meter.unit,
-                      textStyle:
-                          Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                color: entryHelper.getColors(
-                                  entry.count,
-                                  entry.usage,
-                                ),
-                              ),
+                      textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: entryHelper.getColors(
+                              entry.count,
+                              entry.usage,
+                            ),
+                          ),
                     ),
                     Text(
                       costFormat.format(dailyCost),
