@@ -41,7 +41,7 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
   String _pageTitle = 'Neuer Zähler';
   bool _updateMeterState = false;
 
-  final List<String> _tagsId = [];
+  final List<TagDto> _tagsId = [];
   String _meterUnit = 'kWh';
 
   RoomDto? _room;
@@ -96,18 +96,10 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
 
   void handleOnSave() async {
     if (_formKey.currentState!.validate()) {
-      final MeterDto meter = MeterDto(
-          unit: _meterUnit,
-          number: _meterNumber.text,
-          typ: _meterType,
-          note: _meterNote.text,
-          tags: []);
+      final MeterDto meter = MeterDto(unit: _meterUnit, number: _meterNumber.text, typ: _meterType, note: _meterNote.text, tags: []);
 
       if (_updateMeterState) {
-        await ref
-            .read(detailsMeterProvider(widget.detailsMeter!.meter.id!).notifier)
-            .updateMeter(meter, _room, _tagsId)
-            .then(
+        await ref.read(detailsMeterProvider(widget.detailsMeter!.meter.id!).notifier).updateMeter(meter, _room, _tagsId).then(
           (value) {
             if (mounted) {
               Navigator.of(context).pop();
@@ -115,10 +107,7 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
           },
         );
       } else {
-        await ref
-            .read(meterListProvider.notifier)
-            .createMeter(meter, int.parse(_meterValue.text), _room, _tagsId)
-            .then(
+        await ref.read(meterListProvider.notifier).createMeter(meter, int.parse(_meterValue.text), _room, _tagsId).then(
           (value) {
             if (mounted) {
               Navigator.of(context).pop();
@@ -180,8 +169,7 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
                     onChanged: (value) {
                       String typ = value ?? 'Stromzähler';
 
-                      final meterTyp = meterTyps
-                          .firstWhere((element) => element.meterTyp == value);
+                      final meterTyp = meterTyps.firstWhere((element) => element.meterTyp == value);
 
                       setState(() {
                         _meterUnit = meterTyp.unit;
@@ -206,16 +194,12 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
                     },
                     textInputAction: TextInputAction.next,
                     controller: _meterNumber,
-                    decoration: const InputDecoration(
-                        label: Text('Zählernummer'),
-                        icon: Icon(Icons.onetwothree_outlined)),
+                    decoration: const InputDecoration(label: Text('Zählernummer'), icon: Icon(Icons.onetwothree_outlined)),
                   ),
                   TextFormField(
                     textInputAction: TextInputAction.next,
                     controller: _meterNote,
-                    decoration: const InputDecoration(
-                        label: Text('Notiz'),
-                        icon: Icon(Icons.drive_file_rename_outline)),
+                    decoration: const InputDecoration(label: Text('Notiz'), icon: Icon(Icons.drive_file_rename_outline)),
                   ),
                   if (!_updateMeterState)
                     TextFormField(
@@ -246,10 +230,10 @@ class _AddMeterScreenState extends ConsumerState<AddMeterScreen> {
                   MeterAddTags(
                     selectedTags: _tagsId,
                     onTagSelect: (tag) {
-                      if (_tagsId.contains(tag.uuid)) {
-                        _tagsId.remove(tag.uuid);
+                      if (_tagsId.contains(tag)) {
+                        _tagsId.remove(tag);
                       } else {
-                        _tagsId.add(tag.uuid!);
+                        _tagsId.add(tag);
                       }
 
                       setState(() {});
@@ -331,7 +315,7 @@ class _UnitInputState extends State<UnitInput> {
 
 class MeterAddTags extends ConsumerWidget {
   final Function(TagDto) onTagSelect;
-  final List<String> selectedTags;
+  final List<TagDto> selectedTags;
 
   const MeterAddTags({
     super.key,
@@ -387,7 +371,7 @@ class MeterAddTags extends ConsumerWidget {
                     itemBuilder: (context, index) {
                       Widget child = Container();
 
-                      if (selectedTags.contains(tags[index].uuid)) {
+                      if (selectedTags.contains(tags[index])) {
                         child = Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: CheckedTag(

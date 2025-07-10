@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:openmeter/features/meters/model/meter_dto.dart';
 import 'package:openmeter/features/meters/provider/meter_list_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,8 +25,11 @@ class SearchMeter extends _$SearchMeter {
 
     for (MeterDto meter in currentMeters) {
       final containsRoomName = meter.room?.name.toLowerCase().contains(lowerCaseSearch) ?? false;
+      final containsTag = meter.tags.firstWhereOrNull(
+        (element) => element.name.toLowerCase().contains(lowerCaseSearch),
+      );
 
-      if (meter.typ.toLowerCase().contains(lowerCaseSearch) || meter.number.toLowerCase().contains(lowerCaseSearch) || containsRoomName) {
+      if (meter.typ.toLowerCase().contains(lowerCaseSearch) || meter.number.toLowerCase().contains(lowerCaseSearch) || containsRoomName || containsTag != null) {
         result.add(meter);
       }
     }

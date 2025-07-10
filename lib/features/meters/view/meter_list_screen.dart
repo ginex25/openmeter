@@ -9,6 +9,7 @@ import 'package:openmeter/features/meters/view/add_meter_screen.dart';
 import 'package:openmeter/features/meters/view/details_meter_screen.dart';
 import 'package:openmeter/features/meters/widgets/meter_card_list.dart';
 import 'package:openmeter/features/meters/widgets/sort_icon_button.dart';
+import 'package:openmeter/shared/provider/is_searching.dart';
 import 'package:openmeter/shared/widgets/empty_data.dart';
 import 'package:openmeter/shared/widgets/search_bar.dart';
 import 'package:openmeter/shared/widgets/selected_count_app_bar.dart';
@@ -39,59 +40,51 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
 
     final archivedMetersLengthProvider = ref.watch(archivedMetersCountProvider);
 
-    return PopScope(
-      onPopInvokedWithResult: (bool didPop, _) async {
-        if (selectedMetersCount > 0) {
-          ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
-        }
-      },
-      canPop: selectedMetersCount == 0,
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                MeterCardList(
-                  meters: data,
-                  onLongPress: (MeterDto selectedMeter) {
-                    ref.read(meterListProvider.notifier).toggleMeterSelectedState(selectedMeter);
-                  },
-                  onDelete: (MeterDto meter) {
-                    ref.read(meterListProvider.notifier).deleteMeter(meter);
-                  },
-                  onSidePanelAction: (meter) {
-                    ref.read(meterListProvider.notifier).archiveMeter(meter);
-                  },
-                  onCardTap: (meter) {
-                    if (selectedMetersCount > 0) {
-                      ref.read(meterListProvider.notifier).toggleMeterSelectedState(meter);
-                    } else {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DetailsMeterScreen(meterId: meter.id!),
-                      ));
-                    }
-                  },
-                ),
-                if (selectedMetersCount == 0)
-                  archivedMetersLengthProvider.when(
-                    data: (data) => TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('archive');
-                      },
-                      child: Text(
-                        'Archivierte Zähler ($data)',
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            children: [
+              MeterCardList(
+                meters: data,
+                onLongPress: (MeterDto selectedMeter) {
+                  ref.read(meterListProvider.notifier).toggleMeterSelectedState(selectedMeter);
+                },
+                onDelete: (MeterDto meter) {
+                  ref.read(meterListProvider.notifier).deleteMeter(meter);
+                },
+                onSidePanelAction: (meter) {
+                  ref.read(meterListProvider.notifier).archiveMeter(meter);
+                },
+                onCardTap: (meter) {
+                  if (selectedMetersCount > 0) {
+                    ref.read(meterListProvider.notifier).toggleMeterSelectedState(meter);
+                  } else {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => DetailsMeterScreen(meterId: meter.id!),
+                    ));
+                  }
+                },
+              ),
+              if (selectedMetersCount == 0)
+                archivedMetersLengthProvider.when(
+                  data: (data) => TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('archive');
+                    },
+                    child: Text(
+                      'Archivierte Zähler ($data)',
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
-                    error: (error, _) => throw error,
-                    loading: () => Container(),
                   ),
-              ],
-            ),
+                  error: (error, _) => throw error,
+                  loading: () => Container(),
+                ),
+            ],
           ),
-          if (selectedMetersCount > 0) _selectedItems(),
-        ],
-      ),
+        ),
+        if (selectedMetersCount > 0) _selectedItems(),
+      ],
     );
   }
 
@@ -102,6 +95,8 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
     final searchMeters = ref.watch(searchMeterProvider);
 
     final meterProvider = ref.watch(meterListProvider);
+
+    final isSearching = ref.watch(isSearchingProvider);
 
     return Scaffold(
       appBar: selectedMetersCount > 0
@@ -146,17 +141,30 @@ class _MeterListScreenState extends ConsumerState<MeterListScreen> {
                 }
               },
             ),
-      body: searchMeters != null
-          ? _meterListWidget(searchMeters, selectedMetersCount, true)
-          : meterProvider.when(
-              data: (List<MeterDto> data) {
-                return _meterListWidget(data, selectedMetersCount, false);
-              },
-              error: (error, stackTrace) => throw error,
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
+      body: PopScope(
+        onPopInvokedWithResult: (bool didPop, _) async {
+          if (selectedMetersCount > 0) {
+            ref.read(meterListProvider.notifier).removeAllSelectedMetersState();
+          }
+
+          if (isSearching) {
+            ref.read(isSearchingProvider.notifier).setState(false);
+            ref.read(searchMeterProvider.notifier).resetSearchState();
+          }
+        },
+        canPop: selectedMetersCount == 0 && !isSearching,
+        child: searchMeters != null
+            ? _meterListWidget(searchMeters, selectedMetersCount, true)
+            : meterProvider.when(
+                data: (List<MeterDto> data) {
+                  return _meterListWidget(data, selectedMetersCount, false);
+                },
+                error: (error, stackTrace) => throw error,
+                loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
-            ),
+      ),
     );
   }
 

@@ -24,8 +24,7 @@ class MeterRepository {
 
   final EntryHelper _entryHelper = EntryHelper();
 
-  MeterRepository(this._meterDao, this._entryRepository, this._roomRepository,
-      this._tagRepository);
+  MeterRepository(this._meterDao, this._entryRepository, this._roomRepository, this._tagRepository);
 
   Future<List<MeterDto>> fetchMeters({bool? isArchived}) async {
     final data = await _meterDao.getAllMeterWithRooms(isArchived: isArchived);
@@ -33,12 +32,14 @@ class MeterRepository {
     List<MeterDto> result = [];
 
     for (MeterWithRoom m in data) {
-      final EntryDto? entry =
-          await _entryRepository.getNewestEntryForMeter(m.meter.id);
+      final EntryDto? entry = await _entryRepository.getNewestEntryForMeter(m.meter.id);
 
       final meterDto = MeterDto.fromData(m.meter, entry != null);
       meterDto.lastEntry = entry;
       meterDto.room = m.room != null ? RoomDto.fromData(m.room!) : null;
+      final tags = await _tagRepository.getTagsForMeter(m.meter.id);
+
+      meterDto.tags = tags;
 
       result.add(meterDto);
     }
@@ -78,11 +79,7 @@ class MeterRepository {
     return meter;
   }
 
-  Future<MeterDto> createMeter(
-      {required MeterDto meter,
-      int? currentCount,
-      RoomDto? room,
-      required List<String> tags}) async {
+  Future<MeterDto> createMeter({required MeterDto meter, int? currentCount, RoomDto? room, required List<TagDto> tags}) async {
     meter.id = await _meterDao.createMeter(meter.toMeterCompanion());
 
     if (currentCount != null) {
@@ -99,15 +96,14 @@ class MeterRepository {
     if (room != null) {
       meter.room = room;
 
-      await _roomRepository
-          .saveAllMetersWithRoom(roomId: room.uuid, meters: [meter]);
+      await _roomRepository.saveAllMetersWithRoom(roomId: room.uuid, meters: [meter]);
     }
 
     if (tags.isNotEmpty) {
       meter.tags = tags;
 
-      for (String tag in tags) {
-        await _tagRepository.createMeterWithTag(meter.id!, tag);
+      for (TagDto tag in tags) {
+        await _tagRepository.createMeterWithTag(meter.id!, tag.uuid!);
       }
     }
 
@@ -118,13 +114,11 @@ class MeterRepository {
     await _meterDao.updateArchived(meter.id!, meter.isArchived);
   }
 
-  Future<DetailsMeterModel> fetchDetailsMeter(
-      int meterId, bool predictCount) async {
+  Future<DetailsMeterModel> fetchDetailsMeter(int meterId, bool predictCount) async {
     final MeterData meterData = await _meterDao.getSingleMeter(meterId);
     final MeterDto meter = MeterDto.fromData(meterData, false);
 
-    List<EntryDto> entries =
-        await _entryRepository.fetchEntriesForMeter(meterId);
+    List<EntryDto> entries = await _entryRepository.fetchEntriesForMeter(meterId);
 
     meter.hasEntry = entries.isNotEmpty;
     meter.lastEntry = entries.firstOrNull;
@@ -142,24 +136,12 @@ class MeterRepository {
     }
 
     List<TagDto> tags = await _tagRepository.getTagsForMeter(meterId);
-    meter.tags = tags
-        .map(
-          (e) => e.uuid!,
-        )
-        .toList();
+    meter.tags = tags;
 
-    return DetailsMeterModel(
-        meter: meter,
-        entries: entries,
-        room: room,
-        predictCount: predictedCount);
+    return DetailsMeterModel(meter: meter, entries: entries, room: room, predictCount: predictedCount);
   }
 
-  Future<MeterDto> updateMeter(
-      {required MeterDto oldMeter,
-      RoomDto? newRoom,
-      required List<String> tags,
-      required MeterDto newMeter}) async {
+  Future<MeterDto> updateMeter({required MeterDto oldMeter, RoomDto? newRoom, required List<TagDto> tags, required MeterDto newMeter}) async {
     if (newRoom == null && oldMeter.room != null) {
       await _roomRepository.removeMeterFromRoom(oldMeter);
     }
@@ -169,19 +151,19 @@ class MeterRepository {
     }
 
     if (tags.isEmpty && oldMeter.tags.isNotEmpty) {
-      for (String tag in oldMeter.tags) {
-        await _tagRepository.removeAssoziation(oldMeter, tag);
+      for (TagDto tag in oldMeter.tags) {
+        await _tagRepository.removeAssoziation(oldMeter, tag.uuid!);
       }
     }
 
     if (tags.isNotEmpty) {
-      for (String tag in tags) {
+      for (TagDto tag in tags) {
         if (oldMeter.tags.contains(tag)) {
-          await _tagRepository.removeAssoziation(oldMeter, tag);
+          await _tagRepository.removeAssoziation(oldMeter, tag.uuid!);
           continue;
         }
 
-        await _tagRepository.createMeterWithTag(oldMeter.id!, tag);
+        await _tagRepository.createMeterWithTag(oldMeter.id!, tag.uuid!);
       }
     }
 
@@ -210,6 +192,5 @@ class MeterRepository {
 MeterRepository meterRepository(Ref ref) {
   final db = ref.watch(localDbProvider);
 
-  return MeterRepository(db.meterDao, ref.watch(entryRepositoryProvider),
-      ref.watch(roomRepositoryProvider), ref.watch(tagRepositoryProvider));
+  return MeterRepository(db.meterDao, ref.watch(entryRepositoryProvider), ref.watch(roomRepositoryProvider), ref.watch(tagRepositoryProvider));
 }

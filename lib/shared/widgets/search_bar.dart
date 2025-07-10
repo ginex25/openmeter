@@ -30,7 +30,7 @@ class _SearchAppBarState extends ConsumerState<SearchAppBar> with SingleTickerPr
     setState(() {});
   }
 
-  void _stopSearch() {
+  void _resetSearch() {
     _textController.clear();
     widget.onSearch?.call('');
     ref.read(isSearchingProvider.notifier).setState(false);
@@ -45,6 +45,15 @@ class _SearchAppBarState extends ConsumerState<SearchAppBar> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final isSearching = ref.watch(isSearchingProvider);
+
+    ref.listen(
+      isSearchingProvider,
+      (previous, next) {
+        if (!next) {
+          _resetSearch();
+        }
+      },
+    );
 
     return AppBar(
       title: isSearching
@@ -61,7 +70,7 @@ class _SearchAppBarState extends ConsumerState<SearchAppBar> with SingleTickerPr
                 },
                 leading: IconButton(
                   onPressed: () {
-                    _stopSearch();
+                    _resetSearch();
                   },
                   icon: const Icon(Icons.arrow_back),
                 ),

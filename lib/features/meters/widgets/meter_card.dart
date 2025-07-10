@@ -29,8 +29,7 @@ class MeterCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final CustomAvatar avatarData =
-        meterTyps.firstWhere((element) => element.meterTyp == meter.typ).avatar;
+    final CustomAvatar avatarData = meterTyps.firstWhere((element) => element.meterTyp == meter.typ).avatar;
 
     String dateText = 'none';
 
@@ -47,9 +46,7 @@ class MeterCard extends ConsumerWidget {
         padding: const EdgeInsets.only(left: 4.0, right: 4),
         child: Card(
           elevation: Theme.of(context).cardTheme.elevation,
-          color: meter.isSelected
-              ? Theme.of(context).highlightColor
-              : Theme.of(context).cardTheme.color,
+          color: meter.isSelected ? Theme.of(context).highlightColor : Theme.of(context).cardTheme.color,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -89,7 +86,7 @@ class MeterCard extends ConsumerWidget {
                 if (showTags && meter.id != null)
                   HorizontalTagsList(
                     meterId: meter.id!,
-                    tags: [],
+                    tags: meter.tags,
                   ),
                 const SizedBox(
                   height: 10,
@@ -153,10 +150,7 @@ class MeterCard extends ConsumerWidget {
               children: [
                 Text(
                   meter.note.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelSmall!
-                      .copyWith(fontSize: 14),
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(fontSize: 14),
                 ),
               ],
             )

@@ -12,6 +12,7 @@ import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
 import 'package:openmeter/features/room/provider/details_room_provider.dart';
 import 'package:openmeter/features/room/provider/room_list_provider.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:openmeter/features/tags/provider/meter_tags_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -123,7 +124,6 @@ class DetailsMeter extends _$DetailsMeter {
 
     final newDetails = state.value!.copyWith(entries: currentEntries, meter: meter);
 
-
     ref.invalidate(meterCostProviderProvider);
     ref.read(hasUpdateProvider.notifier).setState(true);
     _updateDetailsRoom(meter.room, null);
@@ -131,7 +131,7 @@ class DetailsMeter extends _$DetailsMeter {
     state = AsyncData(newDetails);
   }
 
-  Future<void> updateMeter(MeterDto meter, RoomDto? newRoom, List<String> tags) async {
+  Future<void> updateMeter(MeterDto meter, RoomDto? newRoom, List<TagDto> tags) async {
     if (state.value == null) {
       throw NullValueException();
     }
@@ -194,8 +194,8 @@ class DetailsMeter extends _$DetailsMeter {
     state = AsyncData(newDetails);
   }
 
-  void _updateDetailsRoom(RoomDto? oldRoom, RoomDto? newRoom){
+  void _updateDetailsRoom(RoomDto? oldRoom, RoomDto? newRoom) {
     if (oldRoom != null) ref.invalidate(detailsRoomProvider(oldRoom.id!));
-    if(newRoom != null) ref.invalidate(detailsRoomProvider(newRoom.id!));
+    if (newRoom != null) ref.invalidate(detailsRoomProvider(newRoom.id!));
   }
 }

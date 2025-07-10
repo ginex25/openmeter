@@ -43,8 +43,7 @@ class ExportRepository {
   final Map<int, List<EntryDto>> _entries = {};
   List<TagDto> _tags = [];
 
-  ExportRepository(this._meterRepository, this._entryRepository,
-      this._contractRepository, this._roomRepository, this._tagRepository);
+  ExportRepository(this._meterRepository, this._entryRepository, this._contractRepository, this._roomRepository, this._tagRepository);
 
   Future<void> _getData() async {
     _meters = await _meterRepository.fetchMeters();
@@ -57,25 +56,15 @@ class ExportRepository {
         throw NullValueException('meter id should not be null');
       }
 
-      List<EntryDto> entries =
-          await _entryRepository.fetchEntriesForMeter(meter.id!);
+      List<EntryDto> entries = await _entryRepository.fetchEntriesForMeter(meter.id!);
 
       _entries.addAll({meter.id!: entries});
-
-      List<TagDto> tags = await _tagRepository.getTagsForMeter(meter.id!);
-      meter.tags = tags
-          .map(
-            (e) => e.uuid!,
-          )
-          .toList();
     }
   }
 
   String _convertToJson() {
-    List<Map<String, dynamic>> jsonRoomList =
-        _rooms.map((e) => e.toJson()).toList();
-    List<Map<String, dynamic>> jsonContracts =
-        _contracts.map((e) => e.toJson()).toList();
+    List<Map<String, dynamic>> jsonRoomList = _rooms.map((e) => e.toJson()).toList();
+    List<Map<String, dynamic>> jsonContracts = _contracts.map((e) => e.toJson()).toList();
     List<Map<String, dynamic>> jsonTags = _tags.map((e) => e.toJson()).toList();
     List<Map<String, dynamic>> finalMeter = [];
 
@@ -116,19 +105,13 @@ class ExportRepository {
 
       dbFile.deleteSync();
 
-      log('Successfully export db as zip file!',
-          name: LogNames.databaseExportImport);
+      log('Successfully export db as zip file!', name: LogNames.databaseExportImport);
     } catch (e) {
-      log('Error while export db as zip file: $e',
-          name: LogNames.databaseExportImport);
+      log('Error while export db as zip file: $e', name: LogNames.databaseExportImport);
     }
   }
 
-  Future<bool> _exportAsJson(
-      {required String path,
-      bool clearBackupFiles = false,
-      bool isAutoBackup = false,
-      String cacheDir = ''}) async {
+  Future<bool> _exportAsJson({required String path, bool clearBackupFiles = false, bool isAutoBackup = false, String cacheDir = ''}) async {
     try {
       await _getData();
 
@@ -139,8 +122,7 @@ class ExportRepository {
 
       if (isAutoBackup) {
         DateTime date = DateTime.now();
-        String formattedDate =
-            DateFormat(DateTimeFormats.timestamp24h).format(date);
+        String formattedDate = DateFormat(DateTimeFormats.timestamp24h).format(date);
 
         fileName = 'meter_$formattedDate.json';
 
@@ -171,8 +153,7 @@ class ExportRepository {
 
       return true;
     } on PlatformException catch (e) {
-      log('Error Unsupported operation: ${e.toString()}',
-          name: 'Export as JSON');
+      log('Error Unsupported operation: ${e.toString()}', name: 'Export as JSON');
 
       return false;
     } catch (e) {
@@ -189,14 +170,9 @@ class ExportRepository {
     final cacheDir = await getApplicationCacheDirectory();
     await _imageService.createDirectory();
 
-    log('export as autobackup: $isAutoBackup',
-        name: LogNames.databaseExportImport);
+    log('export as autobackup: $isAutoBackup', name: LogNames.databaseExportImport);
 
-    return await _exportAsJson(
-        path: path,
-        cacheDir: cacheDir.path,
-        isAutoBackup: isAutoBackup,
-        clearBackupFiles: clearBackupFiles);
+    return await _exportAsJson(path: path, cacheDir: cacheDir.path, isAutoBackup: isAutoBackup, clearBackupFiles: clearBackupFiles);
   }
 }
 
@@ -217,13 +193,10 @@ Future<bool> runExportAsIsolate({
       final db = LocalDatabase(await connection.connect());
 
       final TagRepository tagRepository = TagRepository(db.tagsDao, prefs);
-      final RoomRepository roomRepository =
-          RoomRepository(db.roomDao, db.entryDao, db.meterDao);
+      final RoomRepository roomRepository = RoomRepository(db.roomDao, db.entryDao, db.meterDao);
       final EntryRepository entryRepository = EntryRepository(db.entryDao);
-      final ContractRepository contractRepository =
-          ContractRepository(db.contractDao);
-      final MeterRepository meterRepository = MeterRepository(
-          db.meterDao, entryRepository, roomRepository, tagRepository);
+      final ContractRepository contractRepository = ContractRepository(db.contractDao);
+      final MeterRepository meterRepository = MeterRepository(db.meterDao, entryRepository, roomRepository, tagRepository);
 
       final repo = ExportRepository(
         meterRepository,
@@ -233,10 +206,7 @@ Future<bool> runExportAsIsolate({
         tagRepository,
       );
 
-      return await repo.runExport(
-          path: path,
-          clearBackupFiles: clearBackupFiles,
-          isAutoBackup: isAutoBackup);
+      return await repo.runExport(path: path, clearBackupFiles: clearBackupFiles, isAutoBackup: isAutoBackup);
     },
     debugName: 'Export Database as JSON',
   );

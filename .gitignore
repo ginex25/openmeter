@@ -49,4 +49,4 @@ bugs.txt
 
 # FVM Version Cache
 .fvm/
-/android/app/.cxx/Debug/
+/android/app/.cxx/

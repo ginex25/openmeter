@@ -4,6 +4,7 @@ import 'package:openmeter/features/meters/provider/archived_meters_list_provider
 import 'package:openmeter/features/meters/provider/selected_meters_count.dart';
 import 'package:openmeter/features/meters/repository/meter_repository.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../database_settings/provider/has_update.dart';
@@ -129,16 +130,14 @@ class MeterList extends _$MeterList {
     state = AsyncData(meters);
   }
 
-  Future<void> createMeter(
-      MeterDto meter, int meterCount, RoomDto? room, List<String> tags) async {
+  Future<void> createMeter(MeterDto meter, int meterCount, RoomDto? room, List<TagDto> tags) async {
     if (state.value == null) {
       throw NullValueException();
     }
 
     final MeterRepository repo = ref.watch(meterRepositoryProvider);
 
-    final MeterDto newMeter = await repo.createMeter(
-        meter: meter, currentCount: meterCount, room: room, tags: tags);
+    final MeterDto newMeter = await repo.createMeter(meter: meter, currentCount: meterCount, room: room, tags: tags);
 
     final currentMeters = state.value!;
 
@@ -190,9 +189,7 @@ class MeterList extends _$MeterList {
 
     for (MeterDto meter in currentMeters) {
       if (meter.isSelected) {
-        await ref
-            .read(archivedMetersListProvider.notifier)
-            .addMeterToArchiv(meter);
+        await ref.read(archivedMetersListProvider.notifier).addMeterToArchiv(meter);
       }
     }
 

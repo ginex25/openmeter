@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:openmeter/features/room/model/room_dto.dart';
+import 'package:openmeter/features/tags/model/tag_dto.dart';
 
 import '../../../core/database/local_database.dart';
 import 'entry_dto.dart';
@@ -12,23 +13,12 @@ class MeterDto {
   String note;
   RoomDto? room;
   bool isArchived;
-  List<String> tags;
+  List<TagDto> tags;
   bool isSelected;
   bool hasEntry = false;
   EntryDto? lastEntry;
 
-  MeterDto(
-      {this.id,
-      required this.typ,
-      required this.number,
-      required this.unit,
-      this.note = '',
-      this.room,
-      this.isArchived = false,
-      required this.tags,
-      this.isSelected = false,
-      this.hasEntry = false,
-      this.lastEntry});
+  MeterDto({this.id, required this.typ, required this.number, required this.unit, this.note = '', this.room, this.isArchived = false, required this.tags, this.isSelected = false, this.hasEntry = false, this.lastEntry});
 
   Map<String, dynamic> toJson(List<EntryDto> entries) => {
         'typ': typ,
@@ -38,7 +28,7 @@ class MeterDto {
         'isArchived': isArchived,
         'room': room?.uuid,
         'entries': entries.map((e) => e.toJson()).toList(),
-        'tags': tags
+        'tags': tags.map((e) => e.uuid).toList(),
       };
 
   MeterDto.fromData(MeterData data, this.hasEntry)
